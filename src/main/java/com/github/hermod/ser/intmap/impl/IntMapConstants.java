@@ -47,16 +47,16 @@ public final class IntMapConstants
     // double (encoded on 5 bits)
     public static final byte TYPE_5BITS_DECIMAL = TYPE_DECIMAL | 5;
     
-    // String (ASCII)
+    // String (Extended ASCII)
     public static final byte TYPE_STRING_ISO_8859_1 = (byte) 0x80;//0b1000_0000;
+    
+    // TODO not implement
+    // String (UTF16)
+    public static final byte TYPE_STRING_UTF16 = (byte) 0xA0;//0b1010_0000;
     
     // TODO not implemented
     // Array
-    public static final byte TYPE_ARRAY = (byte) 0xA0;//0b1010_0000;
-    
-    // TODO not implement
-    // StringMap
-    public static final byte TYPE_STRING_MAP = (byte) 0xC0; //0b1100_0000;
+    public static final byte TYPE_ARRAY = (byte) 0xC0; //0b1100_0000;
     
     // IntMap
     public static final byte TYPE_INT_MAP = (byte) 0xE0; //0b1110_0000;
