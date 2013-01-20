@@ -1,7 +1,9 @@
 /**
  * 
  */
-package com.github.hermod.ser.intmap.impl;
+package com.github.hermod.ser.impl;
+
+import com.github.hermod.ser.impl.KeyObjectMsg;
 
 
 /**
@@ -26,7 +28,7 @@ public final class Demo
 	byte[] bytes = new byte[100];
 	
 	//
-	KeyObjectValueIntMap intMap = new KeyObjectValueIntMap(44);
+	KeyObjectMsg intMap = new KeyObjectMsg(44);
 	intMap.clear();
 	intMap.set(0, 1.1, 1);
 	intMap.set(1, 1.1, 1);
@@ -47,7 +49,7 @@ public final class Demo
 	double d16 = intMap.getAsDecimal(6);
 	double d17 = intMap.getAsDecimal(7);
 	
-	KeyObjectValueIntMap intMap2 = new KeyObjectValueIntMap(44);
+	KeyObjectMsg intMap2 = new KeyObjectMsg(44);
 	intMap2.readFrom(bytes, 0, size);
 	
 	double d0a = intMap2.getAsDecimal(0);
@@ -85,7 +87,7 @@ public final class Demo
 		+ " count=" + count + " time=" + (stop - start) + " msg/s="
 		+ (((nbTestEncode / (stop - start)) * 1000)));
 	
-	intMap2 = new KeyObjectValueIntMap(44);
+	intMap2 = new KeyObjectMsg(44);
 	
 	start = System.currentTimeMillis();
 	for (int i = nbTestEncode; i-- != 0;)
@@ -122,7 +124,7 @@ public final class Demo
 		+ " count=" + count + " time=" + (stop - start) + " msg/s="
 		+ (((nbTestEncode / (stop - start)) * 1000)));
 	
-	intMap2 = new KeyObjectValueIntMap(44);
+	intMap2 = new KeyObjectMsg(44);
 	
 	start = System.currentTimeMillis();
 	for (int i = nbTestEncode; i-- != 0;)
