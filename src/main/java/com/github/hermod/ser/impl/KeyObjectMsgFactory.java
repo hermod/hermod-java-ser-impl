@@ -31,7 +31,7 @@ public class KeyObjectMsgFactory implements MsgFactory {
      */
     @Override
     public Msg create(final int size) {
-        return new KeyObjectMsg(size / 4);
+        return new KeyObjectMsg(size >> 2);
     }
 
 }

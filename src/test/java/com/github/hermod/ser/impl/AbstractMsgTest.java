@@ -40,6 +40,7 @@ public abstract class AbstractMsgTest {
     private static final int    KEY_ELEVEN     = 11;
     private static final int    KEY_TWELVE     = 12;
     private static final int    KEY_THIRTEEN   = 13;
+    private static final int    KEY_NINETY = 90;
     private static final int    KEY_NINETYNINE = 99;
     
     private static final double PRECISION      = 0.00001;
@@ -117,7 +118,9 @@ public abstract class AbstractMsgTest {
     public void testSetGetAsByte() {
 	final Msg msg = this.msgFactory.create();
         msg.set(KEY_ONE, BYTE_TEST);
+        //msg.set(KEY_NINETY, BYTE_TEST);
         final byte[] bytes = msg.writeTo();
+        
         
         final Msg msg2 = this.msgFactory.create();
         msg2.readFrom(bytes, 0, bytes.length);
@@ -126,6 +129,8 @@ public abstract class AbstractMsgTest {
         Assert.assertEquals(MsgConstants.DEFAULT_BYTE_VALUE, msg2.getAsByte(KEY_NINETYNINE));
         Assert.assertEquals(MsgConstants.DEFAULT_BYTE_VALUE, msg2.getAsByte(KEY_ZERO));
         Assert.assertEquals(MsgConstants.DEFAULT_BYTE_VALUE, msg2.getAsByte(KEY_MINUS_ONE));
+        
+        
         
     }
     
@@ -212,6 +217,9 @@ public abstract class AbstractMsgTest {
         msg2.readFrom(bytes, 0, bytes.length);
         Assert.assertEquals(FLOAT_TEST, msg2.getAsFloat(KEY_ONE), PRECISION);
         Assert.assertEquals(FLOAT_TEST, msg2.getAsDouble(KEY_ONE), PRECISION);
+        Assert.assertEquals(MsgConstants.DEFAULT_FLOAT_VALUE, msg2.getAsFloat(KEY_NINETYNINE), PRECISION);
+        Assert.assertEquals(MsgConstants.DEFAULT_FLOAT_VALUE, msg2.getAsFloat(KEY_ZERO), PRECISION);
+        Assert.assertEquals(MsgConstants.DEFAULT_FLOAT_VALUE, msg2.getAsFloat(KEY_MINUS_ONE), PRECISION);
         Assert.assertFalse(msg2.contains(KEY_ZERO));
     }
     
