@@ -1,5 +1,7 @@
 package com.github.hermod.ser.impl;
 
+import com.github.hermod.ser.Msg;
+
 /**
  * IntMapConstants.
  * 
@@ -140,19 +142,26 @@ public final class MsgConstants
      */
     public static final String DEFAULT_STRING_VALUE = "";
     
+    
     /**
      * DEFAULT_BYTES_VALUE
      */
     public static final byte[] DEFAULT_BYTES_VALUE = new byte[0];
     
-    /**
-     * DEFAULT_INT_MAP_VALUE
-     */
-    // public static final IntMapValue DEFAULT_INT_MAP_VALUE = new
-    // DefaultIntMapValue(new byte[0], 0, 0, 1);
     
     /**
-     * 
+     * DEFAULT_MSG_VALUE
+     */
+    public static final Msg DEFAULT_MSG_VALUE = (new KeyObjectMsgFactory()).create(0);
+    
+    /**
+     * DEFAULT_ARRAY_VALUE
+     */
+    public static final Object[] DEFAULT_ARRAY_VALUE = new Object[0];
+
+    
+    /**
+     * DOZENS
      */
     public static double[] DOZENS =
     { 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0, 100000000.0 };

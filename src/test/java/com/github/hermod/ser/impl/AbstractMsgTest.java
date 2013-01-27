@@ -18,16 +18,19 @@ import com.github.hermod.ser.MsgFactory;
 public abstract class AbstractMsgTest {
     
     
+    
     private static final byte   BYTE_TEST      = Byte.MIN_VALUE;
     private static final short  SHORT_TEST     = Short.MAX_VALUE;
     private static final int    INT_TEST       = Integer.MIN_VALUE;
     private static final long   LONG_TEST      = Long.MAX_VALUE / 2;
     private static final float  FLOAT_TEST     = 10.10f;
     private static final double DOUBLE_TEST    = 11.11;
+    private static final double DOUBLE_TEST2    = Double.MAX_VALUE / 2;
     private static final String STRING_TEST    = "string";
     private static final String STRING_TEST32  = "12345678901234567890123456789012";
     private static final String STRING_TEST132 = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012";
-    
+    private static final Object[] OBJECT_ARRAY_TEST = {};
+
     
     private static final int    KEY_MINUS_ONE  = -1;
     private static final int    KEY_ZERO       = 0;
@@ -41,12 +44,15 @@ public abstract class AbstractMsgTest {
     private static final int    KEY_TWELVE     = 12;
     private static final int    KEY_THIRTEEN   = 13;
     private static final int    KEY_NINETY = 90;
+    private static final int    KEY_NINETYTWO = 92;
     private static final int    KEY_NINETYNINE = 99;
     
     private static final double PRECISION      = 0.00001;
     
+    
     protected final MsgFactory msgFactory;
     
+    protected final Msg msgTest;
 
     
     
@@ -58,6 +64,8 @@ public abstract class AbstractMsgTest {
     public AbstractMsgTest(final MsgFactory msgFactory) {
 	super();
 	this.msgFactory = msgFactory;
+	this.msgTest = this.msgFactory.create();
+	this.msgTest.set(KEY_ONE, BYTE_TEST);
     }
 
     /**
@@ -118,20 +126,28 @@ public abstract class AbstractMsgTest {
     public void testSetGetAsByte() {
 	final Msg msg = this.msgFactory.create();
         msg.set(KEY_ONE, BYTE_TEST);
-        //msg.set(KEY_NINETY, BYTE_TEST);
+        msg.set(KEY_NINETY, BYTE_TEST);
         final byte[] bytes = msg.writeTo();
         
         
         final Msg msg2 = this.msgFactory.create();
         msg2.readFrom(bytes, 0, bytes.length);
         Assert.assertEquals(BYTE_TEST, msg2.getAsByte(KEY_ONE));
+        Assert.assertEquals(BYTE_TEST, msg2.getAsByte(KEY_NINETY));
         Assert.assertFalse(msg2.contains(KEY_ZERO));
         Assert.assertEquals(MsgConstants.DEFAULT_BYTE_VALUE, msg2.getAsByte(KEY_NINETYNINE));
         Assert.assertEquals(MsgConstants.DEFAULT_BYTE_VALUE, msg2.getAsByte(KEY_ZERO));
         Assert.assertEquals(MsgConstants.DEFAULT_BYTE_VALUE, msg2.getAsByte(KEY_MINUS_ONE));
-        
-        
-        
+    }
+    
+    /**
+     * testSetGetAsByteWithIllegalArgument.
+     *
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetGetAsByteWithIllegalArgument() {
+        final Msg msg = this.msgFactory.create();
+        msg.set(KEY_MINUS_ONE, BYTE_TEST);
     }
     
     /**
@@ -143,16 +159,28 @@ public abstract class AbstractMsgTest {
 	final Msg msg = this.msgFactory.create();
         msg.set(KEY_ONE, SHORT_TEST);
         msg.set(KEY_TWO, BYTE_TEST);
+        msg.set(KEY_NINETY, SHORT_TEST);
         final byte[] bytes = msg.writeTo();
         
         final Msg msg2 = this.msgFactory.create();
         msg2.readFrom(bytes, 0, bytes.length);
         Assert.assertEquals(SHORT_TEST, msg2.getAsShort(KEY_ONE));
+        Assert.assertEquals(SHORT_TEST, msg2.getAsShort(KEY_NINETY));
         Assert.assertEquals(BYTE_TEST, msg2.getAsShort(KEY_TWO));
         Assert.assertFalse(msg2.contains(KEY_ZERO));
         Assert.assertEquals(MsgConstants.DEFAULT_SHORT_VALUE, msg2.getAsShort(KEY_NINETYNINE));
         Assert.assertEquals(MsgConstants.DEFAULT_SHORT_VALUE, msg2.getAsShort(KEY_ZERO));
         Assert.assertEquals(MsgConstants.DEFAULT_SHORT_VALUE, msg2.getAsShort(KEY_MINUS_ONE));
+    }
+    
+    /**
+     * testSetGetAsShortWithIllegalArgument.
+     *
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetGetAsShortWithIllegalArgument() {
+        final Msg msg = this.msgFactory.create();
+        msg.set(KEY_MINUS_ONE, SHORT_TEST);
     }
     
     /**
@@ -165,6 +193,7 @@ public abstract class AbstractMsgTest {
         msg.set(KEY_ONE, INT_TEST);
         msg.set(KEY_TWO, SHORT_TEST);
         msg.set(KEY_THREE, BYTE_TEST);
+        msg.set(KEY_NINETY, INT_TEST);
         final byte[] bytes = msg.writeTo();
         
         final Msg msg2 = this.msgFactory.create();
@@ -172,10 +201,22 @@ public abstract class AbstractMsgTest {
         Assert.assertEquals(INT_TEST, msg2.getAsInt(KEY_ONE));
         Assert.assertEquals(SHORT_TEST, msg2.getAsInt(KEY_TWO));
         Assert.assertEquals(BYTE_TEST, msg2.getAsInt(KEY_THREE));
+        Assert.assertEquals(INT_TEST, msg2.getAsInt(KEY_NINETY));
         Assert.assertFalse(msg2.contains(KEY_ZERO));
         Assert.assertEquals(MsgConstants.DEFAULT_INT_VALUE, msg2.getAsInt(KEY_NINETYNINE));
         Assert.assertEquals(MsgConstants.DEFAULT_INT_VALUE, msg2.getAsInt(KEY_ZERO));
         Assert.assertEquals(MsgConstants.DEFAULT_INT_VALUE, msg2.getAsInt(KEY_MINUS_ONE));
+    }
+    
+    
+    /**
+     * testSetGetAsIntWithIllegalArgument.
+     *
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetGetAsIntWithIllegalArgument() {
+        final Msg msg = this.msgFactory.create();
+        msg.set(KEY_MINUS_ONE, INT_TEST);
     }
     
     /**
@@ -189,6 +230,7 @@ public abstract class AbstractMsgTest {
         msg.set(KEY_TWO, INT_TEST);
         msg.set(KEY_THREE, SHORT_TEST);
         msg.set(KEY_FOUR, BYTE_TEST);
+        msg.set(KEY_NINETY, LONG_TEST);
         final byte[] bytes = msg.writeTo();
         
         final Msg msg2 = this.msgFactory.create();
@@ -197,11 +239,24 @@ public abstract class AbstractMsgTest {
         Assert.assertEquals(INT_TEST, msg2.getAsLong(KEY_TWO));
         Assert.assertEquals(SHORT_TEST, msg2.getAsLong(KEY_THREE));
         Assert.assertEquals(BYTE_TEST, msg2.getAsLong(KEY_FOUR));
+        Assert.assertEquals(LONG_TEST, msg2.getAsLong(KEY_NINETY));
         Assert.assertFalse(msg2.contains(KEY_ZERO));
         Assert.assertEquals(MsgConstants.DEFAULT_LONG_VALUE, msg2.getAsLong(KEY_NINETYNINE));
         Assert.assertEquals(MsgConstants.DEFAULT_LONG_VALUE, msg2.getAsLong(KEY_ZERO));
         Assert.assertEquals(MsgConstants.DEFAULT_LONG_VALUE, msg2.getAsLong(KEY_MINUS_ONE));
     }
+    
+    
+    /**
+     * testSetGetAsIntWithIllegalArgument.
+     *
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetGetAsLongWithIllegalArgument() {
+        final Msg msg = this.msgFactory.create();
+        msg.set(KEY_MINUS_ONE, LONG_TEST);
+    }
+    
     
     /**
      * testSetGetAsFloat.
@@ -211,16 +266,29 @@ public abstract class AbstractMsgTest {
     public void testSetGetAsFloat() {
         final Msg msg = this.msgFactory.create();
         msg.set(KEY_ONE, FLOAT_TEST);
+        msg.set(KEY_NINETY, FLOAT_TEST);
         final byte[] bytes = msg.writeTo();
         
         final Msg msg2 = this.msgFactory.create();
         msg2.readFrom(bytes, 0, bytes.length);
         Assert.assertEquals(FLOAT_TEST, msg2.getAsFloat(KEY_ONE), PRECISION);
-        Assert.assertEquals(FLOAT_TEST, msg2.getAsDouble(KEY_ONE), PRECISION);
+        Assert.assertEquals(FLOAT_TEST, msg2.getAsFloat(KEY_ONE), PRECISION);
+        Assert.assertEquals(FLOAT_TEST, msg2.getAsDouble(KEY_NINETY), PRECISION);
+        
         Assert.assertEquals(MsgConstants.DEFAULT_FLOAT_VALUE, msg2.getAsFloat(KEY_NINETYNINE), PRECISION);
         Assert.assertEquals(MsgConstants.DEFAULT_FLOAT_VALUE, msg2.getAsFloat(KEY_ZERO), PRECISION);
         Assert.assertEquals(MsgConstants.DEFAULT_FLOAT_VALUE, msg2.getAsFloat(KEY_MINUS_ONE), PRECISION);
         Assert.assertFalse(msg2.contains(KEY_ZERO));
+    }
+    
+    /**
+     * testSetGetAsFloatWithIllegalArgument.
+     *
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetGetAsFloatWithIllegalArgument() {
+        final Msg msg = this.msgFactory.create();
+        msg.set(KEY_MINUS_ONE, FLOAT_TEST);
     }
     
     /**
@@ -233,6 +301,8 @@ public abstract class AbstractMsgTest {
         msg.set(KEY_ONE, FLOAT_TEST);
         msg.set(KEY_TWO, DOUBLE_TEST);
         msg.set(KEY_THREE, DOUBLE_TEST, 5);
+        msg.set(KEY_NINETY, DOUBLE_TEST);
+        msg.set(KEY_NINETYTWO, DOUBLE_TEST2, 5);
         final byte[] bytes = msg.writeTo();
         
         final Msg msg2 = this.msgFactory.create();
@@ -240,12 +310,34 @@ public abstract class AbstractMsgTest {
         Assert.assertEquals(FLOAT_TEST, msg2.getAsFloat(KEY_ONE), PRECISION);
         Assert.assertEquals(DOUBLE_TEST, msg2.getAsDouble(KEY_TWO), PRECISION);
         Assert.assertEquals(DOUBLE_TEST, msg2.getAsDouble(KEY_THREE), PRECISION);
+        Assert.assertEquals(DOUBLE_TEST, msg2.getAsDouble(KEY_NINETY), PRECISION);
+        Assert.assertEquals(DOUBLE_TEST2, msg2.getAsDouble(KEY_NINETYTWO), PRECISION);
         
         Assert.assertEquals(MsgConstants.DEFAULT_DOUBLE_VALUE, msg2.getAsDouble(KEY_NINETYNINE), PRECISION);
         Assert.assertEquals(MsgConstants.DEFAULT_DOUBLE_VALUE, msg2.getAsDouble(KEY_ZERO), PRECISION);
         Assert.assertEquals(MsgConstants.DEFAULT_DOUBLE_VALUE, msg2.getAsDouble(KEY_MINUS_ONE), PRECISION);
         
         Assert.assertFalse(msg2.contains(KEY_ZERO));
+    }
+    
+    /**
+     * testSetGetAsFloatWithIllegalArgument.
+     *
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetGetAsDoubleWithIllegalArgument() {
+        final Msg msg = this.msgFactory.create();
+        msg.set(KEY_MINUS_ONE, DOUBLE_TEST);
+    }
+    
+    /**
+     * testSetGetAsDoubleWithDigitWithIllegalArgument.
+     *
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetGetAsDoubleWithDigitWithIllegalArgument() {
+        final Msg msg = this.msgFactory.create();
+        msg.set(KEY_MINUS_ONE, DOUBLE_TEST, 1);
     }
     
     /**
@@ -258,6 +350,7 @@ public abstract class AbstractMsgTest {
         msg.set(KEY_ONE, STRING_TEST);
         msg.set(KEY_TWO, STRING_TEST32);
         msg.set(KEY_THREE, STRING_TEST132);
+        //msg.set(KEY_NINETY, STRING_TEST);
         
         final byte[] bytes = msg.writeTo();
         
@@ -266,41 +359,100 @@ public abstract class AbstractMsgTest {
         Assert.assertEquals(STRING_TEST, msg2.getAsString(KEY_ONE));
         Assert.assertEquals(STRING_TEST32, msg2.getAsString(KEY_TWO));
         Assert.assertEquals(STRING_TEST132, msg2.getAsString(KEY_THREE));
+        //Assert.assertEquals(STRING_TEST, msg2.getAsString(KEY_NINETY));
         Assert.assertEquals(MsgConstants.DEFAULT_STRING_VALUE, msg2.getAsString(KEY_NINETYNINE));
         Assert.assertEquals(MsgConstants.DEFAULT_STRING_VALUE, msg2.getAsString(KEY_ZERO));
         Assert.assertEquals(MsgConstants.DEFAULT_STRING_VALUE, msg2.getAsString(KEY_MINUS_ONE));
         Assert.assertFalse(msg2.contains(KEY_ZERO));
     }
     
-    //
-    // /**
-    // * testSetGetAsMap.
-    // *
-    // */
-    // @Test
-    // public void testSetGetAsMap()
-    // {
-    // fail("Not yet implemented");
-    // }
     
-    // @Test
-    // public void testGetAsIntMapValue()
-    // {
-    // fail("Not yet implemented");
-    // }
+    /**
+     * testSetGetAsStringWithIllegalArgument.
+     *
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetGetAsStringWithIllegalArgument() {
+        final Msg msg = this.msgFactory.create();
+        msg.set(KEY_MINUS_ONE, STRING_TEST);
+    }
     
-    // @Test
-    // public void testGet()
-    // {
-    // //fail("Not yet implemented");
-    // //TODO
-    // }
     
-    // @Test
-    // public void testGetIterator()
-    // {
-    // fail("Not yet implemented");
-    // }
+    
+    /**
+     * testSetGetAsMsg.
+     *
+     */
+    @Test
+    public void testSetGetAsMsg() {
+        final Msg msg = this.msgFactory.create();
+        msg.set(KEY_ONE, this.msgTest);
+        msg.set(KEY_NINETY, this.msgTest);
+        
+        final byte[] bytes = msg.writeTo();
+        
+        final Msg msg2 = this.msgFactory.create();
+        msg2.readFrom(bytes, 0, bytes.length);
+        Assert.assertEquals(this.msgTest, msg2.getAsMsg(KEY_ONE));
+        Assert.assertEquals(this.msgTest, msg2.getAsMsg(KEY_NINETY));
+        Assert.assertEquals(MsgConstants.DEFAULT_MSG_VALUE, msg2.getAsMsg(KEY_NINETYNINE));
+        Assert.assertEquals(MsgConstants.DEFAULT_MSG_VALUE, msg2.getAsMsg(KEY_ZERO));
+        Assert.assertEquals(MsgConstants.DEFAULT_MSG_VALUE, msg2.getAsMsg(KEY_MINUS_ONE));
+        Assert.assertFalse(msg2.contains(KEY_ZERO));
+    }
+    
+    
+    
+    /**
+     * testSetGetAsMsgWithIllegalArgument.
+     *
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetGetAsMsgWithIllegalArgument() {
+        final Msg msg = this.msgFactory.create();
+        msg.set(KEY_MINUS_ONE, this.msgTest);
+    }
+    
+    
+    
+    /**
+     * testSetGetAsObjectArray.
+     *
+     */
+    @Test
+    public void testSetGetAsObjectArray() {
+//        final Msg msg = this.msgFactory.create();
+//        msg.set(KEY_ONE, STRING_TEST);
+//        msg.set(KEY_TWO, STRING_TEST32);
+//        msg.set(KEY_THREE, STRING_TEST132);
+//        //msg.set(KEY_NINETY, STRING_TEST);
+//        
+//        final byte[] bytes = msg.writeTo();
+//        
+//        final Msg msg2 = this.msgFactory.create();
+//        msg2.readFrom(bytes, 0, bytes.length);
+//        Assert.assertEquals(STRING_TEST, msg2.getAsString(KEY_ONE));
+//        Assert.assertEquals(STRING_TEST32, msg2.getAsString(KEY_TWO));
+//        Assert.assertEquals(STRING_TEST132, msg2.getAsString(KEY_THREE));
+//        //Assert.assertEquals(STRING_TEST, msg2.getAsString(KEY_NINETY));
+//        Assert.assertEquals(MsgConstants.DEFAULT_STRING_VALUE, msg2.getAsString(KEY_NINETYNINE));
+//        Assert.assertEquals(MsgConstants.DEFAULT_STRING_VALUE, msg2.getAsString(KEY_ZERO));
+//        Assert.assertEquals(MsgConstants.DEFAULT_STRING_VALUE, msg2.getAsString(KEY_MINUS_ONE));
+//        Assert.assertFalse(msg2.contains(KEY_ZERO));
+    }
+    
+    
+    /**
+     * testSetGetAsObjectArrayWithIllegalArgument.
+     *
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetGetAsObjectArrayWithIllegalArgument() {
+        final Msg msg = this.msgFactory.create();
+        msg.set(KEY_MINUS_ONE, OBJECT_ARRAY_TEST);
+    }
+    
+    
     
     /**
      * testSetAll.
@@ -317,7 +469,22 @@ public abstract class AbstractMsgTest {
      */
     @Test
     public void testRemove() {
-        //fail("Not yet implemented");
+        final Msg msg = this.msgFactory.create();
+        msg.set(KEY_ONE, INT_TEST);
+        Assert.assertTrue(msg.contains(KEY_ONE));
+        msg.remove(KEY_ONE);
+        Assert.assertFalse(msg.contains(KEY_ONE));
+        
+    }
+    
+    /**
+     * testRemoveWi.
+     *
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testRemoveWithIllegalArgument() {
+        final Msg msg = this.msgFactory.create();
+        msg.remove(KEY_MINUS_ONE);
     }
     
     /**

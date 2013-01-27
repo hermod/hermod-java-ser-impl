@@ -18,5 +18,7 @@ public final class KeyObjectMsgTest
     public KeyObjectMsgTest() {
 	super(new KeyObjectMsgFactory());
     }
+
+
     
 }

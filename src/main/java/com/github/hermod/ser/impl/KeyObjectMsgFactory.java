@@ -11,7 +11,7 @@ import com.github.hermod.ser.MsgFactory;
  * @author anavarro - Jan 20, 2013
  * 
  */
-public class KeyObjectMsgFactory implements MsgFactory {
+public final class KeyObjectMsgFactory implements MsgFactory {
 
     /**
      * (non-Javadoc)

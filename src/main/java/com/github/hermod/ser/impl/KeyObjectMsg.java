@@ -1,29 +1,5 @@
 package com.github.hermod.ser.impl;
 
-import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_BYTE_VALUE;
-import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_DOUBLE_VALUE;
-import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_FLOAT_VALUE;
-import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_INT_VALUE;
-import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_LONG_VALUE;
-import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_SHORT_VALUE;
-import static com.github.hermod.ser.impl.MsgConstants.DOZENS;
-import static com.github.hermod.ser.impl.MsgConstants.SIZE_ENCODED_IN_A_BIT;
-import static com.github.hermod.ser.impl.MsgConstants.SIZE_ENCODED_IN_AN_INT;
-
-import org.junit.internal.ArrayComparisonFailure;
-
-import static com.github.hermod.ser.impl.MsgConstants.SIZE_MASK;
-import static com.github.hermod.ser.impl.MsgConstants.TYPE_5BITS_DECIMAL;
-import static com.github.hermod.ser.impl.MsgConstants.TYPE_BYTE;
-import static com.github.hermod.ser.impl.MsgConstants.TYPE_DOUBLE;
-import static com.github.hermod.ser.impl.MsgConstants.TYPE_FLOAT;
-import static com.github.hermod.ser.impl.MsgConstants.TYPE_INT;
-import static com.github.hermod.ser.impl.MsgConstants.TYPE_LONG;
-import static com.github.hermod.ser.impl.MsgConstants.TYPE_MASK;
-import static com.github.hermod.ser.impl.MsgConstants.TYPE_NULL_KEY;
-import static com.github.hermod.ser.impl.MsgConstants.TYPE_SHORT;
-import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_MAX_KEY;
-import static com.github.hermod.ser.impl.MsgConstants.TYPE_INTEGER;
 import static com.github.hermod.ser.impl.MsgConstants.*;
 
 import com.github.hermod.ser.Msg;
@@ -40,6 +16,16 @@ public class KeyObjectMsg implements Msg {
     private long[] primitiveValues;
     private Object[] objectValues;
 
+    
+    
+    /**
+     * Constructor.
+     *
+     */
+    public KeyObjectMsg() {
+        this(DEFAULT_MAX_KEY);
+    }
+    
     /**
      * Constructor.
      * 
@@ -52,6 +38,8 @@ public class KeyObjectMsg implements Msg {
     }
 
     /**
+     * clear.
+     * 
      * @param aKeyMax
      */
     private final void clear(final int aKeyMax) {
@@ -68,10 +56,10 @@ public class KeyObjectMsg implements Msg {
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      * 
-     * @see org.fame.z.intmap.WriteIntMap#clear()
+     * @see com.github.hermod.ser.Msg#clear()
      */
     @Override
     public final void clear() {
@@ -82,10 +70,27 @@ public class KeyObjectMsg implements Msg {
         }
     }
 
-    /*
+    /**
+     * increaseKeyMax.
+     * 
+     * @param keyMax
+     */
+    private final void increaseKeyMax(final int keyMax) {
+        final byte[] types = new byte[keyMax + 1];
+        final long[] primitiveValues = new long[keyMax + 1];
+        final Object[] objectValues = new Object[keyMax + 1];
+        System.arraycopy(this.types, 0, types, 0, this.types.length);
+        System.arraycopy(this.primitiveValues, 0, primitiveValues, 0, this.primitiveValues.length);
+        System.arraycopy(this.objectValues, 0, objectValues, 0, this.objectValues.length);
+        this.types = types;
+        this.primitiveValues = primitiveValues;
+        this.objectValues = objectValues;
+    }
+
+    /**
      * (non-Javadoc)
      * 
-     * @see org.fame.z.intmap.ReadIntMap#contains(int)
+     * @see com.github.hermod.ser.Msg#contains(int)
      */
     @Override
     public final boolean contains(final int aKey) {
@@ -96,10 +101,10 @@ public class KeyObjectMsg implements Msg {
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      * 
-     * @see org.fame.z.intmap.ReadIntMap#get(int)
+     * @see com.github.hermod.ser.Msg#get(int)
      */
     @Override
     public final Object get(final int aKey) {
@@ -109,10 +114,10 @@ public class KeyObjectMsg implements Msg {
         return null;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      * 
-     * @see org.fame.z.intmap.ReadIntMap#getAsByte(int)
+     * @see com.github.hermod.ser.Msg#getAsByte(int)
      */
     @Override
     public final byte getAsByte(final int aKey) {
@@ -123,10 +128,10 @@ public class KeyObjectMsg implements Msg {
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      * 
-     * @see org.fame.z.intmap.ReadIntMap#getAsShort(int)
+     * @see com.github.hermod.ser.Msg#getAsShort(int)
      */
     @Override
     public final short getAsShort(final int aKey) {
@@ -137,10 +142,10 @@ public class KeyObjectMsg implements Msg {
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      * 
-     * @see org.fame.z.intmap.ReadIntMap#getAsInt(int)
+     * @see com.github.hermod.ser.Msg#getAsInt(int)
      */
     @Override
     public final int getAsInt(final int aKey) {
@@ -152,10 +157,10 @@ public class KeyObjectMsg implements Msg {
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      * 
-     * @see org.fame.z.intmap.ReadIntMap#getAsLong(int)
+     * @see com.github.hermod.ser.Msg#getAsLong(int)
      */
     @Override
     public final long getAsLong(final int aKey) {
@@ -166,10 +171,10 @@ public class KeyObjectMsg implements Msg {
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      * 
-     * @see org.fame.z.intmap.ReadIntMap#getAsFloat(int)
+     * @see com.github.hermod.ser.Msg#getAsFloat(int)
      */
     @Override
     public final float getAsFloat(final int aKey) {
@@ -182,12 +187,11 @@ public class KeyObjectMsg implements Msg {
     }
 
     /**
-     * getAsDecimal
+     * getAsDouble
      * 
      * @param aKey
      * @return
      */
-    // TODO set as private
     @Override
     public final double getAsDouble(final int aKey) {
         try {
@@ -243,10 +247,10 @@ public class KeyObjectMsg implements Msg {
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      * 
-     * @see org.fame.z.intmap.ReadIntMap#getAsString(int)
+     * @see com.github.hermod.ser.Msg#getAsString(int)
      */
     @Override
     public final String getAsString(final int aKey) {
@@ -264,8 +268,25 @@ public class KeyObjectMsg implements Msg {
      */
     @Override
     public final Msg getAsMsg(int aKey) {
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            return ((this.types[aKey] & TYPE_MASK) == TYPE_MSG) ? (Msg) this.objectValues[aKey] : DEFAULT_MSG_VALUE;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return DEFAULT_MSG_VALUE;
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsArray(int)
+     */
+    @Override
+    public final Object[] getAsArray(int aKey) {
+        try {
+            return ((this.types[aKey] & TYPE_MASK) == TYPE_ARRAY) ? (Object[]) this.objectValues[aKey] : DEFAULT_ARRAY_VALUE;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return DEFAULT_ARRAY_VALUE;
+        }
     }
 
     /**
@@ -294,19 +315,7 @@ public class KeyObjectMsg implements Msg {
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser3.intmap.ReadIntMap#getIterator()
-     */
-    // @Override
-    // public final IntMapIterator<ReadIntMapMsg> getIterator()
-    // {
-    // // TODO Auto-generated method stub
-    // return null;
-    // }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.fame.z.intmap.WriteIntMap#set(int, byte)
+     * @see com.github.hermod.ser.Msg#set(int, byte)
      */
     @Override
     public final void set(final int aKey, final byte aByte) {
@@ -487,39 +496,81 @@ public class KeyObjectMsg implements Msg {
      */
     @Override
     public final void set(final int aKey, final Msg aMsg) {
-        // TODO
+        try {
+            this.objectValues[aKey] = aMsg;
+            this.types[aKey] = TYPE_MSG;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            if (aKey < 0) {
+                throw new IllegalArgumentException("The key=" + aKey + " must be positive.");
+            } else {
+                increaseKeyMax(aKey);
+                set(aKey, aMsg);
+            }
+        }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      * 
-     * @see org.fame.z.intmap.WriteIntMap#setAll(org.fame.z.intmap.ReadIntMap)
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Object[])
+     */
+    public final void set(final int aKey, final Object[] aObjectArray) {
+        try {
+            this.objectValues[aKey] = aObjectArray;
+            this.types[aKey] = TYPE_ARRAY;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            if (aKey < 0) {
+                throw new IllegalArgumentException("The key=" + aKey + " must be positive.");
+            } else {
+                increaseKeyMax(aKey);
+                set(aKey, aObjectArray);
+            }
+        }
+    }
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Object)
+     */
+    @Override
+    public final void set(final int aKey, final Object aObject) {
+        //TODO
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#setAll(com.github.hermod.ser.Msg)
      */
     @Override
     public final void setAll(final Msg aMsg) {
-        // TODO Auto-generated method stub
-
+        final int[] keys = aMsg.getKeys();
+        for (int i = 0; i < keys.length; i++) {
+            set(keys[i], aMsg.get(keys[i]));
+        }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      * 
-     * @see org.fame.z.intmap.WriteIntMap#remove(int)
+     * @see com.github.hermod.ser.Msg#remove(int)
      */
     @Override
     public final void remove(final int aKey) {
         try {
             this.types[aKey] = TYPE_NULL_KEY;
-        } catch (ArrayIndexOutOfBoundsException e) {
-            // TODO
-            throw new IllegalArgumentException("");
+            this.objectValues[aKey] = null;
+            this.primitiveValues[aKey] = DEFAULT_LONG_VALUE;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            throw new IllegalArgumentException("The key=" + aKey + " must be positive.");
         }
     }
 
-    /*
+    /**
      * (non-Javadoc)
      * 
-     * @see org.fame.z.ReadMsg#readFrom(byte[], int, int)
+     * @see com.github.hermod.ser.Serializable#readFrom(byte[], int, int)
      */
     @Override
     public final void readFrom(final byte[] bytes, final int offset, final int length) {
@@ -533,8 +584,8 @@ public class KeyObjectMsg implements Msg {
         while (pos < offset + length) {
             if ((bytes[pos] & TYPE_MASK) == TYPE_NULL_KEY) {
                 final int sizeMask = bytes[pos++] & SIZE_MASK;
-                key += (sizeMask < SIZE_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == SIZE_ENCODED_IN_A_BIT) ? bytes[pos++] : (bytes[pos++] & 0xFF)
-                        | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos] & 0xFF) << 24);
+                key += ((sizeMask < SIZE_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == SIZE_ENCODED_IN_A_BIT) ? bytes[pos++] : (bytes[pos++] & 0xFF)
+                        | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos] & 0xFF) << 24));
             } else {
                 final int sizeMask = bytes[pos++] & SIZE_MASK;
                 pos += (sizeMask != SIZE_ENCODED_IN_A_BIT) ? sizeMask : (bytes[pos++] & 0xFF) | ((bytes[pos++] & 0xFF) << 8)
@@ -606,6 +657,7 @@ public class KeyObjectMsg implements Msg {
                 // All non fixed type
                 default:
                     final byte typeMask = (byte) (type & TYPE_MASK);
+                    this.types[key] = typeMask;
                     final int sizeMask = (SIZE_MASK & type);
                     final int size = (sizeMask < SIZE_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == SIZE_ENCODED_IN_A_BIT) ? bytes[pos++]
                             : (bytes[pos++] & 0xFF) | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos++] & 0xFF) << 24);
@@ -618,7 +670,16 @@ public class KeyObjectMsg implements Msg {
                         }
                         this.objectValues[key] = new String(chars);
                         break;
-
+                        
+                    case TYPE_MSG:
+                        final Msg msg = new KeyObjectMsg();
+                        msg.readFrom(bytes, pos, size);
+                        this.objectValues[key] = msg;
+                        break;
+                        
+                    case TYPE_ARRAY:
+                        //TODO
+                        
                     default:
                         break;
                     }
@@ -638,10 +699,9 @@ public class KeyObjectMsg implements Msg {
      */
     @Override
     public final byte[] writeTo() {
-        final byte[] bytes = new byte[getBytesSize()];
+        final byte[] bytes = new byte[getSize()];
         this.writeTo(bytes, 0);
         return bytes;
-
     }
 
     /*
@@ -654,7 +714,7 @@ public class KeyObjectMsg implements Msg {
 
         // Calculate size
         // TODO to optimize with a try catch
-        final int size = getBytesSize();
+        final int size = getSize();
         if (bytes.length - offset < size) {
             throw new IllegalArgumentException("Bytes array too small from the offset");
         }
@@ -751,7 +811,19 @@ public class KeyObjectMsg implements Msg {
                         }
                     }
                     break;
+                    
+                case TYPE_MSG:
+                    final Msg aMsg = (Msg) this.objectValues[i];
+                    if (aMsg != null) {
+                        final int length = aMsg.getSize();
+                        pos = writeVariableSize(bytes, pos - 1, length);
+                        aMsg.writeTo(bytes, pos);
+                    }
+                    break;
 
+                case TYPE_ARRAY:
+                    //TODO
+                    
                 default:
                     break;
                 }
@@ -793,14 +865,13 @@ public class KeyObjectMsg implements Msg {
      * @return size
      */
     // TODO to optimize
-    private final int getBytesSize() {
+    @Override
+    public final int getSize() {
         int size = 0;
         int consecutiveNullKey = 0;
         for (int i = 0; i < this.types.length; i++) {
             if (this.types[i] != TYPE_NULL_KEY) {
-                // TODO manage all size
                 size += getValueSize(i);
-                // (this.types[i] & SIZE_MASK) + 1;
                 if (consecutiveNullKey != 0) {
                     size += getVariableSize(consecutiveNullKey);
                     consecutiveNullKey = 0;
@@ -813,7 +884,7 @@ public class KeyObjectMsg implements Msg {
     }
 
     /**
-     * getVariableSize.
+     * <p>getVariableSize (with the size of the type).</p>
      * 
      * @param size
      * @return
@@ -823,7 +894,7 @@ public class KeyObjectMsg implements Msg {
     }
 
     /**
-     * getValueSize.
+     * getValueSize (with the size of the type).
      * 
      * @param key
      * @return
@@ -834,31 +905,26 @@ public class KeyObjectMsg implements Msg {
         // Fixed value
         if (sizeMask != 0) {
             return sizeMask + 1;
-            //  Non Fixed value
+            // Non Fixed value
         } else {
             switch (this.types[key]) {
+            //TODO refactor it
             case TYPE_STRING_ISO_8859_1:
                 final int length = ((String) this.objectValues[key]).length();
                 return getVariableSize(length) + length;
-
+                
+            case TYPE_MSG:
+                final int size = ((Msg) this.objectValues[key]).getSize();
+                return getVariableSize(size) + size;
+                
+            case TYPE_ARRAY:
+                // TODO Array
+            
+                // TODO Manage all non Fixed type
             default:
                 return 0;
             }
         }
-    }
-
-    /**
-     * increaseKeyMax.
-     * 
-     * @param keyMax
-     */
-    private final void increaseKeyMax(final int keyMax) {
-        final byte[] types = new byte[keyMax + 1];
-        final long[] primitiveValues = new long[keyMax + 1];
-        final Object[] objectValues = new Object[keyMax + 1];
-        System.arraycopy(this.types, 0, types, 0, this.types.length);
-        System.arraycopy(this.primitiveValues, 0, primitiveValues, 0, this.primitiveValues.length);
-        System.arraycopy(this.objectValues, 0, objectValues, 0, this.objectValues.length);
     }
 
 }
