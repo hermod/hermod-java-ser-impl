@@ -1,6 +1,7 @@
 package com.github.hermod.ser.impl;
 
 import static org.junit.Assert.fail;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,11 +20,14 @@ public abstract class AbstractMsgTest {
     
     private static final byte   BYTE_TEST      = Byte.MIN_VALUE;
     private static final short  SHORT_TEST     = Short.MAX_VALUE;
-    private static final int    INT_TEST       = Integer.MAX_VALUE;
+    private static final int    INT_TEST       = Integer.MIN_VALUE;
     private static final long   LONG_TEST      = Long.MAX_VALUE / 2;
     private static final float  FLOAT_TEST     = 10.10f;
     private static final double DOUBLE_TEST    = 11.11;
     private static final String STRING_TEST    = "string";
+    private static final String STRING_TEST32  = "12345678901234567890123456789012";
+    private static final String STRING_TEST132 = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012";
+    
     
     private static final int    KEY_MINUS_ONE  = -1;
     private static final int    KEY_ZERO       = 0;
@@ -43,6 +47,8 @@ public abstract class AbstractMsgTest {
     protected final MsgFactory msgFactory;
     
 
+    
+    
     /**
      * Constructor.
      * 
@@ -65,6 +71,7 @@ public abstract class AbstractMsgTest {
         msg.clear();
         Assert.assertEquals(msg.getKeys().length, 0);
     }
+    
     
     /**
      * testContains.
@@ -119,6 +126,7 @@ public abstract class AbstractMsgTest {
         Assert.assertEquals(MsgConstants.DEFAULT_BYTE_VALUE, msg2.getAsByte(KEY_NINETYNINE));
         Assert.assertEquals(MsgConstants.DEFAULT_BYTE_VALUE, msg2.getAsByte(KEY_ZERO));
         Assert.assertEquals(MsgConstants.DEFAULT_BYTE_VALUE, msg2.getAsByte(KEY_MINUS_ONE));
+        
     }
     
     /**
@@ -196,7 +204,15 @@ public abstract class AbstractMsgTest {
      */
     @Test
     public void testSetGetAsFloat() {
-        fail("Not yet implemented");
+        final Msg msg = this.msgFactory.create();
+        msg.set(KEY_ONE, FLOAT_TEST);
+        final byte[] bytes = msg.writeTo();
+        
+        final Msg msg2 = this.msgFactory.create();
+        msg2.readFrom(bytes, 0, bytes.length);
+        Assert.assertEquals(FLOAT_TEST, msg2.getAsFloat(KEY_ONE), PRECISION);
+        Assert.assertEquals(FLOAT_TEST, msg2.getAsDouble(KEY_ONE), PRECISION);
+        Assert.assertFalse(msg2.contains(KEY_ZERO));
     }
     
     /**
@@ -205,7 +221,23 @@ public abstract class AbstractMsgTest {
      */
     @Test
     public void testSetGetAsDouble() {
-        fail("Not yet implemented");
+        final Msg msg = this.msgFactory.create();
+        msg.set(KEY_ONE, FLOAT_TEST);
+        msg.set(KEY_TWO, DOUBLE_TEST);
+        msg.set(KEY_THREE, DOUBLE_TEST, 5);
+        final byte[] bytes = msg.writeTo();
+        
+        final Msg msg2 = this.msgFactory.create();
+        msg2.readFrom(bytes, 0, bytes.length);
+        Assert.assertEquals(FLOAT_TEST, msg2.getAsFloat(KEY_ONE), PRECISION);
+        Assert.assertEquals(DOUBLE_TEST, msg2.getAsDouble(KEY_TWO), PRECISION);
+        Assert.assertEquals(DOUBLE_TEST, msg2.getAsDouble(KEY_THREE), PRECISION);
+        
+        Assert.assertEquals(MsgConstants.DEFAULT_DOUBLE_VALUE, msg2.getAsDouble(KEY_NINETYNINE), PRECISION);
+        Assert.assertEquals(MsgConstants.DEFAULT_DOUBLE_VALUE, msg2.getAsDouble(KEY_ZERO), PRECISION);
+        Assert.assertEquals(MsgConstants.DEFAULT_DOUBLE_VALUE, msg2.getAsDouble(KEY_MINUS_ONE), PRECISION);
+        
+        Assert.assertFalse(msg2.contains(KEY_ZERO));
     }
     
     /**
@@ -216,12 +248,20 @@ public abstract class AbstractMsgTest {
     public void testSetGetAsString() {
 	final Msg msg = this.msgFactory.create();
         msg.set(KEY_ONE, STRING_TEST);
+        msg.set(KEY_TWO, STRING_TEST32);
+        msg.set(KEY_THREE, STRING_TEST132);
+        
         final byte[] bytes = msg.writeTo();
         
         final Msg msg2 = this.msgFactory.create();
         msg2.readFrom(bytes, 0, bytes.length);
-        msg2.getAsString(1);
         Assert.assertEquals(STRING_TEST, msg2.getAsString(KEY_ONE));
+        Assert.assertEquals(STRING_TEST32, msg2.getAsString(KEY_TWO));
+        Assert.assertEquals(STRING_TEST132, msg2.getAsString(KEY_THREE));
+        Assert.assertEquals(MsgConstants.DEFAULT_STRING_VALUE, msg2.getAsString(KEY_NINETYNINE));
+        Assert.assertEquals(MsgConstants.DEFAULT_STRING_VALUE, msg2.getAsString(KEY_ZERO));
+        Assert.assertEquals(MsgConstants.DEFAULT_STRING_VALUE, msg2.getAsString(KEY_MINUS_ONE));
+        Assert.assertFalse(msg2.contains(KEY_ZERO));
     }
     
     //
@@ -294,11 +334,12 @@ public abstract class AbstractMsgTest {
         Assert.assertEquals(BYTE_TEST, msg2.getAsByte(KEY_ONE));
         Assert.assertEquals(SHORT_TEST, msg2.getAsShort(KEY_TWO));
         Assert.assertEquals(INT_TEST, msg2.getAsInt(KEY_FOUR));
-        // Assert.assertEquals(LONG_TEST, readWriteIntMapMsg2.getAsLong(KEY_EIGHT));
-        // Assert.assertEquals(FLOAT_TEST, readWriteIntMapMsg2.getAsFloat(KEY_TEN), (float) PRECISION);
-        // Assert.assertEquals(DOUBLE_TEST, readWriteIntMapMsg2.getAsDouble(KEY_ELEVEN), PRECISION);
-        // Assert.assertEquals(DOUBLE_TEST, readWriteIntMapMsg2.getAsDouble(KEY_TWELVE), PRECISION);
-        // Assert.assertEquals(STRING_TEST, readWriteIntMapMsg2.getAsString(KEY_THIRTEEN));
+        
+        Assert.assertEquals(LONG_TEST, msg2.getAsLong(KEY_EIGHT));
+        Assert.assertEquals(FLOAT_TEST, msg2.getAsFloat(KEY_TEN), (float) PRECISION);
+        Assert.assertEquals(DOUBLE_TEST, msg2.getAsDouble(KEY_ELEVEN), PRECISION);
+        Assert.assertEquals(DOUBLE_TEST, msg2.getAsDouble(KEY_TWELVE), PRECISION);
+        Assert.assertEquals(STRING_TEST, msg2.getAsString(KEY_THIRTEEN));
     }
     
 }

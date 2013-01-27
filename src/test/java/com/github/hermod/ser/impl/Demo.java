@@ -40,26 +40,26 @@ public final class Demo
 	intMap.set(7, 16.161, 4);
 	size = intMap.writeTo(bytes, 0);
 	
-	double d0 = intMap.getAsDecimal(0);
-	double d1 = intMap.getAsDecimal(1);
-	double d2 = intMap.getAsDecimal(2);
-	double d3 = intMap.getAsDecimal(3);
-	double d14 = intMap.getAsDecimal(4);
-	double d15 = intMap.getAsDecimal(5);
-	double d16 = intMap.getAsDecimal(6);
-	double d17 = intMap.getAsDecimal(7);
+	double d0 = intMap.getAsDouble(0);
+	double d1 = intMap.getAsDouble(1);
+	double d2 = intMap.getAsDouble(2);
+	double d3 = intMap.getAsDouble(3);
+	double d14 = intMap.getAsDouble(4);
+	double d15 = intMap.getAsDouble(5);
+	double d16 = intMap.getAsDouble(6);
+	double d17 = intMap.getAsDouble(7);
 	
 	KeyObjectMsg intMap2 = new KeyObjectMsg(44);
 	intMap2.readFrom(bytes, 0, size);
 	
-	double d0a = intMap2.getAsDecimal(0);
-	double d1a = intMap2.getAsDecimal(1);
-	double d2a = intMap2.getAsDecimal(2);
-	double d3a = intMap2.getAsDecimal(3);
-	double d14a = intMap2.getAsDecimal(4);
-	double d15a = intMap2.getAsDecimal(5);
-	double d16a = intMap2.getAsDecimal(6);
-	double d17a = intMap2.getAsDecimal(7);
+	double d0a = intMap2.getAsDouble(0);
+	double d1a = intMap2.getAsDouble(1);
+	double d2a = intMap2.getAsDouble(2);
+	double d3a = intMap2.getAsDouble(3);
+	double d14a = intMap2.getAsDouble(4);
+	double d15a = intMap2.getAsDouble(5);
+	double d16a = intMap2.getAsDouble(6);
+	double d17a = intMap2.getAsDouble(7);
 	
 	
 	System.out.println("d0=" + d0);
@@ -130,9 +130,9 @@ public final class Demo
 	for (int i = nbTestEncode; i-- != 0;)
 	{
 	    intMap2.readFrom(bytes, 0, size);
-	    count += intMap2.getAsDecimal(0) + intMap2.getAsDecimal(1) + intMap2.getAsDecimal(2)
-		    + intMap2.getAsDecimal(3) + intMap2.getAsDecimal(4) + intMap2.getAsDecimal(5)
-		    + intMap2.getAsDecimal(6) + intMap2.getAsDecimal(7);
+	    count += intMap2.getAsDouble(0) + intMap2.getAsDouble(1) + intMap2.getAsDouble(2)
+		    + intMap2.getAsDouble(3) + intMap2.getAsDouble(4) + intMap2.getAsDouble(5)
+		    + intMap2.getAsDouble(6) + intMap2.getAsDouble(7);
 	}
 	
 	stop = System.currentTimeMillis();
