@@ -2,6 +2,8 @@ package com.github.hermod.ser.impl;
 
 import static com.github.hermod.ser.impl.MsgConstants.*;
 
+import java.util.Arrays;
+
 import com.github.hermod.ser.Msg;
 
 /**
@@ -16,16 +18,14 @@ public class KeyObjectMsg implements Msg {
     private long[] primitiveValues;
     private Object[] objectValues;
 
-    
-    
     /**
      * Constructor.
-     *
+     * 
      */
     public KeyObjectMsg() {
         this(DEFAULT_MAX_KEY);
     }
-    
+
     /**
      * Constructor.
      * 
@@ -527,15 +527,15 @@ public class KeyObjectMsg implements Msg {
             }
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Object)
      */
     @Override
     public final void set(final int aKey, final Object aObject) {
-        //TODO
+        // TODO
     }
 
     /**
@@ -670,16 +670,17 @@ public class KeyObjectMsg implements Msg {
                         }
                         this.objectValues[key] = new String(chars);
                         break;
-                        
+
                     case TYPE_MSG:
                         final Msg msg = new KeyObjectMsg();
                         msg.readFrom(bytes, pos, size);
+                        pos += size;
                         this.objectValues[key] = msg;
                         break;
-                        
+
                     case TYPE_ARRAY:
-                        //TODO
-                        
+                        // TODO
+
                     default:
                         break;
                     }
@@ -811,19 +812,19 @@ public class KeyObjectMsg implements Msg {
                         }
                     }
                     break;
-                    
+
                 case TYPE_MSG:
                     final Msg aMsg = (Msg) this.objectValues[i];
                     if (aMsg != null) {
                         final int length = aMsg.getSize();
                         pos = writeVariableSize(bytes, pos - 1, length);
-                        aMsg.writeTo(bytes, pos);
+                        pos = aMsg.writeTo(bytes, pos);
                     }
                     break;
 
                 case TYPE_ARRAY:
-                    //TODO
-                    
+                    // TODO
+
                 default:
                     break;
                 }
@@ -908,23 +909,49 @@ public class KeyObjectMsg implements Msg {
             // Non Fixed value
         } else {
             switch (this.types[key]) {
-            //TODO refactor it
+            // TODO refactor it
             case TYPE_STRING_ISO_8859_1:
                 final int length = ((String) this.objectValues[key]).length();
                 return getVariableSize(length) + length;
-                
+
             case TYPE_MSG:
                 final int size = ((Msg) this.objectValues[key]).getSize();
                 return getVariableSize(size) + size;
-                
+
             case TYPE_ARRAY:
                 // TODO Array
-            
+
                 // TODO Manage all non Fixed type
             default:
                 return 0;
             }
         }
     }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        for (int i = 0; i < this.types.length; i++) {
+            if (this.types[i] != TYPE_NULL_KEY) {
+                sb.append(i);
+                sb.append("=");
+                //TODO manage better array
+                sb.append((this.types[i] == TYPE_STRING_ISO_8859_1 || this.types[i] == TYPE_MSG || this.types[i] == TYPE_ARRAY) ? this.objectValues[i]
+                        : this.primitiveValues[i]);
+                sb.append(",");
+            }
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append("}");
+        return sb.toString();
+    }
+
+    // TODO hashcode / equals
 
 }
