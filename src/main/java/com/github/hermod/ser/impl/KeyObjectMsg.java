@@ -1,8 +1,32 @@
 package com.github.hermod.ser.impl;
 
-import static com.github.hermod.ser.impl.MsgConstants.*;
-
-import java.util.Arrays;
+import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_ARRAY_VALUE;
+import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_BYTE_VALUE;
+import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_DOUBLE_VALUE;
+import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_FLOAT_VALUE;
+import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_INT_VALUE;
+import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_LONG_VALUE;
+import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_MAX_KEY;
+import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_MSG_VALUE;
+import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_SHORT_VALUE;
+import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_STRING_VALUE;
+import static com.github.hermod.ser.impl.MsgConstants.DOZENS;
+import static com.github.hermod.ser.impl.MsgConstants.SIZE_ENCODED_IN_AN_INT;
+import static com.github.hermod.ser.impl.MsgConstants.SIZE_ENCODED_IN_A_BIT;
+import static com.github.hermod.ser.impl.MsgConstants.SIZE_MASK;
+import static com.github.hermod.ser.impl.MsgConstants.TYPE_5BITS_DECIMAL;
+import static com.github.hermod.ser.impl.MsgConstants.TYPE_ARRAY;
+import static com.github.hermod.ser.impl.MsgConstants.TYPE_BYTE;
+import static com.github.hermod.ser.impl.MsgConstants.TYPE_DOUBLE;
+import static com.github.hermod.ser.impl.MsgConstants.TYPE_FLOAT;
+import static com.github.hermod.ser.impl.MsgConstants.TYPE_INT;
+import static com.github.hermod.ser.impl.MsgConstants.TYPE_INTEGER;
+import static com.github.hermod.ser.impl.MsgConstants.TYPE_LONG;
+import static com.github.hermod.ser.impl.MsgConstants.TYPE_MASK;
+import static com.github.hermod.ser.impl.MsgConstants.TYPE_MSG;
+import static com.github.hermod.ser.impl.MsgConstants.TYPE_NULL_KEY;
+import static com.github.hermod.ser.impl.MsgConstants.TYPE_SHORT;
+import static com.github.hermod.ser.impl.MsgConstants.TYPE_STRING_ISO_8859_1;
 
 import com.github.hermod.ser.Msg;
 
@@ -76,15 +100,19 @@ public class KeyObjectMsg implements Msg {
      * @param keyMax
      */
     private final void increaseKeyMax(final int keyMax) {
-        final byte[] types = new byte[keyMax + 1];
-        final long[] primitiveValues = new long[keyMax + 1];
-        final Object[] objectValues = new Object[keyMax + 1];
-        System.arraycopy(this.types, 0, types, 0, this.types.length);
-        System.arraycopy(this.primitiveValues, 0, primitiveValues, 0, this.primitiveValues.length);
-        System.arraycopy(this.objectValues, 0, objectValues, 0, this.objectValues.length);
-        this.types = types;
-        this.primitiveValues = primitiveValues;
-        this.objectValues = objectValues;
+        if (keyMax < 0) {
+            throw new IllegalArgumentException("The key=" + keyMax + " must be positive.");
+        } else {
+            final byte[] types = new byte[keyMax + 1];
+            final long[] primitiveValues = new long[keyMax + 1];
+            final Object[] objectValues = new Object[keyMax + 1];
+            System.arraycopy(this.types, 0, types, 0, this.types.length);
+            System.arraycopy(this.primitiveValues, 0, primitiveValues, 0, this.primitiveValues.length);
+            System.arraycopy(this.objectValues, 0, objectValues, 0, this.objectValues.length);
+            this.types = types;
+            this.primitiveValues = primitiveValues;
+            this.objectValues = objectValues;
+        }
     }
 
     /**
@@ -108,10 +136,13 @@ public class KeyObjectMsg implements Msg {
      */
     @Override
     public final Object get(final int aKey) {
-        if (contains(aKey)) {
-            // TODO
-        }
-        return null;
+        //TODO
+        throw new UnsupportedOperationException("Not Yet Implemented");
+//        if (contains(aKey)) {
+//            // TODO
+//            
+//        }
+//        return null;
     }
 
     /**
@@ -323,12 +354,8 @@ public class KeyObjectMsg implements Msg {
             this.primitiveValues[aKey] = aByte;
             this.types[aKey] = TYPE_BYTE;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            if (aKey < 0) {
-                throw new IllegalArgumentException("The key=" + aKey + " must be positive.");
-            } else {
-                increaseKeyMax(aKey);
-                set(aKey, aByte);
-            }
+            increaseKeyMax(aKey);
+            set(aKey, aByte);
         }
     }
 
@@ -342,14 +369,10 @@ public class KeyObjectMsg implements Msg {
         try {
             // TODO do optimization if the value can be encoded as byte
             this.primitiveValues[aKey] = aShort;
-            this.types[aKey] = TYPE_SHORT;
+            this.types[aKey] = (aShort == (byte) aShort) ? TYPE_BYTE : TYPE_SHORT;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            if (aKey < 0) {
-                throw new IllegalArgumentException("The key=" + aKey + " must be positive.");
-            } else {
-                increaseKeyMax(aKey);
-                set(aKey, aShort);
-            }
+            increaseKeyMax(aKey);
+            set(aKey, aShort);
         }
     }
 
@@ -363,14 +386,10 @@ public class KeyObjectMsg implements Msg {
         try {
             // TODO do optimization if the value can be encoded as byte or short
             this.primitiveValues[aKey] = aInt;
-            this.types[aKey] = TYPE_INT;
+            this.types[aKey] = (aInt == (byte) aInt) ? TYPE_BYTE : (aInt == (short) aInt) ? TYPE_SHORT : TYPE_INT;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            if (aKey < 0) {
-                throw new IllegalArgumentException("The key=" + aKey + " must be positive.");
-            } else {
-                increaseKeyMax(aKey);
-                set(aKey, aInt);
-            }
+            increaseKeyMax(aKey);
+            set(aKey, aInt);
         }
     }
 
@@ -382,16 +401,13 @@ public class KeyObjectMsg implements Msg {
     @Override
     public final void set(final int aKey, final long aLong) {
         try {
-            // TODO do optimization if the value can be encoded as byte, short or int
             this.primitiveValues[aKey] = aLong;
             this.types[aKey] = TYPE_LONG;
+            this.types[aKey] = (aLong == (byte) aLong) ? TYPE_BYTE : (aLong == (short) aLong) ? TYPE_SHORT : (aLong == (int) aLong) ? TYPE_INT
+                    : TYPE_LONG;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            if (aKey < 0) {
-                throw new IllegalArgumentException("The key=" + aKey + " must be positive.");
-            } else {
-                increaseKeyMax(aKey);
-                set(aKey, aLong);
-            }
+            increaseKeyMax(aKey);
+            set(aKey, aLong);
         }
     }
 
@@ -406,12 +422,8 @@ public class KeyObjectMsg implements Msg {
             this.primitiveValues[aKey] = Float.floatToIntBits(aFloat);
             this.types[aKey] = TYPE_FLOAT;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            if (aKey < 0) {
-                throw new IllegalArgumentException("The key=" + aKey + " must be positive.");
-            } else {
-                increaseKeyMax(aKey);
-                set(aKey, aFloat);
-            }
+            increaseKeyMax(aKey);
+            set(aKey, aFloat);
         }
     }
 
@@ -423,15 +435,12 @@ public class KeyObjectMsg implements Msg {
     @Override
     public final void set(final int aKey, final double aDouble) {
         try {
-            this.primitiveValues[aKey] = Double.doubleToLongBits(aDouble);
-            this.types[aKey] = TYPE_DOUBLE;
+            final boolean canEncodeOnFloat = (aDouble == (float) aDouble) ? true : false;
+            this.primitiveValues[aKey] = (canEncodeOnFloat) ? Float.floatToIntBits((float) aDouble) : Double.doubleToLongBits(aDouble);
+            this.types[aKey] = (canEncodeOnFloat) ? TYPE_FLOAT : TYPE_DOUBLE;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            if (aKey < 0) {
-                throw new IllegalArgumentException("The key=" + aKey + " must be positive.");
-            } else {
-                increaseKeyMax(aKey);
-                set(aKey, aDouble);
-            }
+            increaseKeyMax(aKey);
+            set(aKey, aDouble);
         }
     }
 
@@ -460,12 +469,8 @@ public class KeyObjectMsg implements Msg {
                 }
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
-            if (aKey < 0) {
-                throw new IllegalArgumentException("The key=" + aKey + " must be positive.");
-            } else {
-                increaseKeyMax(aKey);
-                set(aKey, aDouble, nbDigit);
-            }
+            increaseKeyMax(aKey);
+            set(aKey, aDouble, nbDigit);
         }
     }
 
@@ -480,12 +485,8 @@ public class KeyObjectMsg implements Msg {
             this.objectValues[aKey] = aString;
             this.types[aKey] = TYPE_STRING_ISO_8859_1;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            if (aKey < 0) {
-                throw new IllegalArgumentException("The key=" + aKey + " must be positive.");
-            } else {
-                increaseKeyMax(aKey);
-                set(aKey, aString);
-            }
+            increaseKeyMax(aKey);
+            set(aKey, aString);
         }
     }
 
@@ -500,12 +501,8 @@ public class KeyObjectMsg implements Msg {
             this.objectValues[aKey] = aMsg;
             this.types[aKey] = TYPE_MSG;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            if (aKey < 0) {
-                throw new IllegalArgumentException("The key=" + aKey + " must be positive.");
-            } else {
-                increaseKeyMax(aKey);
-                set(aKey, aMsg);
-            }
+            increaseKeyMax(aKey);
+            set(aKey, aMsg);
         }
     }
 
@@ -519,12 +516,8 @@ public class KeyObjectMsg implements Msg {
             this.objectValues[aKey] = aObjectArray;
             this.types[aKey] = TYPE_ARRAY;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            if (aKey < 0) {
-                throw new IllegalArgumentException("The key=" + aKey + " must be positive.");
-            } else {
-                increaseKeyMax(aKey);
-                set(aKey, aObjectArray);
-            }
+            increaseKeyMax(aKey);
+            set(aKey, aObjectArray);
         }
     }
 
@@ -563,7 +556,8 @@ public class KeyObjectMsg implements Msg {
             this.objectValues[aKey] = null;
             this.primitiveValues[aKey] = DEFAULT_LONG_VALUE;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("The key=" + aKey + " must be positive.");
+            increaseKeyMax(aKey);
+            remove(aKey);
         }
     }
 
@@ -941,7 +935,7 @@ public class KeyObjectMsg implements Msg {
             if (this.types[i] != TYPE_NULL_KEY) {
                 sb.append(i);
                 sb.append("=");
-                //TODO manage better array
+                // TODO manage better array
                 sb.append((this.types[i] == TYPE_STRING_ISO_8859_1 || this.types[i] == TYPE_MSG || this.types[i] == TYPE_ARRAY) ? this.objectValues[i]
                         : this.primitiveValues[i]);
                 sb.append(",");
