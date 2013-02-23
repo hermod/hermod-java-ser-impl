@@ -367,7 +367,6 @@ public class KeyObjectMsg implements Msg {
     @Override
     public final void set(final int aKey, final short aShort) {
         try {
-            // TODO do optimization if the value can be encoded as byte
             this.primitiveValues[aKey] = aShort;
             this.types[aKey] = (aShort == (byte) aShort) ? TYPE_BYTE : TYPE_SHORT;
         } catch (final ArrayIndexOutOfBoundsException e) {
@@ -384,7 +383,6 @@ public class KeyObjectMsg implements Msg {
     @Override
     public final void set(final int aKey, final int aInt) {
         try {
-            // TODO do optimization if the value can be encoded as byte or short
             this.primitiveValues[aKey] = aInt;
             this.types[aKey] = (aInt == (byte) aInt) ? TYPE_BYTE : (aInt == (short) aInt) ? TYPE_SHORT : TYPE_INT;
         } catch (final ArrayIndexOutOfBoundsException e) {
@@ -435,9 +433,9 @@ public class KeyObjectMsg implements Msg {
     @Override
     public final void set(final int aKey, final double aDouble) {
         try {
-            final boolean canEncodeOnFloat = (aDouble == (float) aDouble) ? true : false;
-            this.primitiveValues[aKey] = (canEncodeOnFloat) ? Float.floatToIntBits((float) aDouble) : Double.doubleToLongBits(aDouble);
-            this.types[aKey] = (canEncodeOnFloat) ? TYPE_FLOAT : TYPE_DOUBLE;
+            final boolean isEncodeableInAFloat = (aDouble == (float) aDouble) ? true : false;
+            this.primitiveValues[aKey] = (isEncodeableInAFloat) ? Float.floatToIntBits((float) aDouble) : Double.doubleToLongBits(aDouble);
+            this.types[aKey] = (isEncodeableInAFloat) ? TYPE_FLOAT : TYPE_DOUBLE;
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aDouble);
@@ -578,8 +576,8 @@ public class KeyObjectMsg implements Msg {
         while (pos < offset + length) {
             if ((bytes[pos] & TYPE_MASK) == TYPE_NULL_KEY) {
                 final int sizeMask = bytes[pos++] & SIZE_MASK;
-                key += ((sizeMask < SIZE_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == SIZE_ENCODED_IN_A_BIT) ? bytes[pos++] : (bytes[pos++] & 0xFF)
-                        | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos] & 0xFF) << 24));
+                key += (((sizeMask < SIZE_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == SIZE_ENCODED_IN_A_BIT) ? bytes[pos++] : (bytes[pos++] & 0xFF)
+                        | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos] & 0xFF) << 24))) + 1;
             } else {
                 final int sizeMask = bytes[pos++] & SIZE_MASK;
                 pos += (sizeMask != SIZE_ENCODED_IN_A_BIT) ? sizeMask : (bytes[pos++] & 0xFF) | ((bytes[pos++] & 0xFF) << 8)
@@ -598,8 +596,8 @@ public class KeyObjectMsg implements Msg {
             // Skip null key
             if ((type & TYPE_MASK) == TYPE_NULL_KEY) {
                 final int sizeMask = type & SIZE_MASK;
-                key += (sizeMask < SIZE_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == SIZE_ENCODED_IN_A_BIT) ? bytes[pos++] : (bytes[pos++] & 0xFF)
-                        | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos] & 0xFF) << 24);
+                key += ((sizeMask < SIZE_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == SIZE_ENCODED_IN_A_BIT) ? bytes[pos++] : (bytes[pos++] & 0xFF)
+                        | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos] & 0xFF) << 24)) + 1;
             }
             // Decode values
             else {
@@ -721,7 +719,7 @@ public class KeyObjectMsg implements Msg {
         for (int i = 0; i < this.types.length; i++) {
             if (this.types[i] != TYPE_NULL_KEY) {
                 if (consecutiveNullKey != 0) {
-                    pos = writeVariableSize(bytes, pos, consecutiveNullKey);
+                    pos = writeVariableSize(bytes, pos, consecutiveNullKey - 1);
                     consecutiveNullKey = 0;
                 }
 
