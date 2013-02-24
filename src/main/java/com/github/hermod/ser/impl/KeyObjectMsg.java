@@ -136,13 +136,13 @@ public class KeyObjectMsg implements Msg {
      */
     @Override
     public final Object get(final int aKey) {
-        //TODO
+        // TODO
         throw new UnsupportedOperationException("Not Yet Implemented");
-//        if (contains(aKey)) {
-//            // TODO
-//            
-//        }
-//        return null;
+        // if (contains(aKey)) {
+        // // TODO
+        //
+        // }
+        // return null;
     }
 
     /**
@@ -460,15 +460,19 @@ public class KeyObjectMsg implements Msg {
             // else
             {
                 if (d >= Integer.MIN_VALUE && d <= Integer.MAX_VALUE) {
-                    this.primitiveValues[aKey] = (nbDigit) | (((int) (d)) << 8);
-                    this.types[aKey] = TYPE_5BITS_DECIMAL;
+                    try {    
+                        this.primitiveValues[aKey] = (nbDigit) | (((int) (d)) << 8);
+                        this.types[aKey] = TYPE_5BITS_DECIMAL;
+                    } catch (final ArrayIndexOutOfBoundsException e) {
+                        increaseKeyMax(aKey);
+                        set(aKey, aDouble, nbDigit);
+                    }
                 } else {
                     this.set(aKey, aDouble);
                 }
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
-            increaseKeyMax(aKey);
-            set(aKey, aDouble, nbDigit);
+            throw new IllegalArgumentException("NbDigit must be between 0 and " + (DOZENS.length - 1));
         }
     }
 
@@ -577,11 +581,19 @@ public class KeyObjectMsg implements Msg {
             if ((bytes[pos] & TYPE_MASK) == TYPE_NULL_KEY) {
                 final int sizeMask = bytes[pos++] & SIZE_MASK;
                 key += (((sizeMask < SIZE_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == SIZE_ENCODED_IN_A_BIT) ? bytes[pos++] : (bytes[pos++] & 0xFF)
-                        | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos] & 0xFF) << 24))) + 1;
+                        | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos++] & 0xFF) << 24))) + 1;
             } else {
                 final int sizeMask = bytes[pos++] & SIZE_MASK;
-                pos += (sizeMask != SIZE_ENCODED_IN_A_BIT) ? sizeMask : (bytes[pos++] & 0xFF) | ((bytes[pos++] & 0xFF) << 8)
-                        | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos] & 0xFF) << 24);
+                // T
+                // pos += (((sizeMask < SIZE_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == SIZE_ENCODED_IN_A_BIT) ? bytes[pos++] : ((bytes[pos++] &
+                // 0xFF)
+                // | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos] & 0xFF) << 24))));
+                //
+                // TODO to optimize
+                pos += (((sizeMask < SIZE_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == SIZE_ENCODED_IN_A_BIT) ? bytes[pos] : ((bytes[pos] & 0xFF)
+                        | ((bytes[pos + 1] & 0xFF) << 8) | ((bytes[pos + 2] & 0xFF) << 16) | ((bytes[pos + 3] & 0xFF) << 24))));
+                pos += (sizeMask < SIZE_ENCODED_IN_A_BIT) ? 0 : (sizeMask == SIZE_ENCODED_IN_A_BIT) ? 1 : 4;
+
                 key++;
             }
         }
@@ -597,7 +609,7 @@ public class KeyObjectMsg implements Msg {
             if ((type & TYPE_MASK) == TYPE_NULL_KEY) {
                 final int sizeMask = type & SIZE_MASK;
                 key += ((sizeMask < SIZE_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == SIZE_ENCODED_IN_A_BIT) ? bytes[pos++] : (bytes[pos++] & 0xFF)
-                        | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos] & 0xFF) << 24)) + 1;
+                        | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos++] & 0xFF) << 24)) + 1;
             }
             // Decode values
             else {
@@ -933,9 +945,28 @@ public class KeyObjectMsg implements Msg {
             if (this.types[i] != TYPE_NULL_KEY) {
                 sb.append(i);
                 sb.append("=");
-                // TODO manage better array
+                // TODO manage better array, double/float, use just get()
                 sb.append((this.types[i] == TYPE_STRING_ISO_8859_1 || this.types[i] == TYPE_MSG || this.types[i] == TYPE_ARRAY) ? this.objectValues[i]
                         : this.primitiveValues[i]);
+//                if (this.types[i] == TYPE_BYTE || this.types[i] == TYPE_SHORT || this.types[i] == TYPE_INT || this.types[i] == TYPE_LONG) {
+//                    sb.append(this.getAsLong(i));
+//                } else if (this.types[i] == TYPE_STRING_ISO_8859_1 || this.types[i] == TYPE_MSG) {
+//                    sb.append(this.objectValues[i].toString());
+//                } else {
+//                    if (this.types[i] == TYPE_ARRAY) {
+//                        final Object[] objects = (Object[]) this.objectValues[i];
+//                        sb.append("[");
+//                        for (final Object object : objects) {
+//                            sb.append(object);
+//                            sb.append(",");
+//                        }
+//                        sb.deleteCharAt(sb.length() - 1);
+//                        sb.append("]");
+//
+//                    } else {
+//                        sb.append("Type Not Managed");
+//                    }
+//                }
                 sb.append(",");
             }
         }
