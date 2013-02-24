@@ -26,7 +26,7 @@ public final class KeyObjectMsgFactory implements MsgFactory {
     /**
      * create.
      *
-     * @param size
+     * @param size in bytes (if it does make sense for the implementation notably when keyMax, we consider it is the keyMax = size / 4)
      * @return
      */
     @Override

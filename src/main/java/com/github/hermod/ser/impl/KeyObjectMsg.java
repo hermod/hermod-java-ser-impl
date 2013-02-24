@@ -540,6 +540,7 @@ public class KeyObjectMsg implements Msg {
      */
     @Override
     public final void setAll(final Msg aMsg) {
+        //TODO to optimize
         final int[] keys = aMsg.getKeys();
         for (int i = 0; i < keys.length; i++) {
             set(keys[i], aMsg.get(keys[i]));
@@ -584,11 +585,6 @@ public class KeyObjectMsg implements Msg {
                         | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos++] & 0xFF) << 24))) + 1;
             } else {
                 final int sizeMask = bytes[pos++] & SIZE_MASK;
-                // T
-                // pos += (((sizeMask < SIZE_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == SIZE_ENCODED_IN_A_BIT) ? bytes[pos++] : ((bytes[pos++] &
-                // 0xFF)
-                // | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos] & 0xFF) << 24))));
-                //
                 // TODO to optimize
                 pos += (((sizeMask < SIZE_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == SIZE_ENCODED_IN_A_BIT) ? bytes[pos] : ((bytes[pos] & 0xFF)
                         | ((bytes[pos + 1] & 0xFF) << 8) | ((bytes[pos + 2] & 0xFF) << 16) | ((bytes[pos + 3] & 0xFF) << 24))));
@@ -830,6 +826,7 @@ public class KeyObjectMsg implements Msg {
 
                 case TYPE_ARRAY:
                     // TODO
+                    break;
 
                 default:
                     break;
