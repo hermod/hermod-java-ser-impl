@@ -1,0 +1,16 @@
+<document xmlns="http://maven.apache.org/changes/1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
+	<properties>
+		<title>hermod-java-ser-impl</title>
+		<author email="alexandre.j.navarro@gmail.com">Alexandre Navarro</author>
+	</properties>
+	<body>
+		<release version="0.1" date="2013-02-01" description="First Release">
+			<action dev="anavarro" type="fix">Fix pb when call set double with 7-8 precision.</action>
+			<action dev="anavarro" type="add">Add Array Management (TODO)</action>
+			<action dev="anavarro" type="add">Add set/get Object method (TODO)</action>
+			<action dev="anavarro" type="update">Rationalize the null management (TODO)</action>
+		</release>
+	</body>
+</document>

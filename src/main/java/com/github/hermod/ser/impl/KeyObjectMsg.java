@@ -461,7 +461,7 @@ public class KeyObjectMsg implements Msg {
             {
                 if (d >= Integer.MIN_VALUE && d <= Integer.MAX_VALUE) {
                     try {    
-                        this.primitiveValues[aKey] = (nbDigit) | (((int) (d)) << 8);
+                        this.primitiveValues[aKey] = (nbDigit) | (((long) (d)) << 8);
                         this.types[aKey] = TYPE_5BITS_DECIMAL;
                     } catch (final ArrayIndexOutOfBoundsException e) {
                         increaseKeyMax(aKey);
@@ -637,8 +637,8 @@ public class KeyObjectMsg implements Msg {
                     break;
 
                 case TYPE_5BITS_DECIMAL:
-                    this.primitiveValues[key] = (((int) bytes[pos++] & 0xFF) << 8) | (((int) bytes[pos++] & 0xFF) << 16)
-                            | (((int) bytes[pos++] & 0xFF) << 24) | (((int) bytes[pos++] & 0xFF) << 32) | ((byte) bytes[pos++] & 0xFF);
+                    this.primitiveValues[key] = (((long) bytes[pos++] & 0xFF) << 8) | (((long) bytes[pos++] & 0xFF) << 16)
+                            | (((long) bytes[pos++] & 0xFF) << 24) | (((long) bytes[pos++] & 0xFF) << 32) | ((byte) bytes[pos++] & 0xFF);
                     break;
 
                 // case TYPE_3BITS_DECIMAL:
@@ -668,6 +668,7 @@ public class KeyObjectMsg implements Msg {
 
                     switch (typeMask) {
                     case TYPE_STRING_ISO_8859_1:
+                        //TODO manage null value
                         final char[] chars = new char[size];
                         for (int i = 0; i < size; i++) {
                             chars[i] = (char) bytes[pos++];
@@ -676,6 +677,7 @@ public class KeyObjectMsg implements Msg {
                         break;
 
                     case TYPE_MSG:
+                        // TODO manage null value
                         final Msg msg = new KeyObjectMsg();
                         msg.readFrom(bytes, pos, size);
                         pos += size;
@@ -915,11 +917,11 @@ public class KeyObjectMsg implements Msg {
             switch (this.types[key]) {
             // TODO refactor it
             case TYPE_STRING_ISO_8859_1:
-                final int length = ((String) this.objectValues[key]).length();
+                final int length = (this.objectValues[key] != null) ? ((String) this.objectValues[key]).length() : 0;
                 return getVariableSize(length) + length;
 
             case TYPE_MSG:
-                final int size = ((Msg) this.objectValues[key]).getSize();
+                final int size = (this.objectValues[key] != null) ? ((Msg) this.objectValues[key]).getSize() : 0;
                 return getVariableSize(size) + size;
 
             case TYPE_ARRAY:
