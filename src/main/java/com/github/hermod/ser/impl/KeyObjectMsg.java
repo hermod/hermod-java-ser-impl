@@ -27,6 +27,7 @@ import static com.github.hermod.ser.impl.MsgConstants.TYPE_MSG;
 import static com.github.hermod.ser.impl.MsgConstants.TYPE_NULL_KEY;
 import static com.github.hermod.ser.impl.MsgConstants.TYPE_SHORT;
 import static com.github.hermod.ser.impl.MsgConstants.TYPE_STRING_ISO_8859_1;
+import static com.github.hermod.ser.impl.MsgConstants.FORCE_ENCODING_ZERO_ON_2BITS;
 
 import com.github.hermod.ser.Msg;
 
@@ -665,23 +666,60 @@ public class KeyObjectMsg implements Msg {
                     switch (typeMask) {
                     case TYPE_STRING_ISO_8859_1:
                         //TODO manage null value
-                        final char[] chars = new char[size];
-                        for (int i = 0; i < size; i++) {
-                            chars[i] = (char) bytes[pos++];
+                        if (sizeMask != 0) {
+                            final char[] chars = new char[size];
+                            for (int i = 0; i < size; i++) {
+                                chars[i] = (char) bytes[pos++];
+                            }
+                            this.objectValues[key] = new String(chars);
                         }
-                        this.objectValues[key] = new String(chars);
                         break;
 
                     case TYPE_MSG:
                         // TODO manage null value
-                        final Msg msg = new KeyObjectMsg();
-                        msg.readFrom(bytes, pos, size);
-                        pos += size;
-                        this.objectValues[key] = msg;
+                        if (sizeMask != 0) {
+                            final Msg msg = new KeyObjectMsg();
+                            msg.readFrom(bytes, pos, size);
+                            pos += size;
+                            this.objectValues[key] = msg;
+                        }
                         break;
 
                     case TYPE_ARRAY:
-                        // TODO
+                        final byte arrayType = bytes[pos++];
+                        if (arrayType == TYPE_NULL_KEY) {
+                            // For variable type
+                            
+                            
+                        } else {
+                            // For Fixed typed
+                            switch (arrayType) {
+                            case TYPE_BYTE:
+                                final byte[] byteArray = new byte[size - 1];
+                                //TODO to optimize
+                                for (int i = 0; i < size - 1; i++) {
+                                    byteArray[i] = bytes[pos++];
+                                }
+                                break;
+                            case TYPE_SHORT:
+                                //TODO
+                                break;   
+                            case TYPE_INT:
+                                //TODO
+                                break;
+                            case TYPE_LONG:
+                                //TODO
+                                break; 
+                            case TYPE_FLOAT:
+                                //TODO
+                                break;
+                            case TYPE_DOUBLE:
+                                //TODO
+                                break;     
+                            default:
+                                break;
+                            }
+                        }
 
                     default:
                         break;
@@ -729,7 +767,7 @@ public class KeyObjectMsg implements Msg {
         for (int i = 0; i < this.types.length; i++) {
             if (this.types[i] != TYPE_NULL_KEY) {
                 if (consecutiveNullKey != 0) {
-                    pos = writeVariableSize(bytes, pos, consecutiveNullKey - 1);
+                    pos = writeVariableSize(bytes, pos, consecutiveNullKey - 1, false);
                     consecutiveNullKey = 0;
                 }
 
@@ -808,7 +846,7 @@ public class KeyObjectMsg implements Msg {
                     final String aString = (String) this.objectValues[i];
                     if (aString != null) {
                         final int length = aString.length();
-                        pos = writeVariableSize(bytes, pos - 1, length);
+                        pos = writeVariableSize(bytes, pos - 1, length, FORCE_ENCODING_ZERO_ON_2BITS);
                         for (int j = 0; j < length; j++) {
                             bytes[pos++] = (byte) aString.charAt(j);
                         }
@@ -819,7 +857,7 @@ public class KeyObjectMsg implements Msg {
                     final Msg aMsg = (Msg) this.objectValues[i];
                     if (aMsg != null) {
                         final int length = aMsg.getSize();
-                        pos = writeVariableSize(bytes, pos - 1, length);
+                        pos = writeVariableSize(bytes, pos - 1, length, FORCE_ENCODING_ZERO_ON_2BITS);
                         pos = aMsg.writeTo(bytes, pos);
                     }
                     break;
@@ -844,20 +882,21 @@ public class KeyObjectMsg implements Msg {
      * 
      * @param bytes
      * @param pos
-     * @param length
+     * @param size
+     * @param forceEncodingZeroOn2Bits TODO
      * @return
      */
-    private final int writeVariableSize(final byte[] bytes, int pos, final int length) {
-        if (length < SIZE_ENCODED_IN_A_BIT) {
-            bytes[pos++] |= (byte) length;
+    private final int writeVariableSize(final byte[] bytes, int pos, final int size, boolean forceEncodingZeroOn2Bits) {
+        if (size < SIZE_ENCODED_IN_A_BIT && !(forceEncodingZeroOn2Bits && size == 0)) {
+            bytes[pos++] |= (byte) size;
         } else {
-            final boolean isEncodedInAnInt = (length > Byte.MAX_VALUE);
+            final boolean isEncodedInAnInt = (size > Byte.MAX_VALUE);
             bytes[pos++] |= (byte) ((isEncodedInAnInt) ? SIZE_ENCODED_IN_AN_INT : SIZE_ENCODED_IN_A_BIT);
-            bytes[pos++] = (byte) (length);
+            bytes[pos++] = (byte) (size);
             if (isEncodedInAnInt) {
-                bytes[pos++] = (byte) (length >> 8);
-                bytes[pos++] = (byte) (length >> 16);
-                bytes[pos++] = (byte) (length >> 24);
+                bytes[pos++] = (byte) (size >> 8);
+                bytes[pos++] = (byte) (size >> 16);
+                bytes[pos++] = (byte) (size >> 24);
             }
         }
         return pos;
@@ -877,7 +916,7 @@ public class KeyObjectMsg implements Msg {
             if (this.types[i] != TYPE_NULL_KEY) {
                 size += getValueSize(i);
                 if (consecutiveNullKey != 0) {
-                    size += getVariableSize(consecutiveNullKey);
+                    size += getVariableSize(consecutiveNullKey, false);
                     consecutiveNullKey = 0;
                 }
             } else {
@@ -893,8 +932,8 @@ public class KeyObjectMsg implements Msg {
      * @param size
      * @return
      */
-    private final int getVariableSize(final int size) {
-        return (size < SIZE_ENCODED_IN_A_BIT) ? 1 : (size <= Byte.MAX_VALUE) ? 2 : 5;
+    private final int getVariableSize(final int size, final boolean forceEncodingZeroOn2Bits) {
+        return (size < SIZE_ENCODED_IN_A_BIT && !(forceEncodingZeroOn2Bits && size == 0)) ? 1 : (size <= Byte.MAX_VALUE) ? 2 : 5;
     }
 
     /**
@@ -915,11 +954,11 @@ public class KeyObjectMsg implements Msg {
             // TODO refactor it
             case TYPE_STRING_ISO_8859_1:
                 final int length = (this.objectValues[key] != null) ? ((String) this.objectValues[key]).length() : 0;
-                return getVariableSize(length) + length;
+                return getVariableSize(length, FORCE_ENCODING_ZERO_ON_2BITS) + length;
 
             case TYPE_MSG:
                 final int size = (this.objectValues[key] != null) ? ((Msg) this.objectValues[key]).getSize() : 0;
-                return getVariableSize(size) + size;
+                return getVariableSize(size, FORCE_ENCODING_ZERO_ON_2BITS) + size;
 
             case TYPE_ARRAY:
                 // TODO Array

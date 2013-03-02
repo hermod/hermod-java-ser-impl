@@ -396,8 +396,8 @@ public abstract class AbstractMsgTest {
         msg.set(KEY_ONE, STRING_TEST);
         msg.set(KEY_TWO, STRING_TEST32);
         msg.set(KEY_THREE, STRING_TEST132);
-        msg.set(KEY_NINETY, STRING_TEST);
         msg.set(KEY_FOUR, (String) null);
+        msg.set(KEY_NINETY, STRING_TEST);
         msg.set(KEY_THREE_HUNDRED, STRING_TEST);
 
         final byte[] bytes = msg.writeTo();
@@ -406,6 +406,7 @@ public abstract class AbstractMsgTest {
         Assert.assertEquals(STRING_TEST, msg2.getAsString(KEY_ONE));
         Assert.assertEquals(STRING_TEST32, msg2.getAsString(KEY_TWO));
         Assert.assertEquals(STRING_TEST132, msg2.getAsString(KEY_THREE));
+        Assert.assertNull(msg2.getAsString(KEY_FOUR));
         Assert.assertEquals(STRING_TEST, msg2.getAsString(KEY_NINETY));
         Assert.assertEquals(STRING_TEST, msg2.getAsString(KEY_THREE_HUNDRED));
 
@@ -446,6 +447,7 @@ public abstract class AbstractMsgTest {
         Assert.assertEquals(this.msgTest.getAsByte(KEY_ONE), msg2.getAsMsg(KEY_ONE).getAsByte(KEY_ONE));
         Assert.assertEquals(this.msgTest.getAsByte(KEY_ONE), msg2.getAsMsg(KEY_NINETY).getAsByte(KEY_ONE));
         Assert.assertEquals(this.msgTest.getAsByte(KEY_ONE), msg2.getAsMsg(KEY_THREE_HUNDRED).getAsByte(KEY_ONE));
+        Assert.assertNull(msg2.getAsMsg(KEY_FOUR));
 
         Assert.assertEquals(MsgConstants.DEFAULT_MSG_VALUE, msg2.getAsMsg(KEY_NINETYNINE));
 

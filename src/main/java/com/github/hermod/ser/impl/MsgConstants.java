@@ -128,14 +128,15 @@ public final class MsgConstants
     public static final long DEFAULT_LONG_VALUE = DEFAULT_INT_VALUE;
     
     /**
-     * DEFAULT_FLOAT_VALUE
-     */
-    public static final float DEFAULT_FLOAT_VALUE = DEFAULT_INT_VALUE;
-    
-    /**
      * DEFAULT_DOUBLE_VALUE
      */
-    public static final double DEFAULT_DOUBLE_VALUE = DEFAULT_INT_VALUE;
+    public static final double DEFAULT_DOUBLE_VALUE = Double.NaN;
+    
+    /**
+     * DEFAULT_FLOAT_VALUE
+     */
+    public static final float DEFAULT_FLOAT_VALUE = (float) DEFAULT_DOUBLE_VALUE;
+    
     
     /**
      * DEFAULT_STRING_VALUE
@@ -165,6 +166,14 @@ public final class MsgConstants
      */
     public static double[] DOZENS =
     { 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0, 100000000.0 };
+    
+    
+    /**
+     * FORCE_ENCODING_ZERO_ON_2BITS
+     * 
+     * We encode variable size on 2 bits (1 byte in addition of type) instead on 1 byte (in type) to distinct null and Object with 0 size. 
+     */
+    public static boolean FORCE_ENCODING_ZERO_ON_2BITS = true;
     
     
   

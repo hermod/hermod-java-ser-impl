@@ -8,9 +8,10 @@
 	<body>
 		<release version="0.1" date="2013-02-01" description="First Release">
 			<action dev="anavarro" type="fix">Fix pb when call set double with 7-8 precision.</action>
+			<action dev="anavarro" type="update">Rationalize the null management</action>
+			<action dev="anavarro" type="add">Add custom default value (TODO)</action>
 			<action dev="anavarro" type="add">Add Array Management (TODO)</action>
 			<action dev="anavarro" type="add">Add set/get Object method (TODO)</action>
-			<action dev="anavarro" type="update">Rationalize the null management (TODO)</action>
 		</release>
 	</body>
 </document>
