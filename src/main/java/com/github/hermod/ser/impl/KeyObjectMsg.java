@@ -153,10 +153,23 @@ public class KeyObjectMsg implements Msg {
      */
     @Override
     public final byte getAsByte(final int aKey) {
+        //TODO check perf (inlining done or not)
+        return getAsByte(aKey, DEFAULT_BYTE_VALUE);
+    }
+    
+    /**
+     * getAsByte.
+     *
+     * @param aKey
+     * @param defaultValue
+     * @return
+     */
+    @Override
+    public final byte getAsByte(final int aKey, final byte defaultValue) {
         try {
-            return (this.types[aKey] == TYPE_BYTE) ? (byte) this.primitiveValues[aKey] : DEFAULT_BYTE_VALUE;
+            return (this.types[aKey] == TYPE_BYTE) ? (byte) this.primitiveValues[aKey] : defaultValue;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            return DEFAULT_BYTE_VALUE;
+            return defaultValue;
         }
     }
 
@@ -167,10 +180,22 @@ public class KeyObjectMsg implements Msg {
      */
     @Override
     public final short getAsShort(final int aKey) {
+        return getAsShort(aKey, DEFAULT_SHORT_VALUE);
+    }
+    
+    /**
+     * getAsShort.
+     *
+     * @param aKey
+     * @param defaultValue
+     * @return
+     */
+    @Override
+    public final short getAsShort(final int aKey, final short defaultValue) {
         try {
-            return (this.types[aKey] == TYPE_BYTE || this.types[aKey] == TYPE_SHORT) ? (short) this.primitiveValues[aKey] : DEFAULT_SHORT_VALUE;
+            return (this.types[aKey] == TYPE_BYTE || this.types[aKey] == TYPE_SHORT) ? (short) this.primitiveValues[aKey] : defaultValue;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            return DEFAULT_SHORT_VALUE;
+            return defaultValue;
         }
     }
 
@@ -181,11 +206,23 @@ public class KeyObjectMsg implements Msg {
      */
     @Override
     public final int getAsInt(final int aKey) {
+        return getAsInt(aKey, DEFAULT_INT_VALUE);
+    }
+    
+    /**
+     * getAsInt.
+     *
+     * @param aKey
+     * @param defaultValue
+     * @return
+     */
+    @Override
+    public final int getAsInt(final int aKey, final int defaultValue) {
         try {
             return (this.types[aKey] == TYPE_BYTE || this.types[aKey] == TYPE_SHORT || this.types[aKey] == TYPE_INT) ? (int) this.primitiveValues[aKey]
-                    : DEFAULT_INT_VALUE;
+                    : defaultValue;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            return DEFAULT_INT_VALUE;
+            return defaultValue;
         }
     }
 
@@ -196,10 +233,22 @@ public class KeyObjectMsg implements Msg {
      */
     @Override
     public final long getAsLong(final int aKey) {
+        return getAsLong(aKey, DEFAULT_LONG_VALUE);
+    }
+    
+    /**
+     * getAsLong.
+     *
+     * @param aKey
+     * @param defaultValue
+     * @return
+     */
+    @Override
+    public final long getAsLong(final int aKey, final long defaultValue) {
         try {
-            return ((this.types[aKey] & TYPE_MASK) == TYPE_INTEGER) ? (long) this.primitiveValues[aKey] : DEFAULT_LONG_VALUE;
+            return ((this.types[aKey] & TYPE_MASK) == TYPE_INTEGER) ? (long) this.primitiveValues[aKey] : defaultValue;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            return DEFAULT_LONG_VALUE;
+            return defaultValue;
         }
     }
 
@@ -210,11 +259,23 @@ public class KeyObjectMsg implements Msg {
      */
     @Override
     public final float getAsFloat(final int aKey) {
+        return getAsFloat(aKey, DEFAULT_FLOAT_VALUE);
+    }
+    
+    /**
+     * getAsFloat.
+     *
+     * @param aKey
+     * @param defaultValue
+     * @return
+     */
+    @Override
+    public final float getAsFloat(final int aKey, final float defaultValue) {
         try {
             // TODO do some stuff if the type TYPE_5BITS_DECIMAL
-            return (this.types[aKey] == TYPE_FLOAT) ? Float.intBitsToFloat((int) this.primitiveValues[aKey]) : DEFAULT_FLOAT_VALUE;
+            return (this.types[aKey] == TYPE_FLOAT) ? Float.intBitsToFloat((int) this.primitiveValues[aKey]) : defaultValue;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            return DEFAULT_FLOAT_VALUE;
+            return defaultValue;
         }
     }
 
@@ -226,6 +287,18 @@ public class KeyObjectMsg implements Msg {
      */
     @Override
     public final double getAsDouble(final int aKey) {
+        return getAsDouble(aKey, DEFAULT_DOUBLE_VALUE);
+    }
+    
+    /**
+     * getAsDouble.
+     *
+     * @param aKey
+     * @param defaultValue
+     * @return
+     */
+    @Override
+    public final double getAsDouble(final int aKey, final double defaultValue) {
         try {
             switch (this.types[aKey]) {
             // case TYPE_3BITS_DECIMAL:
@@ -239,10 +312,10 @@ public class KeyObjectMsg implements Msg {
             case TYPE_FLOAT:
                 return Float.intBitsToFloat((int) this.primitiveValues[aKey]);
             default:
-                return DEFAULT_DOUBLE_VALUE;
+                return defaultValue;
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
-            return DEFAULT_DOUBLE_VALUE;
+            return defaultValue;
         }
     }
 
@@ -286,10 +359,22 @@ public class KeyObjectMsg implements Msg {
      */
     @Override
     public final String getAsString(final int aKey) {
+        return getAsString(aKey, DEFAULT_STRING_VALUE);
+    }
+    
+    /**
+     * getAsString.
+     *
+     * @param aKey
+     * @param defaultValue
+     * @return
+     */
+    @Override
+    public final String getAsString(final int aKey, final String defaultValue) {
         try {
-            return ((this.types[aKey] & TYPE_MASK) == TYPE_STRING_ISO_8859_1) ? (String) this.objectValues[aKey] : DEFAULT_STRING_VALUE;
+            return ((this.types[aKey] & TYPE_MASK) == TYPE_STRING_ISO_8859_1) ? (String) this.objectValues[aKey] : defaultValue;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            return DEFAULT_STRING_VALUE;
+            return defaultValue;
         }
     }
 
@@ -299,13 +384,26 @@ public class KeyObjectMsg implements Msg {
      * @see com.github.hermod.ser3.intmap.ReadIntMap#getAsMap(int)
      */
     @Override
-    public final Msg getAsMsg(int aKey) {
+    public final Msg getAsMsg(final int aKey) {
+        return getAsMsg(aKey, DEFAULT_MSG_VALUE);
+    }
+    
+    /**
+     * getAsMsg.
+     *
+     * @param aKey
+     * @param defaultValue
+     * @return
+     */
+    @Override
+    public final Msg getAsMsg(final int aKey, final Msg defaultValue) {
         try {
-            return ((this.types[aKey] & TYPE_MASK) == TYPE_MSG) ? (Msg) this.objectValues[aKey] : DEFAULT_MSG_VALUE;
+            return ((this.types[aKey] & TYPE_MASK) == TYPE_MSG) ? (Msg) this.objectValues[aKey] : defaultValue;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            return DEFAULT_MSG_VALUE;
+            return defaultValue;
         }
     }
+
 
     /**
      * (non-Javadoc)
@@ -313,11 +411,21 @@ public class KeyObjectMsg implements Msg {
      * @see com.github.hermod.ser.Msg#getAsArray(int)
      */
     @Override
-    public final Object[] getAsArray(int aKey) {
+    public final Object[] getAsArray(final int aKey) {
+        return getAsArray(aKey, DEFAULT_ARRAY_VALUE);
+    }
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#getAsArray(int, java.lang.Object[])
+     */
+    @Override
+    public final Object[] getAsArray(final int aKey, Object[] defaultValue) {
         try {
-            return ((this.types[aKey] & TYPE_MASK) == TYPE_ARRAY) ? (Object[]) this.objectValues[aKey] : DEFAULT_ARRAY_VALUE;
+            return ((this.types[aKey] & TYPE_MASK) == TYPE_ARRAY) ? (Object[]) this.objectValues[aKey] : defaultValue;
         } catch (final ArrayIndexOutOfBoundsException e) {
-            return DEFAULT_ARRAY_VALUE;
+            return defaultValue;
         }
     }
 
