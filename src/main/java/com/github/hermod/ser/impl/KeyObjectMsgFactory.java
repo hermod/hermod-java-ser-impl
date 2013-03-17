@@ -2,8 +2,8 @@ package com.github.hermod.ser.impl;
 
 import static com.github.hermod.ser.impl.MsgConstants.DEFAULT_MAX_KEY;
 
-import com.github.hermod.ser.Msg;
-import com.github.hermod.ser.MsgFactory;
+import com.github.hermod.ser.IMsg;
+import com.github.hermod.ser.IMsgFactory;
 
 /**
  * KeyObjectMsgFactory.
@@ -11,15 +11,15 @@ import com.github.hermod.ser.MsgFactory;
  * @author anavarro - Jan 20, 2013
  * 
  */
-public final class KeyObjectMsgFactory implements MsgFactory {
+public final class KeyObjectMsgFactory implements IMsgFactory {
 
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.MsgFactory#create()
+     * @see com.github.hermod.ser.IMsgFactory#create()
      */
     @Override
-    public Msg create() {
+    public IMsg create() {
 	return new KeyObjectMsg(DEFAULT_MAX_KEY);
     }
     
@@ -30,7 +30,7 @@ public final class KeyObjectMsgFactory implements MsgFactory {
      * @return
      */
     @Override
-    public Msg create(final int size) {
+    public IMsg create(final int size) {
         return new KeyObjectMsg(size >> 2);
     }
 

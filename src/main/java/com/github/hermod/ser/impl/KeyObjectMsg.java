@@ -27,9 +27,12 @@ import static com.github.hermod.ser.impl.MsgConstants.TYPE_MSG;
 import static com.github.hermod.ser.impl.MsgConstants.TYPE_NULL_KEY;
 import static com.github.hermod.ser.impl.MsgConstants.TYPE_SHORT;
 import static com.github.hermod.ser.impl.MsgConstants.TYPE_STRING_ISO_8859_1;
+import static com.github.hermod.ser.impl.MsgConstants.TYPE_DECIMAL;
 import static com.github.hermod.ser.impl.MsgConstants.FORCE_ENCODING_ZERO_ON_2BITS;
 
-import com.github.hermod.ser.Msg;
+
+import com.github.hermod.ser.IMsg;
+import com.github.hermod.ser.ISerializable;
 
 /**
  * <p>KeyObjectMsg. </p>
@@ -37,7 +40,7 @@ import com.github.hermod.ser.Msg;
  * @author anavarro - Jan 21, 2013
  * 
  */
-public class KeyObjectMsg implements Msg {
+public class KeyObjectMsg implements IMsg, ISerializable {
 
     private byte[] types;
     private long[] primitiveValues;
@@ -84,7 +87,7 @@ public class KeyObjectMsg implements Msg {
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.Msg#clear()
+     * @see com.github.hermod.ser.IMsg#clear()
      */
     @Override
     public final void clear() {
@@ -119,7 +122,7 @@ public class KeyObjectMsg implements Msg {
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.Msg#contains(int)
+     * @see com.github.hermod.ser.IMsg#contains(int)
      */
     @Override
     public final boolean contains(final int aKey) {
@@ -133,33 +136,17 @@ public class KeyObjectMsg implements Msg {
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.Msg#get(int)
-     */
-    @Override
-    public final Object get(final int aKey) {
-        // TODO
-        throw new UnsupportedOperationException("Not Yet Implemented");
-        // if (contains(aKey)) {
-        // // TODO
-        //
-        // }
-        // return null;
-    }
-
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#getAsByte(int)
+     * @see com.github.hermod.ser.IMsg#getAsByte(int)
      */
     @Override
     public final byte getAsByte(final int aKey) {
-        //TODO check perf (inlining done or not)
+        // TODO check perf (inlining done or not)
         return getAsByte(aKey, DEFAULT_BYTE_VALUE);
     }
-    
+
     /**
      * getAsByte.
-     *
+     * 
      * @param aKey
      * @param defaultValue
      * @return
@@ -176,16 +163,16 @@ public class KeyObjectMsg implements Msg {
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.Msg#getAsShort(int)
+     * @see com.github.hermod.ser.IMsg#getAsShort(int)
      */
     @Override
     public final short getAsShort(final int aKey) {
         return getAsShort(aKey, DEFAULT_SHORT_VALUE);
     }
-    
+
     /**
      * getAsShort.
-     *
+     * 
      * @param aKey
      * @param defaultValue
      * @return
@@ -202,16 +189,28 @@ public class KeyObjectMsg implements Msg {
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.Msg#getAsInt(int)
+     * @see com.github.hermod.ser.IMsg#getAsInt(int)
      */
     @Override
     public final int getAsInt(final int aKey) {
         return getAsInt(aKey, DEFAULT_INT_VALUE);
     }
     
+
+    /**
+     * getAsInteger.
+     *
+     * @param aKey
+     * @param defaultValue
+     * @return
+     */
+    public final Integer getAsInteger(final int aKey, final int defaultValue) {
+        return getAsInt(aKey, DEFAULT_INT_VALUE);
+    }
+
     /**
      * getAsInt.
-     *
+     * 
      * @param aKey
      * @param defaultValue
      * @return
@@ -229,16 +228,16 @@ public class KeyObjectMsg implements Msg {
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.Msg#getAsLong(int)
+     * @see com.github.hermod.ser.IMsg#getAsLong(int)
      */
     @Override
     public final long getAsLong(final int aKey) {
         return getAsLong(aKey, DEFAULT_LONG_VALUE);
     }
-    
+
     /**
      * getAsLong.
-     *
+     * 
      * @param aKey
      * @param defaultValue
      * @return
@@ -255,16 +254,16 @@ public class KeyObjectMsg implements Msg {
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.Msg#getAsFloat(int)
+     * @see com.github.hermod.ser.IMsg#getAsFloat(int)
      */
     @Override
     public final float getAsFloat(final int aKey) {
         return getAsFloat(aKey, DEFAULT_FLOAT_VALUE);
     }
-    
+
     /**
      * getAsFloat.
-     *
+     * 
      * @param aKey
      * @param defaultValue
      * @return
@@ -289,10 +288,10 @@ public class KeyObjectMsg implements Msg {
     public final double getAsDouble(final int aKey) {
         return getAsDouble(aKey, DEFAULT_DOUBLE_VALUE);
     }
-    
+
     /**
      * getAsDouble.
-     *
+     * 
      * @param aKey
      * @param defaultValue
      * @return
@@ -355,16 +354,16 @@ public class KeyObjectMsg implements Msg {
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.Msg#getAsString(int)
+     * @see com.github.hermod.ser.IMsg#getAsString(int)
      */
     @Override
     public final String getAsString(final int aKey) {
         return getAsString(aKey, DEFAULT_STRING_VALUE);
     }
-    
+
     /**
      * getAsString.
-     *
+     * 
      * @param aKey
      * @param defaultValue
      * @return
@@ -384,41 +383,58 @@ public class KeyObjectMsg implements Msg {
      * @see com.github.hermod.ser3.intmap.ReadIntMap#getAsMap(int)
      */
     @Override
-    public final Msg getAsMsg(final int aKey) {
+    public final IMsg getAsMsg(final int aKey) {
         return getAsMsg(aKey, DEFAULT_MSG_VALUE);
     }
-    
+
     /**
      * getAsMsg.
-     *
+     * 
      * @param aKey
      * @param defaultValue
      * @return
      */
     @Override
-    public final Msg getAsMsg(final int aKey, final Msg defaultValue) {
+    public final IMsg getAsMsg(final int aKey, final IMsg defaultValue) {
         try {
-            return ((this.types[aKey] & TYPE_MASK) == TYPE_MSG) ? (Msg) this.objectValues[aKey] : defaultValue;
+            return ((this.types[aKey] & TYPE_MASK) == TYPE_MSG) ? (IMsg) this.objectValues[aKey] : defaultValue;
         } catch (final ArrayIndexOutOfBoundsException e) {
             return defaultValue;
         }
-    }
-
-
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#getAsArray(int)
-     */
-    @Override
-    public final Object[] getAsArray(final int aKey) {
-        return getAsArray(aKey, DEFAULT_ARRAY_VALUE);
     }
     
     /**
      * (non-Javadoc)
      *
-     * @see com.github.hermod.ser.Msg#getAsArray(int, java.lang.Object[])
+     * @see com.github.hermod.ser.IMsg#getAsMsgInto(int, com.github.hermod.ser.IMsg)
+     */
+    @Override
+    public final void getAsMsgInto(final int aKey, final IMsg destValue) {
+        try {
+            if ((this.types[aKey] & TYPE_MASK) == TYPE_MSG) {
+                destValue.setAll((IMsg) this.objectValues[aKey]);
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+        }
+    }
+    
+    
+    //TODO
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.IMsg#getAsArray(int)
+     */
+    @Override
+    public final Object[] getAsArray(final int aKey) {
+        return getAsArray(aKey, DEFAULT_ARRAY_VALUE);
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.IMsg#getAsArray(int, java.lang.Object[])
      */
     @Override
     public final Object[] getAsArray(final int aKey, Object[] defaultValue) {
@@ -426,6 +442,61 @@ public class KeyObjectMsg implements Msg {
             return ((this.types[aKey] & TYPE_MASK) == TYPE_ARRAY) ? (Object[]) this.objectValues[aKey] : defaultValue;
         } catch (final ArrayIndexOutOfBoundsException e) {
             return defaultValue;
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.IMsg#get(int)
+     */
+    @Override
+    public final Object get(final int aKey) {
+        try {
+            final byte type = this.types[aKey];
+            switch (type) {
+            case TYPE_BYTE:
+                return getAsByte(aKey);
+
+            case TYPE_SHORT:
+                return getAsShort(aKey);
+
+            case TYPE_INT:
+                return getAsInt(aKey);
+
+            case TYPE_LONG:
+                return getAsLong(aKey);
+
+            case TYPE_INTEGER:
+                return (Integer) null;
+
+            case TYPE_FLOAT:
+                return getAsFloat(aKey);
+
+            case TYPE_DOUBLE:
+                return getAsDouble(aKey);
+
+            case TYPE_5BITS_DECIMAL:
+                return getAsDouble(aKey);
+
+            case TYPE_DECIMAL:
+                return (Double) null;
+
+            case TYPE_STRING_ISO_8859_1:
+                return getAsString(aKey, null);
+
+            case TYPE_MSG:
+                return getAsMsg(aKey, null);
+
+            case TYPE_ARRAY:
+                return getAsArray(aKey, null);
+
+            default:
+                return null;
+            }
+
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
         }
     }
 
@@ -451,11 +522,13 @@ public class KeyObjectMsg implements Msg {
         }
         return keys;
     }
+    
+    
 
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.Msg#set(int, byte)
+     * @see com.github.hermod.ser.IMsg#set(int, byte)
      */
     @Override
     public final void set(final int aKey, final byte aByte) {
@@ -569,7 +642,7 @@ public class KeyObjectMsg implements Msg {
             // else
             {
                 if (d >= Integer.MIN_VALUE && d <= Integer.MAX_VALUE) {
-                    try {    
+                    try {
                         this.primitiveValues[aKey] = (nbDigit) | (((long) (d)) << 8);
                         this.types[aKey] = TYPE_5BITS_DECIMAL;
                     } catch (final ArrayIndexOutOfBoundsException e) {
@@ -604,10 +677,10 @@ public class KeyObjectMsg implements Msg {
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.Msg#set(int, com.github.hermod.ser.Msg)
+     * @see com.github.hermod.ser.IMsg#set(int, com.github.hermod.ser.IMsg)
      */
     @Override
-    public final void set(final int aKey, final Msg aMsg) {
+    public final void set(final int aKey, final IMsg aMsg) {
         try {
             this.objectValues[aKey] = aMsg;
             this.types[aKey] = TYPE_MSG;
@@ -620,7 +693,7 @@ public class KeyObjectMsg implements Msg {
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.Msg#set(int, java.lang.Object[])
+     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Object[])
      */
     public final void set(final int aKey, final Object[] aObjectArray) {
         try {
@@ -635,21 +708,50 @@ public class KeyObjectMsg implements Msg {
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.Msg#set(int, java.lang.Object)
+     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Object)
      */
     @Override
     public final void set(final int aKey, final Object aObject) {
-        // TODO
+        try {
+
+            if (aObject instanceof Byte | aObject instanceof Short | aObject instanceof Integer | aObject instanceof Long) {
+                if (aObject != null) {
+                    set(aKey, ((Number) aObject).longValue());
+                } else {
+                    this.types[aKey] = TYPE_INTEGER;
+                    this.objectValues[aKey] = DEFAULT_INT_VALUE;
+                }
+            } else if (aObject instanceof Float | aObject instanceof Double) {
+                if (aObject != null) {
+                    set(aKey, ((Number) aObject).doubleValue());
+                } else {
+                    this.types[aKey] = TYPE_DECIMAL;
+                    this.objectValues[aKey] = DEFAULT_DOUBLE_VALUE;
+                }
+            } else if (aObject instanceof String) {
+                set(aKey, (String) aObject);
+            } else if (aObject instanceof IMsg) {
+                set(aKey, (IMsg) aObject);
+            } else if (aObject instanceof Object[]) {
+                set(aKey, (Object[]) aObject);
+            } else {
+                throw new IllegalArgumentException("Impossible to set this type of value=" + aObject.getClass());
+            }
+            this.objectValues[aKey] = aObject;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aObject);
+        }
     }
 
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.Msg#setAll(com.github.hermod.ser.Msg)
+     * @see com.github.hermod.ser.IMsg#setAll(com.github.hermod.ser.IMsg)
      */
     @Override
-    public final void setAll(final Msg aMsg) {
-        //TODO to optimize
+    public final void setAll(final IMsg aMsg) {
+        // TODO to optimize
         final int[] keys = aMsg.getKeys();
         for (int i = 0; i < keys.length; i++) {
             set(keys[i], aMsg.get(keys[i]));
@@ -659,7 +761,7 @@ public class KeyObjectMsg implements Msg {
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.Msg#remove(int)
+     * @see com.github.hermod.ser.IMsg#remove(int)
      */
     @Override
     public final void remove(final int aKey) {
@@ -672,11 +774,21 @@ public class KeyObjectMsg implements Msg {
             remove(aKey);
         }
     }
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.ISerializable#readFrom(byte[])
+     */
+    @Override
+    public final void readFrom(final byte[] bytes) {
+        readFrom(bytes, 0, bytes.length);
+    }
 
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.Serializable#readFrom(byte[], int, int)
+     * @see com.github.hermod.ser.ISerializable#readFrom(byte[], int, int)
      */
     @Override
     public final void readFrom(final byte[] bytes, final int offset, final int length) {
@@ -773,7 +885,7 @@ public class KeyObjectMsg implements Msg {
 
                     switch (typeMask) {
                     case TYPE_STRING_ISO_8859_1:
-                        //TODO manage null value
+                        // TODO manage null value
                         if (sizeMask != 0) {
                             final char[] chars = new char[size];
                             for (int i = 0; i < size; i++) {
@@ -786,8 +898,8 @@ public class KeyObjectMsg implements Msg {
                     case TYPE_MSG:
                         // TODO manage null value
                         if (sizeMask != 0) {
-                            final Msg msg = new KeyObjectMsg();
-                            msg.readFrom(bytes, pos, size);
+                            final IMsg msg = new KeyObjectMsg();
+                            ((ISerializable) msg).readFrom(bytes, pos, size);
                             pos += size;
                             this.objectValues[key] = msg;
                         }
@@ -797,33 +909,32 @@ public class KeyObjectMsg implements Msg {
                         final byte arrayType = bytes[pos++];
                         if (arrayType == TYPE_NULL_KEY) {
                             // For variable type
-                            
-                            
+
                         } else {
                             // For Fixed typed
                             switch (arrayType) {
                             case TYPE_BYTE:
                                 final byte[] byteArray = new byte[size - 1];
-                                //TODO to optimize
+                                // TODO to optimize
                                 for (int i = 0; i < size - 1; i++) {
                                     byteArray[i] = bytes[pos++];
                                 }
                                 break;
                             case TYPE_SHORT:
-                                //TODO
-                                break;   
+                                // TODO
+                                break;
                             case TYPE_INT:
-                                //TODO
+                                // TODO
                                 break;
                             case TYPE_LONG:
-                                //TODO
-                                break; 
+                                // TODO
+                                break;
                             case TYPE_FLOAT:
-                                //TODO
+                                // TODO
                                 break;
                             case TYPE_DOUBLE:
-                                //TODO
-                                break;     
+                                // TODO
+                                break;
                             default:
                                 break;
                             }
@@ -962,11 +1073,11 @@ public class KeyObjectMsg implements Msg {
                     break;
 
                 case TYPE_MSG:
-                    final Msg aMsg = (Msg) this.objectValues[i];
+                    final IMsg aMsg = (IMsg) this.objectValues[i];
                     if (aMsg != null) {
-                        final int length = aMsg.getSize();
+                        final int length = ((ISerializable) aMsg).getSize();
                         pos = writeVariableSize(bytes, pos - 1, length, FORCE_ENCODING_ZERO_ON_2BITS);
-                        pos = aMsg.writeTo(bytes, pos);
+                        pos = ((ISerializable) aMsg).writeTo(bytes, pos);
                     }
                     break;
 
@@ -1063,9 +1174,9 @@ public class KeyObjectMsg implements Msg {
             case TYPE_STRING_ISO_8859_1:
                 final int length = (this.objectValues[key] != null) ? ((String) this.objectValues[key]).length() : 0;
                 return getVariableSize(length, FORCE_ENCODING_ZERO_ON_2BITS) + length;
-
             case TYPE_MSG:
-                final int size = (this.objectValues[key] != null) ? ((Msg) this.objectValues[key]).getSize() : 0;
+                //TODO change to Serializer.getSize();
+                final int size = (this.objectValues[key] != null) ? ((ISerializable) this.objectValues[key]).getSize() : 0;
                 return getVariableSize(size, FORCE_ENCODING_ZERO_ON_2BITS) + size;
 
             case TYPE_ARRAY:
@@ -1094,25 +1205,25 @@ public class KeyObjectMsg implements Msg {
                 // TODO manage better array, double/float, use just get()
                 sb.append((this.types[i] == TYPE_STRING_ISO_8859_1 || this.types[i] == TYPE_MSG || this.types[i] == TYPE_ARRAY) ? this.objectValues[i]
                         : this.primitiveValues[i]);
-//                if (this.types[i] == TYPE_BYTE || this.types[i] == TYPE_SHORT || this.types[i] == TYPE_INT || this.types[i] == TYPE_LONG) {
-//                    sb.append(this.getAsLong(i));
-//                } else if (this.types[i] == TYPE_STRING_ISO_8859_1 || this.types[i] == TYPE_MSG) {
-//                    sb.append(this.objectValues[i].toString());
-//                } else {
-//                    if (this.types[i] == TYPE_ARRAY) {
-//                        final Object[] objects = (Object[]) this.objectValues[i];
-//                        sb.append("[");
-//                        for (final Object object : objects) {
-//                            sb.append(object);
-//                            sb.append(",");
-//                        }
-//                        sb.deleteCharAt(sb.length() - 1);
-//                        sb.append("]");
-//
-//                    } else {
-//                        sb.append("Type Not Managed");
-//                    }
-//                }
+                // if (this.types[i] == TYPE_BYTE || this.types[i] == TYPE_SHORT || this.types[i] == TYPE_INT || this.types[i] == TYPE_LONG) {
+                // sb.append(this.getAsLong(i));
+                // } else if (this.types[i] == TYPE_STRING_ISO_8859_1 || this.types[i] == TYPE_MSG) {
+                // sb.append(this.objectValues[i].toString());
+                // } else {
+                // if (this.types[i] == TYPE_ARRAY) {
+                // final Object[] objects = (Object[]) this.objectValues[i];
+                // sb.append("[");
+                // for (final Object object : objects) {
+                // sb.append(object);
+                // sb.append(",");
+                // }
+                // sb.deleteCharAt(sb.length() - 1);
+                // sb.append("]");
+                //
+                // } else {
+                // sb.append("Type Not Managed");
+                // }
+                // }
                 sb.append(",");
             }
         }
