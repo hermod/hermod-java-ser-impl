@@ -1,6 +1,9 @@
 package com.github.hermod.ser.impl;
 
+import com.github.hermod.ser.EPrecision;
+import com.github.hermod.ser.EType;
 import com.github.hermod.ser.IMsg;
+import com.github.hermod.ser.Types;
 
 /**
  * IntMapConstants.
@@ -8,61 +11,64 @@ import com.github.hermod.ser.IMsg;
  * @author anavarro - Dec 15, 2011
  * 
  */
-public final class MsgConstants
+public final class Msgs
 {
     
     // Might be set in another interface
     
-    // null key
-    public static final byte TYPE_NULL_KEY = 0x0; //0b0000_0000; 
+//    // Null key
+//    public static final byte TYPE_NULL = EType.NULL.getId();
+//    
+//    // Msg
+//    public static final byte TYPE_MSG = EType.MSG.getId();
+//    
+//    // Integer (long / int / short / byte / boolean)
+//    public static final byte TYPE_INTEGER = EType.INTEGER.getId();
     
-    // TODO not implemented
-    // date / timestamp
-    public static final byte TYPE_DATE_VALUE = 0x20; //0b0010_0000;
     
-    // long / int / short / byte
-    public static final byte TYPE_INTEGER = 0x40; //0b0100_0000;
-    
-    // byte
-    public static final byte TYPE_BYTE = TYPE_INTEGER | 1;
+    // byte / boolean
+    public static final byte BYTE_TYPE = (byte) (Types.INTEGER_TYPE | 1);
     
     // short
-    public static final byte TYPE_SHORT = TYPE_INTEGER | 2;
+    public static final byte SHORT_TYPE = (byte) (Types.INTEGER_TYPE | 2);
     
     // int
-    public static final byte TYPE_INT = TYPE_INTEGER | 4;
+    public static final byte INT_TYPE = (byte) (Types.INTEGER_TYPE | 4);
     
     // long
-    public static final byte TYPE_LONG = TYPE_INTEGER | 8;
+    public static final byte LONG_TYPE = (byte) (Types.INTEGER_TYPE | 8);
+    
     
     // float / double or double encoded on 5 bits
-    public static final byte TYPE_DECIMAL = 0x60; //0b0110_0000;
+    public static final byte TYPE_DECIMAL = EType.DECIMAL.getId();
     
     // float
-    public static final byte TYPE_FLOAT = TYPE_DECIMAL | 4;
+    public static final byte FLOAT_TYPE = (byte) (Types.DECIMAL_TYPE | 4);
     
     // double
-    public static final byte TYPE_DOUBLE = TYPE_DECIMAL | 8;
+    public static final byte DOUBLE_TYPE = (byte) (Types.DECIMAL_TYPE | 8);
     
     // double (encoded on 3 bits)
-    public static final byte TYPE_3BITS_DECIMAL = TYPE_DECIMAL | 3;
+    public static final byte THREE_BITS_DECIMAL_TYPE = (byte) (Types.DECIMAL_TYPE | 3);
     
     // double (encoded on 5 bits)
-    public static final byte TYPE_5BITS_DECIMAL = TYPE_DECIMAL | 5;
+    public static final byte FIVE_BITS_DECIMAL_TYPE = (byte) (Types.DECIMAL_TYPE | 5);
     
-    // String (Extended ASCII) or byte[]
-    public static final byte TYPE_STRING_ISO_8859_1 = (byte) 0x80;//0b1000_0000;
     
-    // TODO not implement
-    // String (UTF16) or char[]
-    public static final byte TYPE_STRING_UTF16 = (byte) 0xA0;//0b1010_0000;
-    
-    // TODO not implemented
-    // Array
-    public static final byte TYPE_ARRAY = (byte) 0xC0; //0b1100_0000;
-    
-    // Msg
-    public static final byte TYPE_MSG = (byte) 0xE0; //0b1110_0000;
+//    // String (Extended ASCII) or byte[]
+//    public static final byte TYPE_STRING_ISO_8859_1 = EType.STRING_ISO_8859_1.getId();
+//    
+//    // TODO not implement
+//    // String (UTF16) or char[]
+//    public static final byte TYPE_STRING_UTF16 = EType.STRING_UTF16.getId();
+//    
+//    // TODO not implemented
+//    // Fixed Value Length Array
+//    public static final byte TYPE_FIXED_VALUE_LENGTH_ARRAY = EType.FIXED_VALUE_LENGTH_ARRAY.getId();
+//    
+//    // TODO not implemented
+//    // Variable Value Length Array
+//    public static final byte TYPE_VARIABLE_VALUE_LENGTH_ARRAY = EType.VARIABLE_VALUE_LENGTH_ARRAY.getId();
     
     // Length is implemented as
     // 1-29, the length is in the last 5 bits of the type
@@ -75,32 +81,32 @@ public final class MsgConstants
     /**
      * 
      */
-    public static final byte TYPE_MASK = (byte) 0xE0; //0b1110_0000;
+    //public static final byte TYPE_MASK = (byte) 0b1110_0000;
     
     /**
      * 
      */
-    public static final byte SIZE_MASK = 0x1F; //0b0001_1111;
+    public static final byte LENGTH_MASK = (byte) 0b0001_1111;
     
     /**
      * 
      */
-    public static final int SIZE_ENCODED_IN_A_BIT = SIZE_MASK - 1;
+    public static final int LENGTH_ENCODED_IN_A_BIT = LENGTH_MASK - 1;
     
     /**
      * 
      */
-    public static final int SIZE_ENCODED_IN_AN_INT = SIZE_MASK;
+    public static final int LENSTH_ENCODED_IN_AN_INT = LENGTH_MASK;
     
     /**
      * DEFAULT_MSG_SIZE
      */
-    public static final int DEFAULT_MSG_SIZE = 64;
+    public static final int DEFAULT_MSG_LENGTH = 64;
     
     /**
      * DEFAULT_MAX_KEY
      */
-    public static final int DEFAULT_MAX_KEY = DEFAULT_MSG_SIZE / 4;
+    public static final int DEFAULT_MAX_KEY = DEFAULT_MSG_LENGTH / 4;
     
     /**
      * FIRST_KEY
@@ -121,6 +127,11 @@ public final class MsgConstants
      * DEFAULT_BYTE_VALUE
      */
     public static final byte DEFAULT_BYTE_VALUE = (byte) DEFAULT_INT_VALUE;
+    
+    /**
+     * DEFAULT_BOOLEAN_VALUE
+     */
+    public static final boolean DEFAULT_BOOLEAN_VALUE = false;
     
     /**
      * DEFAULT_LONG_VALUE
@@ -153,7 +164,7 @@ public final class MsgConstants
     /**
      * DEFAULT_MSG_VALUE
      */
-    public static final IMsg DEFAULT_MSG_VALUE = (new KeyObjectMsgFactory()).create(0);
+    public static final IMsg DEFAULT_MSG_VALUE = KeyObjectMsgs.newMsg();
     
     /**
      * DEFAULT_ARRAY_VALUE
@@ -164,8 +175,11 @@ public final class MsgConstants
     /**
      * DOZENS
      */
+    
     public static double[] DOZENS =
     { 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0, 100000000.0 };
+    
+    public static final double[] DOZENS2 = {EPrecision.UNITS.getPrecision()};
     
     
     /**
@@ -176,5 +190,7 @@ public final class MsgConstants
     public static boolean FORCE_ENCODING_ZERO_ON_2BITS = true;
     
     
+    
   
+
 }
