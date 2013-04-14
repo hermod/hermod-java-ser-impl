@@ -13,7 +13,7 @@ import static com.github.hermod.ser.impl.Msgs.FORCE_ENCODING_ZERO_ON_2BITS;
 import static com.github.hermod.ser.impl.Msgs.INT_TYPE;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_A_BIT;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_MASK;
-import static com.github.hermod.ser.impl.Msgs.LENSTH_ENCODED_IN_AN_INT;
+import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_AN_INT;
 import static com.github.hermod.ser.impl.Msgs.LONG_TYPE;
 import static com.github.hermod.ser.impl.Msgs.SHORT_TYPE;
 
@@ -323,7 +323,7 @@ public final class DefaultSerializer implements IBytesMsgSerializer {
             bytes[pos++] |= (byte) length;
         } else {
             final boolean isEncodedInAnInt = (length > Byte.MAX_VALUE);
-            bytes[pos++] |= (byte) ((isEncodedInAnInt) ? LENSTH_ENCODED_IN_AN_INT : LENGTH_ENCODED_IN_A_BIT);
+            bytes[pos++] |= (byte) ((isEncodedInAnInt) ? LENGTH_ENCODED_IN_AN_INT : LENGTH_ENCODED_IN_A_BIT);
             bytes[pos++] = (byte) (length);
             if (isEncodedInAnInt) {
                 bytes[pos++] = (byte) (length >> 8);

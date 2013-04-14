@@ -1,7 +1,5 @@
 package com.github.hermod.ser.impl;
 
-import org.junit.Ignore;
-
 import com.github.hermod.ser.IByteableMsg;
 
 
@@ -12,7 +10,6 @@ import com.github.hermod.ser.IByteableMsg;
  * @author anavarro - Jan 20, 2013
  * 
  */
-//@Ignore
 public final class KeyObjectMsgTest
     extends AbstractMsgTest
 {

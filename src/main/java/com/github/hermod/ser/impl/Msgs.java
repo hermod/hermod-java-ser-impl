@@ -96,7 +96,7 @@ public final class Msgs
     /**
      * 
      */
-    public static final int LENSTH_ENCODED_IN_AN_INT = LENGTH_MASK;
+    public static final int LENGTH_ENCODED_IN_AN_INT = LENGTH_MASK;
     
     /**
      * DEFAULT_MSG_SIZE
@@ -113,63 +113,65 @@ public final class Msgs
      */
     public static final int FIRST_AUTHORIZED_KEY = 0;
     
+    public static final int DEFAULT_VALUE = 0;
+    
     /**
      * DEFAULT_INT_VALUE
      */
-    public static final int DEFAULT_INT_VALUE = 0;
+    //public static final int DEFAULT_INT_VALUE = 0;
     
     /**
      * DEFAULT_SHORT_VALUE
      */
-    public static final short DEFAULT_SHORT_VALUE = (short) DEFAULT_INT_VALUE;
+    //public static final short DEFAULT_SHORT_VALUE = (short) DEFAULT_INT_VALUE;
     
     /**
      * DEFAULT_BYTE_VALUE
      */
-    public static final byte DEFAULT_BYTE_VALUE = (byte) DEFAULT_INT_VALUE;
+    //public static final byte DEFAULT_BYTE_VALUE = (byte) DEFAULT_INT_VALUE;
     
     /**
      * DEFAULT_BOOLEAN_VALUE
      */
-    public static final boolean DEFAULT_BOOLEAN_VALUE = false;
+    //public static final boolean DEFAULT_BOOLEAN_VALUE = false;
     
     /**
      * DEFAULT_LONG_VALUE
      */
-    public static final long DEFAULT_LONG_VALUE = DEFAULT_INT_VALUE;
+    //public static final long DEFAULT_LONG_VALUE = DEFAULT_INT_VALUE;
     
     /**
      * DEFAULT_DOUBLE_VALUE
      */
-    public static final double DEFAULT_DOUBLE_VALUE = Double.NaN;
+    //public static final double DEFAULT_DOUBLE_VALUE = Double.NaN;
     
     /**
      * DEFAULT_FLOAT_VALUE
      */
-    public static final float DEFAULT_FLOAT_VALUE = (float) DEFAULT_DOUBLE_VALUE;
+    //public static final float DEFAULT_FLOAT_VALUE = (float) DEFAULT_DOUBLE_VALUE;
     
     
     /**
      * DEFAULT_STRING_VALUE
      */
-    public static final String DEFAULT_STRING_VALUE = "";
+    //public static final String DEFAULT_STRING_VALUE = "";
     
     
     /**
      * DEFAULT_BYTES_VALUE
      */
-    public static final byte[] DEFAULT_BYTES_VALUE = new byte[0];
+    //public static final byte[] DEFAULT_BYTES_VALUE = new byte[0];
     
     
     /**
      * DEFAULT_MSG_VALUE
      */
-    public static final IMsg DEFAULT_MSG_VALUE = KeyObjectMsgs.newByteableMsg();
+    //public static final IMsg DEFAULT_MSG_VALUE = KeyObjectMsgs.newByteableMsg();
     
     /**
      * DEFAULT_ARRAY_VALUE
      */
-    public static final Object[] DEFAULT_ARRAY_VALUE = new Object[0];
+    //public static final Object[] DEFAULT_ARRAY_VALUE = new Object[0];
 
     
     /**
