@@ -24,8 +24,11 @@ import static com.github.hermod.ser.impl.Msgs.LENSTH_ENCODED_IN_AN_INT;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_A_BIT;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_MASK;
 
+import java.nio.ByteBuffer;
+
 import com.github.hermod.ser.EPrecision;
 import com.github.hermod.ser.EType;
+import com.github.hermod.ser.IByteBufferableMsg;
 import com.github.hermod.ser.IByteableMsg;
 import com.github.hermod.ser.IBytesSerializable;
 import com.github.hermod.ser.IMsg;
@@ -36,7 +39,7 @@ import com.github.hermod.ser.IMsg;
  * @author anavarro - Jan 21, 2013
  * 
  */
-public class KeyObjectMsg implements IByteableMsg {
+public class KeyObjectMsg implements IByteableMsg, IByteBufferableMsg {
 
     private byte[] types;
     private long[] primitiveValues;
@@ -1339,8 +1342,38 @@ public class KeyObjectMsg implements IByteableMsg {
 
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.IByteBufferSerializable#serializeToByteBuffer(java.nio.ByteBuffer)
+     */
+    @Override
+    public void serializeToByteBuffer(final ByteBuffer aDestByteBuffer) {
+        aDestByteBuffer.put(this.serializeToBytes());
+    }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.IByteBufferSerializable#serializeToByteBuffer()
+     */
+    @Override
+    public ByteBuffer serializeToByteBuffer() {
+        return ByteBuffer.wrap(this.serializeToBytes());
+    }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.IByteBufferSerializable#deserializeFrom(java.nio.ByteBuffer, int)
+     */
+    @Override
+    public void deserializeFrom(final ByteBuffer aSrcByteBuffer, int aSrcLength) {
+        //TODO to optimize
+        final byte[] bytes = new byte[aSrcLength];
+        aSrcByteBuffer.get(bytes);
+        this.deserializeFrom(bytes, 0, aSrcLength);
+    }
 
 
 }

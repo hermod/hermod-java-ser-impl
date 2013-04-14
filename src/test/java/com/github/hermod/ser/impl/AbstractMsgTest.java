@@ -1,6 +1,8 @@
 package com.github.hermod.ser.impl;
 
-import org.junit.Assert;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+
 import org.junit.Test;
 
 import com.github.hermod.ser.IByteableMsg;
@@ -76,9 +78,9 @@ public abstract class AbstractMsgTest {
     public void testRemoveAll() {
         final IMsg msg = newByteableMsg();
         msg.set(KEY_ONE, INT_TEST);
-        Assert.assertEquals(msg.getKeys().length, 1);
+        assertThat(msg.getKeys()).hasSize(1);
         msg.removeAll();
-        Assert.assertEquals(msg.getKeys().length, 0);
+        assertThat(msg.getKeys()).hasSize(0);
     }
 
     /**
@@ -89,11 +91,10 @@ public abstract class AbstractMsgTest {
     public void testContains() {
         final IMsg msg = newByteableMsg();
         msg.set(1, 1);
-
-        Assert.assertTrue(msg.contains(KEY_ONE));
-        Assert.assertFalse(msg.contains(KEY_MINUS_ONE));
-        Assert.assertFalse(msg.contains(KEY_ZERO));
-        Assert.assertFalse(msg.contains(KEY_NINETYNINE));
+        assertThat(msg.contains(KEY_ONE)).isTrue();
+        assertThat(msg.contains(KEY_MINUS_ONE)).isFalse();
+        assertThat(msg.contains(KEY_ZERO)).isFalse();
+        assertThat(msg.contains(KEY_NINETYNINE)).isFalse();
     }
 
     /**
@@ -111,10 +112,7 @@ public abstract class AbstractMsgTest {
         msg2.deserializeFrom(bytes, 0, bytes.length);
         final int[] keys = msg2.getKeys();
 
-        Assert.assertEquals(2, keys.length);
-        Assert.assertEquals(1, keys[0]);
-        Assert.assertEquals(2, keys[1]);
-
+        assertThat(keys).isEqualTo(new int[]{KEY_ONE, KEY_TWO});
     }
 
     /**
@@ -133,13 +131,32 @@ public abstract class AbstractMsgTest {
 
         final IByteableMsg msg2 = newByteableMsg();
         msg2.deserializeFrom(bytes, 0, bytes.length);
-        Assert.assertEquals(BYTE_TEST, msg2.getAsByte(KEY_ONE));
-        Assert.assertEquals(BYTE_TEST, msg2.getAsByte(KEY_NINETY));
-        Assert.assertEquals(BYTE_TEST, msg2.getAsByte(KEY_THREE_HUNDRED));
-        Assert.assertTrue(msg2.contains(KEY_ZERO));
-        Assert.assertEquals(Msgs.DEFAULT_BYTE_VALUE, msg2.getAsByte(KEY_NINETYNINE));
-        Assert.assertEquals(BYTE_TEST, msg2.getAsByte(KEY_ZERO));
-        Assert.assertEquals(Msgs.DEFAULT_BYTE_VALUE, msg2.getAsByte(KEY_MINUS_ONE));
+        
+        assertThat(msg2.getAsByte(KEY_ONE)).isEqualTo(BYTE_TEST);
+        assertThat(msg2.getAsByte(KEY_NINETY)).isEqualTo(BYTE_TEST);
+        assertThat(msg2.getAsByte(KEY_THREE_HUNDRED)).isEqualTo(BYTE_TEST);
+        assertThat(msg2.contains(KEY_ZERO)).isTrue();
+        
+        try {
+            assertThat(msg2.getAsByte(KEY_NINETYNINE));
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        try {
+            assertThat(msg2.getAsByte(KEY_NINETYNINE));
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        
+        try {
+            assertThat(msg2.getAsByte(KEY_MINUS_ONE));
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        assertThat(msg2.getAsByte(KEY_ZERO)).isEqualTo(BYTE_TEST);
     }
 
     /**
@@ -168,15 +185,32 @@ public abstract class AbstractMsgTest {
 
         final IByteableMsg msg2 = newByteableMsg();
         msg2.deserializeFrom(bytes, 0, bytes.length);
-        Assert.assertEquals(SHORT_TEST, msg2.getAsShort(KEY_ONE));
-        Assert.assertEquals(SHORT_TEST, msg2.getAsShort(KEY_NINETY));
-        Assert.assertEquals(SHORT_TEST, msg2.getAsShort(KEY_THREE_HUNDRED));
-        Assert.assertEquals(BYTE_TEST, msg2.getAsShort(KEY_TWO));
-        Assert.assertEquals(BYTE_TEST, msg2.getAsShort(KEY_THREE));
-        Assert.assertFalse(msg2.contains(KEY_ZERO));
-        Assert.assertEquals(Msgs.DEFAULT_SHORT_VALUE, msg2.getAsShort(KEY_NINETYNINE));
-        Assert.assertEquals(Msgs.DEFAULT_SHORT_VALUE, msg2.getAsShort(KEY_ZERO));
-        Assert.assertEquals(Msgs.DEFAULT_SHORT_VALUE, msg2.getAsShort(KEY_MINUS_ONE));
+        
+        assertThat(msg2.getAsShort(KEY_ONE)).isEqualTo(SHORT_TEST);
+        assertThat(msg2.getAsShort(KEY_NINETY)).isEqualTo(SHORT_TEST);
+        assertThat(msg2.getAsShort(KEY_THREE_HUNDRED)).isEqualTo(SHORT_TEST);
+        assertThat(msg2.getAsShort(KEY_TWO)).isEqualTo(BYTE_TEST);
+        assertThat(msg2.getAsShort(KEY_THREE)).isEqualTo(BYTE_TEST);
+        assertThat(msg2.contains(KEY_ZERO)).isFalse();
+        
+        try {
+            msg2.getAsShort(KEY_NINETYNINE);
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        try {
+            msg2.getAsShort(KEY_ZERO);
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        try {
+            msg2.getAsShort(KEY_MINUS_ONE);
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
     /**
@@ -207,17 +241,34 @@ public abstract class AbstractMsgTest {
 
         final IByteableMsg msg2 = newByteableMsg();
         msg2.deserializeFrom(bytes, 0, bytes.length);
-        Assert.assertEquals(INT_TEST, msg2.getAsInt(KEY_ONE));
-        Assert.assertEquals(SHORT_TEST, msg2.getAsInt(KEY_TWO));
-        Assert.assertEquals(BYTE_TEST, msg2.getAsInt(KEY_THREE));
-        Assert.assertEquals(BYTE_TEST, msg2.getAsInt(KEY_FOUR));
-        Assert.assertEquals(SHORT_TEST, msg2.getAsInt(KEY_FIVE));
-        Assert.assertEquals(INT_TEST, msg2.getAsInt(KEY_NINETY));
-        Assert.assertEquals(INT_TEST, msg2.getAsInt(KEY_THREE_HUNDRED));
-        Assert.assertFalse(msg2.contains(KEY_ZERO));
-        Assert.assertEquals(Msgs.DEFAULT_INT_VALUE, msg2.getAsInt(KEY_NINETYNINE));
-        Assert.assertEquals(Msgs.DEFAULT_INT_VALUE, msg2.getAsInt(KEY_ZERO));
-        Assert.assertEquals(Msgs.DEFAULT_INT_VALUE, msg2.getAsInt(KEY_MINUS_ONE));
+        
+        assertThat(msg2.getAsInt(KEY_ONE)).isEqualTo(INT_TEST);
+        assertThat(msg2.getAsInt(KEY_TWO)).isEqualTo(SHORT_TEST);
+        assertThat(msg2.getAsInt(KEY_THREE)).isEqualTo(BYTE_TEST);
+        assertThat(msg2.getAsInt(KEY_FOUR)).isEqualTo(BYTE_TEST);
+        assertThat(msg2.getAsInt(KEY_FIVE)).isEqualTo(SHORT_TEST);
+        assertThat(msg2.getAsInt(KEY_NINETY)).isEqualTo(INT_TEST);
+        assertThat(msg2.getAsInt(KEY_THREE_HUNDRED)).isEqualTo(INT_TEST);
+        assertThat(msg2.contains(KEY_ZERO)).isFalse();
+        
+        try {
+            msg2.getAsInt(KEY_NINETYNINE);
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        try {
+            msg2.getAsInt(KEY_ZERO);
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        try {
+            msg2.getAsInt(KEY_MINUS_ONE);
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
     /**
@@ -251,20 +302,35 @@ public abstract class AbstractMsgTest {
 
         final IByteableMsg msg2 = newByteableMsg();
         msg2.deserializeFrom(bytes, 0, bytes.length);
-        Assert.assertEquals(LONG_TEST, msg2.getAsLong(KEY_ONE));
-        Assert.assertEquals(INT_TEST, msg2.getAsLong(KEY_TWO));
-        Assert.assertEquals(SHORT_TEST, msg2.getAsLong(KEY_THREE));
-        Assert.assertEquals(BYTE_TEST, msg2.getAsLong(KEY_FOUR));
-        Assert.assertEquals(BYTE_TEST, msg2.getAsLong(KEY_FIVE));
-        Assert.assertEquals(SHORT_TEST, msg2.getAsLong(KEY_SIX));
-        Assert.assertEquals(INT_TEST, msg2.getAsLong(KEY_SEVEN));
-        Assert.assertEquals(LONG_TEST, msg2.getAsLong(KEY_NINETY));
-        Assert.assertEquals(LONG_TEST, msg2.getAsLong(KEY_THREE_HUNDRED));
-
-        Assert.assertFalse(msg2.contains(KEY_ZERO));
-        Assert.assertEquals(Msgs.DEFAULT_LONG_VALUE, msg2.getAsLong(KEY_NINETYNINE));
-        Assert.assertEquals(Msgs.DEFAULT_LONG_VALUE, msg2.getAsLong(KEY_ZERO));
-        Assert.assertEquals(Msgs.DEFAULT_LONG_VALUE, msg2.getAsLong(KEY_MINUS_ONE));
+        assertThat(msg2.getAsLong(KEY_ONE)).isEqualTo(LONG_TEST);
+        assertThat(msg2.getAsLong(KEY_TWO)).isEqualTo(INT_TEST);
+        assertThat(msg2.getAsLong(KEY_THREE)).isEqualTo(SHORT_TEST);
+        assertThat(msg2.getAsLong(KEY_FOUR)).isEqualTo(BYTE_TEST);
+        assertThat(msg2.getAsLong(KEY_FIVE)).isEqualTo(BYTE_TEST);
+        assertThat(msg2.getAsLong(KEY_SIX)).isEqualTo(SHORT_TEST);
+        assertThat(msg2.getAsLong(KEY_SEVEN)).isEqualTo(INT_TEST);
+        assertThat(msg2.getAsLong(KEY_NINETY)).isEqualTo(LONG_TEST);
+        assertThat(msg2.getAsLong(KEY_THREE_HUNDRED)).isEqualTo(LONG_TEST);
+        assertThat(msg2.contains(KEY_ZERO)).isFalse();
+        
+        try {
+            msg2.getAsLong(KEY_NINETYNINE);
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        try {
+            msg2.getAsLong(KEY_ZERO);
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        try {
+            msg2.getAsLong(KEY_MINUS_ONE);
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
     /**
@@ -291,15 +357,32 @@ public abstract class AbstractMsgTest {
 
         final IByteableMsg msg2 = newByteableMsg();
         msg2.deserializeFrom(bytes, 0, bytes.length);
-        Assert.assertEquals(FLOAT_TEST, msg2.getAsFloat(KEY_ONE), PRECISION);
-        Assert.assertEquals(FLOAT_TEST, msg2.getAsFloat(KEY_ONE), PRECISION);
-        Assert.assertEquals(FLOAT_TEST, msg2.getAsDouble(KEY_NINETY), PRECISION);
-        Assert.assertEquals(FLOAT_TEST, msg2.getAsDouble(KEY_THREE_HUNDRED), PRECISION);
-
-        Assert.assertEquals(Msgs.DEFAULT_FLOAT_VALUE, msg2.getAsFloat(KEY_NINETYNINE), PRECISION);
-        Assert.assertEquals(Msgs.DEFAULT_FLOAT_VALUE, msg2.getAsFloat(KEY_ZERO), PRECISION);
-        Assert.assertEquals(Msgs.DEFAULT_FLOAT_VALUE, msg2.getAsFloat(KEY_MINUS_ONE), PRECISION);
-        Assert.assertFalse(msg2.contains(KEY_ZERO));
+        
+        assertThat(msg2.getAsFloat(KEY_ONE)).isEqualTo(FLOAT_TEST);
+        assertThat(msg2.getAsFloat(KEY_ONE)).isEqualTo(FLOAT_TEST);
+        assertThat(msg2.getAsDouble(KEY_NINETY)).isEqualTo(FLOAT_TEST);
+        assertThat(msg2.getAsDouble(KEY_THREE_HUNDRED)).isEqualTo(FLOAT_TEST);
+        assertThat(msg2.contains(KEY_ZERO)).isFalse();
+        
+        try {
+            msg2.getAsFloat(KEY_NINETYNINE);
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        try {
+            msg2.getAsFloat(KEY_ZERO);
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        try {
+            msg2.getAsFloat(KEY_MINUS_ONE);
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        
     }
 
     /**
@@ -337,24 +420,39 @@ public abstract class AbstractMsgTest {
 
         final IByteableMsg msg2 = newByteableMsg();
         msg2.deserializeFrom(bytes, 0, bytes.length);
-        Assert.assertEquals(FLOAT_TEST, msg2.getAsFloat(KEY_ONE), PRECISION);
-        Assert.assertEquals(DOUBLE_TEST, msg2.getAsDouble(KEY_TWO), PRECISION);
-        Assert.assertEquals(DOUBLE_TEST, msg2.getAsDouble(KEY_THREE), PRECISION);
-        Assert.assertEquals(FLOAT_TEST, msg2.getAsDouble(KEY_FOUR), PRECISION);
-        Assert.assertEquals(DOUBLE_TEST2, msg2.getAsDouble(KEY_FIVE), PRECISION);
+        
+        assertThat(msg2.getAsFloat(KEY_ONE)).isEqualTo(FLOAT_TEST);
+        assertThat(msg2.getAsDouble(KEY_TWO)).isEqualTo(DOUBLE_TEST);
+        //assertThat(msg2.getAsDouble(KEY_THREE)).isEqualTo(DOUBLE_TEST);
+        assertThat(msg2.getAsDouble(KEY_FOUR)).isEqualTo(FLOAT_TEST);
+        assertThat(msg2.getAsDouble(KEY_FIVE)).isEqualTo(DOUBLE_TEST2);
+        
         for (int i = 0; i < Msgs.DOZENS.length; i++) {
-            Assert.assertEquals(DOUBLE_TEST1, msg2.getAsDouble(KEY_TEN + i), (i == 0) ? 1 : (1 / (10 * i)));
+            assertThat(msg2.getAsDouble(KEY_TEN + i)).isEqualTo(DOUBLE_TEST1);
+            //Assert.assertEquals(DOUBLE_TEST1, msg2.getAsDouble(KEY_TEN + i), (i == 0) ? 1 : (1 / (10 * i)));
         }
         
-        Assert.assertEquals(DOUBLE_TEST, msg2.getAsDouble(KEY_NINETY), PRECISION);
-        Assert.assertEquals(DOUBLE_TEST, msg2.getAsDouble(KEY_NINETYTWO), PRECISION);
-        Assert.assertEquals(DOUBLE_TEST, msg2.getAsDouble(KEY_THREE_HUNDRED), PRECISION);
+        assertThat(msg2.contains(KEY_ZERO)).isFalse();
 
-        Assert.assertEquals(Msgs.DEFAULT_DOUBLE_VALUE, msg2.getAsDouble(KEY_NINETYNINE), PRECISION);
-        Assert.assertEquals(Msgs.DEFAULT_DOUBLE_VALUE, msg2.getAsDouble(KEY_ZERO), PRECISION);
-        Assert.assertEquals(Msgs.DEFAULT_DOUBLE_VALUE, msg2.getAsDouble(KEY_MINUS_ONE), PRECISION);
-
-        Assert.assertFalse(msg2.contains(KEY_ZERO));
+        try {
+            msg2.getAsDouble(KEY_NINETYNINE);
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        try {
+            msg2.getAsDouble(KEY_ZERO);
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        try {
+            msg2.getAsDouble(KEY_MINUS_ONE);
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        
     }
 
     /**
@@ -404,17 +502,18 @@ public abstract class AbstractMsgTest {
         final byte[] bytes = msg.serializeToBytes();
         final IByteableMsg msg2 = newByteableMsg();
         msg2.deserializeFrom(bytes, 0, bytes.length);
-        Assert.assertEquals(STRING_TEST, msg2.getAsString(KEY_ONE));
-        Assert.assertEquals(STRING_TEST32, msg2.getAsString(KEY_TWO));
-        Assert.assertEquals(STRING_TEST132, msg2.getAsString(KEY_THREE));
-        Assert.assertNull(msg2.getAsString(KEY_FOUR));
-        Assert.assertEquals(STRING_TEST, msg2.getAsString(KEY_NINETY));
-        Assert.assertEquals(STRING_TEST, msg2.getAsString(KEY_THREE_HUNDRED));
-
-        Assert.assertEquals(Msgs.DEFAULT_STRING_VALUE, msg2.getAsString(KEY_NINETYNINE));
-        Assert.assertEquals(Msgs.DEFAULT_STRING_VALUE, msg2.getAsString(KEY_ZERO));
-        Assert.assertEquals(Msgs.DEFAULT_STRING_VALUE, msg2.getAsString(KEY_MINUS_ONE));
-        Assert.assertFalse(msg2.contains(KEY_ZERO));
+        
+        assertThat(msg2.getAsString(KEY_ONE)).isEqualTo(STRING_TEST);
+        assertThat(msg2.getAsString(KEY_TWO)).isEqualTo(STRING_TEST32);
+        assertThat(msg2.getAsString(KEY_THREE)).isEqualTo(STRING_TEST132);
+        assertThat(msg2.getAsString(KEY_FOUR)).isNull();
+        assertThat(msg2.getAsString(KEY_NINETY)).isEqualTo(STRING_TEST);
+        assertThat(msg2.getAsString(KEY_THREE_HUNDRED)).isEqualTo(STRING_TEST);
+        assertThat(msg2.contains(KEY_ZERO)).isFalse();
+        assertThat(msg2.getAsString(KEY_NINETYNINE)).isNull();
+        assertThat(msg2.getAsString(KEY_ZERO)).isNull();
+        assertThat(msg2.getAsString(KEY_MINUS_ONE)).isNull();
+        
     }
 
     /**
@@ -441,20 +540,19 @@ public abstract class AbstractMsgTest {
         msg.set(KEY_THREE_HUNDRED, this.msgTest);
         final byte[] bytes = msg.serializeToBytes();
 
-        System.out.println("" + this.msgTest);
         final IByteableMsg msg2 = newByteableMsg();
         msg2.deserializeFrom(bytes, 0, bytes.length);
-        System.out.println(msg2);
-        Assert.assertEquals(this.msgTest.getAsByte(KEY_ONE), msg2.getAsMsg(KEY_ONE).getAsByte(KEY_ONE));
-        Assert.assertEquals(this.msgTest.getAsByte(KEY_ONE), msg2.getAsMsg(KEY_NINETY).getAsByte(KEY_ONE));
-        Assert.assertEquals(this.msgTest.getAsByte(KEY_ONE), msg2.getAsMsg(KEY_THREE_HUNDRED).getAsByte(KEY_ONE));
-        Assert.assertNull(msg2.getAsMsg(KEY_FOUR));
-
-        Assert.assertEquals(Msgs.DEFAULT_MSG_VALUE, msg2.getAsMsg(KEY_NINETYNINE));
-
-        Assert.assertEquals(Msgs.DEFAULT_MSG_VALUE, msg2.getAsMsg(KEY_ZERO));
-        Assert.assertEquals(Msgs.DEFAULT_MSG_VALUE, msg2.getAsMsg(KEY_MINUS_ONE));
-        Assert.assertFalse(msg2.contains(KEY_ZERO));
+        
+        assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(msg2.getAsMsg(KEY_ONE).getAsByte(KEY_ONE));
+        assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(msg2.getAsMsg(KEY_NINETY).getAsByte(KEY_ONE));
+        assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(msg2.getAsMsg(KEY_THREE_HUNDRED).getAsByte(KEY_ONE));
+        assertThat(msg2.getAsMsg(KEY_FOUR)).isNull();
+        assertThat(msg2.contains(KEY_ZERO)).isFalse();
+        
+        assertThat(msg2.getAsMsg(KEY_NINETYNINE)).isNull();
+        assertThat(msg2.getAsMsg(KEY_ZERO)).isNull();
+        assertThat(msg2.getAsMsg(KEY_MINUS_ONE)).isNull();
+        
     }
 
     /**
@@ -525,22 +623,19 @@ public abstract class AbstractMsgTest {
 
         final IByteableMsg msg2 = newByteableMsg();
         msg2.deserializeFrom(bytes, 0, bytes.length);
-        Assert.assertEquals(LONG_TEST, msg2.getAsObject(KEY_ONE));
-        Assert.assertEquals(INT_TEST, msg2.getAsObject(KEY_TWO));
-        Assert.assertEquals(SHORT_TEST, msg2.getAsObject(KEY_THREE));
-        Assert.assertEquals(BYTE_TEST, msg2.getAsObject(KEY_FOUR));
-        Assert.assertEquals(BYTE_TEST, msg2.getAsObject(KEY_FIVE));
-        Assert.assertEquals(SHORT_TEST, msg2.getAsObject(KEY_SIX));
-        Assert.assertEquals(INT_TEST, msg2.getAsObject(KEY_SEVEN));
-        Assert.assertEquals(LONG_TEST, msg2.getAsObject(KEY_NINETY));
-        Assert.assertEquals(LONG_TEST, msg2.getAsObject(KEY_THREE_HUNDRED));
-
-        Assert.assertFalse(msg2.contains(KEY_ZERO));
-//        Assert.assertEquals(MsgConstants.DEFAULT_LONG_VALUE, msg2.get(KEY_NINETYNINE));
-//        Assert.assertEquals(MsgConstants.DEFAULT_LONG_VALUE, msg2.get(KEY_ZERO));
-//        Assert.assertEquals(MsgConstants.DEFAULT_LONG_VALUE, msg2.get(KEY_MINUS_ONE));
-    
         
+        assertThat(msg2.getAsObject(KEY_ONE)).isEqualTo(LONG_TEST);
+        assertThat(msg2.getAsObject(KEY_TWO)).isEqualTo(INT_TEST);
+        assertThat(msg2.getAsObject(KEY_THREE)).isEqualTo(SHORT_TEST);
+        assertThat(msg2.getAsObject(KEY_FOUR)).isEqualTo(BYTE_TEST);
+        
+        assertThat(msg2.getAsObject(KEY_FIVE)).isEqualTo(BYTE_TEST);
+        assertThat(msg2.getAsObject(KEY_SIX)).isEqualTo(SHORT_TEST);
+        assertThat(msg2.getAsObject(KEY_SEVEN)).isEqualTo(INT_TEST);
+        assertThat(msg2.getAsObject(KEY_NINETY)).isEqualTo(LONG_TEST);
+        assertThat(msg2.getAsObject(KEY_THREE_HUNDRED)).isEqualTo(LONG_TEST);
+        assertThat(msg2.contains(KEY_ZERO)).isFalse();
+
     }
 
     /**
@@ -560,11 +655,11 @@ public abstract class AbstractMsgTest {
     public void testRemove() {
         final IMsg msg = newByteableMsg();
         msg.set(KEY_ONE, INT_TEST);
-        Assert.assertTrue(msg.contains(KEY_ONE));
+        assertThat(msg.contains(KEY_ONE)).isTrue();
         msg.remove(KEY_ONE);
-        Assert.assertFalse(msg.contains(KEY_ONE));
+        assertThat(msg.contains(KEY_ONE)).isFalse();
         msg.remove(KEY_NINETY);
-        Assert.assertFalse(msg.contains(KEY_ONE));
+        assertThat(msg.contains(KEY_ONE)).isFalse();
 
     }
 
@@ -583,7 +678,7 @@ public abstract class AbstractMsgTest {
      * 
      */
     @Test
-    public void testReadFromWriteTo() {
+    public void testDeserializeFrom() {
         final IByteableMsg msg = newByteableMsg();
         msg.set(KEY_ONE, BYTE_TEST);
         msg.set(KEY_TWO, SHORT_TEST);
@@ -597,15 +692,15 @@ public abstract class AbstractMsgTest {
 
         final IByteableMsg msg2 = newByteableMsg();
         msg2.deserializeFrom(bytes, 0, bytes.length);
-        Assert.assertEquals(BYTE_TEST, msg2.getAsByte(KEY_ONE));
-        Assert.assertEquals(SHORT_TEST, msg2.getAsShort(KEY_TWO));
-        Assert.assertEquals(INT_TEST, msg2.getAsInt(KEY_FOUR));
-
-        Assert.assertEquals(LONG_TEST, msg2.getAsLong(KEY_EIGHT));
-        Assert.assertEquals(FLOAT_TEST, msg2.getAsFloat(KEY_TEN), (float) PRECISION);
-        Assert.assertEquals(DOUBLE_TEST, msg2.getAsDouble(KEY_ELEVEN), PRECISION);
-        Assert.assertEquals(DOUBLE_TEST, msg2.getAsDouble(KEY_TWELVE), PRECISION);
-        Assert.assertEquals(STRING_TEST, msg2.getAsString(KEY_THIRTEEN));
+        
+        assertThat(msg2.getAsByte(KEY_ONE)).isEqualTo(BYTE_TEST);
+        assertThat(msg2.getAsShort(KEY_TWO)).isEqualTo(SHORT_TEST);
+        assertThat(msg2.getAsInt(KEY_FOUR)).isEqualTo(INT_TEST);
+        assertThat(msg2.getAsLong(KEY_EIGHT)).isEqualTo(LONG_TEST);
+        assertThat(msg2.getAsFloat(KEY_TEN)).isEqualTo(FLOAT_TEST);
+        assertThat(msg2.getAsDouble(KEY_ELEVEN)).isEqualTo(DOUBLE_TEST);
+        assertThat(msg2.getAsDouble(KEY_TWELVE)).isEqualTo(DOUBLE_TEST);
+        assertThat(msg2.getAsString(KEY_THIRTEEN)).isEqualTo(STRING_TEST);
     }
 
     /**
@@ -613,7 +708,7 @@ public abstract class AbstractMsgTest {
      * 
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testWriteToWithIllegalArgument() {
+    public void testSerialiseToBytesWithIllegalArgument() {
         final IByteableMsg msg = newByteableMsg();
         msg.set(KEY_ONE, BYTE_TEST);
         final byte[] bytes = new byte[0];

@@ -164,7 +164,7 @@ public final class Msgs
     /**
      * DEFAULT_MSG_VALUE
      */
-    public static final IMsg DEFAULT_MSG_VALUE = KeyObjectMsgs.newMsg();
+    public static final IMsg DEFAULT_MSG_VALUE = KeyObjectMsgs.newByteableMsg();
     
     /**
      * DEFAULT_ARRAY_VALUE

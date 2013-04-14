@@ -19,7 +19,7 @@ public final class KeyObjectMsgs {
      *
      * @return
      */
-    public static IByteableMsg newMsg() {
+    public static IByteableMsg newByteableMsg() {
 	return new KeyObjectMsg(DEFAULT_MAX_KEY);
     }
     
@@ -30,7 +30,7 @@ public final class KeyObjectMsgs {
      * @param keyMax
      * @return
      */
-    public static IByteableMsg newMsg(final int keyMax) {
+    public static IByteableMsg newByteableMsg(final int keyMax) {
         return new KeyObjectMsg(keyMax);
     }
 
