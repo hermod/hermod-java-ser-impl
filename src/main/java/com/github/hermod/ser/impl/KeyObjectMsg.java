@@ -7,22 +7,41 @@ import static com.github.hermod.ser.Types.INTEGER_TYPE;
 import static com.github.hermod.ser.Types.MSG_TYPE;
 import static com.github.hermod.ser.Types.NULL_TYPE;
 import static com.github.hermod.ser.Types.STRING_ISO_8859_1_TYPE;
-import static com.github.hermod.ser.Types.STRING_UTF16_TYPE;
+import static com.github.hermod.ser.Types.STRING_UTF_16_TYPE;
 import static com.github.hermod.ser.Types.TYPE_MASK;
+import static com.github.hermod.ser.Types.UTF_16_CHARSET;
 import static com.github.hermod.ser.impl.Msgs.BYTE_TYPE;
 import static com.github.hermod.ser.impl.Msgs.DEFAULT_MAX_KEY;
 import static com.github.hermod.ser.impl.Msgs.DEFAULT_VALUE;
 import static com.github.hermod.ser.impl.Msgs.DOUBLE_TYPE;
 import static com.github.hermod.ser.impl.Msgs.DOZENS;
+import static com.github.hermod.ser.impl.Msgs.EIGHT;
+import static com.github.hermod.ser.impl.Msgs.FIFTY_SIX;
+import static com.github.hermod.ser.impl.Msgs.FIVE;
 import static com.github.hermod.ser.impl.Msgs.FIVE_BITS_DECIMAL_TYPE;
 import static com.github.hermod.ser.impl.Msgs.FLOAT_TYPE;
 import static com.github.hermod.ser.impl.Msgs.FORCE_ENCODING_ZERO_ON_2BITS;
+import static com.github.hermod.ser.impl.Msgs.FORTY;
+import static com.github.hermod.ser.impl.Msgs.FORTY_EIGHT;
+import static com.github.hermod.ser.impl.Msgs.FOUR;
 import static com.github.hermod.ser.impl.Msgs.INT_TYPE;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_AN_INT;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_A_BIT;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_MASK;
 import static com.github.hermod.ser.impl.Msgs.LONG_TYPE;
+import static com.github.hermod.ser.impl.Msgs.ZERO;
+import static com.github.hermod.ser.impl.Msgs.ONE;
+import static com.github.hermod.ser.impl.Msgs.SEVEN;
 import static com.github.hermod.ser.impl.Msgs.SHORT_TYPE;
+import static com.github.hermod.ser.impl.Msgs.SIX;
+import static com.github.hermod.ser.impl.Msgs.SIXTEEN;
+import static com.github.hermod.ser.impl.Msgs.THIRTY_TWO;
+import static com.github.hermod.ser.impl.Msgs.THREE;
+import static com.github.hermod.ser.impl.Msgs.TWENTY_FOUR;
+import static com.github.hermod.ser.impl.Msgs.TWO;
+import static com.github.hermod.ser.impl.Msgs.XFF;
+import static com.github.hermod.ser.EPrecision.HALF;
+
 
 import java.nio.ByteBuffer;
 
@@ -45,6 +64,11 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     private long[] primitiveValues;
     private Object[] objectValues;
 
+    
+    /**
+     * ERROR_WHEN_KEY_NOT_PRESENT
+     */
+    private static final String ERROR_WHEN_KEY_NOT_PRESENT = "The key=%s is not present for type asked."; 
     /**
      * Constructor.
      * 
@@ -82,8 +106,13 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             System.arraycopy(keyObjectMsg.primitiveValues, 0, this.primitiveValues, 0, length);
             System.arraycopy(keyObjectMsg.objectValues, 0, this.objectValues, 0, length);
         } else {
-            //TODO copy or not .getAll();
-            setAll(aMsg);
+            // TODO to optimize with getType
+            if (aMsg != null) {
+                final int[] keys = aMsg.getKeys();
+                for (int i = 0; i < keys.length; i++) {
+                    set(keys[i], aMsg.getAsObject(keys[i]));
+                }
+            }
         }
     }
     
@@ -93,7 +122,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * 
      * @param aKeyMax
      */
-    private final void removeAll(final int aKeyMax) {
+    private void removeAll(final int aKeyMax) {
         if (aKeyMax > this.primitiveValues.length) {
             this.types = new byte[aKeyMax + 1];
             this.primitiveValues = new long[aKeyMax + 1];
@@ -126,19 +155,19 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * 
      * @param keyMax
      */
-    private final void increaseKeyMax(final int keyMax) {
+    private void increaseKeyMax(final int keyMax) {
         if (keyMax < 0) {
-            throw new IllegalArgumentException("The key=" + keyMax + " must be positive.");
+            throw new IllegalArgumentException("The maxKey=" + keyMax + " must be positive.");
         } else {
-            final byte[] types = new byte[keyMax + 1];
-            final long[] primitiveValues = new long[keyMax + 1];
-            final Object[] objectValues = new Object[keyMax + 1];
-            System.arraycopy(this.types, 0, types, 0, this.types.length);
-            System.arraycopy(this.primitiveValues, 0, primitiveValues, 0, this.primitiveValues.length);
-            System.arraycopy(this.objectValues, 0, objectValues, 0, this.objectValues.length);
-            this.types = types;
-            this.primitiveValues = primitiveValues;
-            this.objectValues = objectValues;
+            final byte[] destTypes = new byte[keyMax + 1];
+            final long[] destPrimitiveValues = new long[keyMax + 1];
+            final Object[] destObjectValues = new Object[keyMax + 1];
+            System.arraycopy(this.types, 0, destTypes, 0, this.types.length);
+            System.arraycopy(this.primitiveValues, 0, destPrimitiveValues, 0, this.primitiveValues.length);
+            System.arraycopy(this.objectValues, 0, destObjectValues, 0, this.objectValues.length);
+            this.types = destTypes;
+            this.primitiveValues = destPrimitiveValues;
+            this.objectValues = destObjectValues;
         }
     }
 
@@ -169,7 +198,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
         }
-        throw new IllegalArgumentException("The key=" + aKey + " is not present.");
+        throw new IllegalArgumentException(String.format(ERROR_WHEN_KEY_NOT_PRESENT, aKey));
     }
 
     /**
@@ -185,7 +214,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
         }
-        throw new IllegalArgumentException("The key=" + aKey + " is not present.");
+        throw new IllegalArgumentException(String.format(ERROR_WHEN_KEY_NOT_PRESENT, aKey));
     }
 
     /**
@@ -201,9 +230,9 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
         }
-        throw new IllegalArgumentException("The key=" + aKey + " is not present.");
+        throw new IllegalArgumentException(String.format(ERROR_WHEN_KEY_NOT_PRESENT, aKey));
     }
-
+    
     /**
      * (non-Javadoc)
      * 
@@ -217,7 +246,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
         }
-        throw new IllegalArgumentException("The key=" + aKey + " is not present.");
+        throw new IllegalArgumentException(String.format(ERROR_WHEN_KEY_NOT_PRESENT, aKey));
     }
 
     /**
@@ -233,7 +262,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
         }
-        throw new IllegalArgumentException("The key=" + aKey + " is not present.");
+        throw new IllegalArgumentException(String.format(ERROR_WHEN_KEY_NOT_PRESENT, aKey));
     }
 
     /**
@@ -250,7 +279,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
         }
-        throw new IllegalArgumentException("The key=" + aKey + " is not present.");
+        throw new IllegalArgumentException(String.format(ERROR_WHEN_KEY_NOT_PRESENT, aKey));
     }
 
     /**
@@ -264,12 +293,12 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
         try {
             switch (this.types[aKey]) {
             // case TYPE_3BITS_DECIMAL:
-            // return (this.primitiveValues[aKey] >> 8) / DOZENS[(int) (0xFF &
+            // return (this.primitiveValues[aKey] >> 8) / DOZENS[(int) (XFF &
             // this.primitiveValues[aKey])];
             case FIVE_BITS_DECIMAL_TYPE:
-                // return Precisions.fromNbDigit((int) (0xFF & this.primitiveValues[aKey])).calculateDouble((this.primitiveValues[aKey] >> 8));
+                // return Precisions.fromNbDigit((int) (XFF & this.primitiveValues[aKey])).calculateDouble((this.primitiveValues[aKey] >> 8));
                 return getAs5BitsDecimal(aKey);
-                // return (this.primitiveValues[aKey] >> 8) / DOZENS[(int) (0xFF & this.primitiveValues[aKey])];
+                // return (this.primitiveValues[aKey] >> 8) / DOZENS[(int) (XFF & this.primitiveValues[aKey])];
             case DOUBLE_TYPE:
                 return Double.longBitsToDouble(this.primitiveValues[aKey]);
             case FLOAT_TYPE:
@@ -278,7 +307,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
         }
-        throw new IllegalArgumentException("The key=" + aKey + " is not present.");
+        throw new IllegalArgumentException(String.format(ERROR_WHEN_KEY_NOT_PRESENT, aKey));
     }
 
     /**
@@ -287,31 +316,31 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @param aKey
      * @return
      */
-    private final double getAs5BitsDecimal(final int aKey) {
-        final int digit = (int) (0xFF & this.primitiveValues[aKey]);
-        final double allDigit = (this.primitiveValues[aKey] >> 8);
-        // return Precisions.fromNbDigit((int) (0xFF & this.primitiveValues[aKey])).calculateDouble((this.primitiveValues[aKey] >> 8));
+    private double getAs5BitsDecimal(final int aKey) {
+        final int digit = (int) (XFF & this.primitiveValues[aKey]);
+        final double allDigit = (this.primitiveValues[aKey] >> EIGHT);
+        // return Precisions.fromNbDigit((int) (XFF & this.primitiveValues[aKey])).calculateDouble((this.primitiveValues[aKey] >> EIGHT));
         switch (digit) {
-        case 0:
+        case ZERO:
             return allDigit;
-        case 1:
-            return allDigit * 0.1;
-        case 2:
-            return allDigit * 0.01;
-        case 3:
-            return allDigit * 0.001;
-        case 4:
-            return allDigit * 0.0001;
-        case 5:
-            return allDigit * 0.00001;
-        case 6:
-            return allDigit * 0.000001;
-        case 7:
-            return allDigit * 0.0000001;
-        case 8:
-            return allDigit * 0.00000001;
+        case ONE:
+            return allDigit * EPrecision.TENTHS.getPrecision();
+        case TWO:
+            return allDigit * EPrecision.HUNDREDTHS.getPrecision();
+        case THREE:
+            return allDigit * EPrecision.THOUSANDTHS.getPrecision();
+        case FOUR:
+            return allDigit * EPrecision.TEN_THOUSANDTHS.getPrecision();
+        case FIVE:
+            return allDigit * EPrecision.HUNDRED_THOUSANDTHS.getPrecision();
+        case SIX:
+            return allDigit * EPrecision.MILLIONTHS.getPrecision();
+        case SEVEN:
+            return allDigit * EPrecision.TEN_MILLIONTHS.getPrecision();
+        case EIGHT:
+            return allDigit * EPrecision.HUNDRED_MILLIONTHS.getPrecision();
         default:
-            throw new IllegalArgumentException("");
+            return EPrecision.valueOf(digit).calculateIntegerMantissa(allDigit);
         }
     }
 
@@ -336,9 +365,9 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final IMsg getAsMsg(final int aKey) {
-        //TODO copy or not
         try {
-            return ((this.types[aKey] & TYPE_MASK) == MSG_TYPE) ? (IMsg) this.objectValues[aKey] : null;
+            
+            return ((this.types[aKey] & TYPE_MASK) == MSG_TYPE && this.objectValues[aKey] != null) ? new KeyObjectMsg((IMsg) this.objectValues[aKey]) : null;
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
         }
@@ -409,7 +438,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             case STRING_ISO_8859_1_TYPE:
                 return aClazz.cast(getAsString(aKey));
 
-            case STRING_UTF16_TYPE:
+            case STRING_UTF_16_TYPE:
                 return aClazz.cast(getAsString(aKey));
 
             case MSG_TYPE:
@@ -438,9 +467,15 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final boolean[] getAsBooleans(final int aKey) {
-        //TODO copy or not
         try {
-            return ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof boolean[])) ? (boolean[]) this.objectValues[aKey] : null;
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof boolean[])) {
+                final boolean[] booleans =  (boolean[]) this.objectValues[aKey];
+                final boolean[] results = new boolean[booleans.length];
+                System.arraycopy(booleans, 0, results, 0, booleans.length);
+                return results;
+            } else {
+                return null;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
         }
@@ -453,9 +488,15 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final byte[] getAsBytes(final int aKey) {
-        //TODO copy or not
         try {
-            return ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof byte[])) ? (byte[]) this.objectValues[aKey] : null;
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof byte[])) {
+                final byte[] bytes = (byte[]) this.objectValues[aKey];
+                final byte[] results = new byte[bytes.length];
+                System.arraycopy(bytes, 0, results, 0, bytes.length);
+                return results;
+            } else {
+                return null;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
         }
@@ -468,9 +509,15 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final short[] getAsShorts(final int aKey) {
-        //TODO copy or not
         try {
-            return ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof short[])) ? (short[]) this.objectValues[aKey] : null;
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof short[])) {
+                final short[] shorts = (short[]) this.objectValues[aKey];
+                final short[] results = new short[shorts.length];
+                System.arraycopy(shorts, 0, results, 0, shorts.length);
+                return results;
+            } else {
+                return null;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
         }
@@ -483,9 +530,15 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final int[] getAsInts(final int aKey) {
-        //TODO copy or not
         try {
-            return ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof int[])) ? (int[]) this.objectValues[aKey] : null;
+            if (((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof int[]))) {
+                final int[] ints = (int[]) this.objectValues[aKey];
+                final int[] results = new int[ints.length];
+                System.arraycopy(ints, 0, results, 0, ints.length);
+                return results;
+            } else {
+                return null;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
         }
@@ -498,9 +551,15 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final long[] getAsLongs(final int aKey) {
-        //TODO copy or not
         try {
-            return ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof long[])) ? (long[]) this.objectValues[aKey] : null;
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof long[])) {
+                final long[] longs = (long[]) this.objectValues[aKey];
+                final long[] results = new long[longs.length];
+                System.arraycopy(longs, 0, results, 0, longs.length);
+                return results;
+            } else {
+                return null;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
         }
@@ -513,9 +572,15 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final float[] getAsFloats(final int aKey) {
-        //TODO copy or not
         try {
-            return ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof float[])) ? (float[]) this.objectValues[aKey] : null;
+            if (((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof float[]))) {
+                final float[] floats = (float[]) this.objectValues[aKey];
+                final float[] results = new float[floats.length];
+                System.arraycopy(floats, 0, results, 0, floats.length);
+                return results;
+            } else {
+                return null;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
         }
@@ -528,9 +593,15 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final double[] getAsDoubles(final int aKey) {
-        //TODO copy or not
         try {
-            return ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof double[])) ? (double[]) this.objectValues[aKey] : null;
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof double[])) {
+                final double[] doubles = (double[]) this.objectValues[aKey];
+                final double[] results = new double[doubles.length];
+                System.arraycopy(doubles, 0, results, 0, doubles.length);
+                return results;
+            } else {
+                return null;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
         }
@@ -543,9 +614,15 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final String[] getAsStrings(final int aKey) {
-        //TODO copy or not
         try {
-            return ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof String[])) ? (String[]) this.objectValues[aKey] : null;
+            if (((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof String[]))) {
+                final String[] strings = (String[]) this.objectValues[aKey];
+                final String[] results = new String[strings.length];
+                System.arraycopy(strings, 0, results, 0, strings.length);
+                return results;
+            } else {
+                return null;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
         }
@@ -558,8 +635,15 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final IMsg[] getAsMsgs(final int aKey) {
-        //TODO copy or not
         try {
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof IMsg[])) {
+                final IMsg[] msgs = (IMsg[]) this.objectValues[aKey];
+                final IMsg[] results = new KeyObjectMsg[msgs.length];
+                for (int i = 0; i < msgs.length; i++) {
+                    results[i] = new KeyObjectMsg(msgs[i]);
+                }
+                return results;
+            }
             return ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof IMsg[])) ? (IMsg[]) this.objectValues[aKey] : null;
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
@@ -573,7 +657,19 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final void getAsMsgs(final int aKey, IMsg... aDestMsgs) {
-        // TODO Auto-generated method stub
+        try {
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof IMsg[])) {
+                final IMsg[] msgs = (IMsg[]) this.objectValues[aKey];
+                if (msgs.length == aDestMsgs.length) {
+                    for (int i = 0; i < msgs.length; i++) {
+                        aDestMsgs[i].setAll(msgs[i]);
+                    }
+                } else {
+                    throw new IllegalArgumentException("The destMsgs with length=" + aDestMsgs.length + " must be have the same field array length=" + msgs.length + ". Use getArrayLength() to know the length before call this method.");
+                }
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+        }
     }
 
     /**
@@ -583,7 +679,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final IMsg getAll() {
-        // TODO Auto-generated method stub
+        // TODO to implement
+        //throw new UnsupportedOperationException("Not yet implemented");
         return null;
     }
 
@@ -813,23 +910,22 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * 
      * @see org.fame.z.intmap.WriteIntMap#set(int, double, int)
      */
-    // TODO check nbDigit via enum or the
     @Override
     public final void set(final int aKey, final double aDouble, final int nbDigit) {
         try {
-            final double d = (aDouble * DOZENS[nbDigit]) + 0.5;
+            final double d = (aDouble * DOZENS[nbDigit]) + HALF;
 
             // precision.HUNDREDTHS.calculateIntegerMantissa(aValue);
             // if (d >= Short.MIN_VALUE && d <= Short.MAX_VALUE)
             // {
-            // this.primitiveValues[aKey] = (nbDigit) | (((short) (d)) << 8);
+            // this.primitiveValues[aKey] = (nbDigit) | (((short) (d)) << EIGHT);
             // this.types[aKey] = TYPE_3BITS_DECIMAL;
             // }
             // else
             {
                 if (d >= Integer.MIN_VALUE && d <= Integer.MAX_VALUE) {
                     try {
-                        this.primitiveValues[aKey] = (nbDigit) | (((long) (d)) << 8);
+                        this.primitiveValues[aKey] = (nbDigit) | (((long) (d)) << EIGHT);
                         this.types[aKey] = FIVE_BITS_DECIMAL_TYPE;
                     } catch (final ArrayIndexOutOfBoundsException e) {
                         increaseKeyMax(aKey);
@@ -840,7 +936,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                 }
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("NbDigit must be between 0 and " + (DOZENS.length - 1));
+            throw new IllegalArgumentException("NbDigit must be between 0 and " + (DOZENS.length - 1), e);
         }
     }
 
@@ -852,9 +948,9 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     @Override
     public final void set(final int aKey, final double aDouble, final EPrecision aPrecision) {
         final double mantissa = aPrecision.calculateIntegerMantissa(aDouble);
-        if (mantissa != Double.NaN) {
+        if (!Double.isNaN(mantissa)) {
             try {
-                this.primitiveValues[aKey] = (aPrecision.getNbDigit()) | (((long) (mantissa)) << 8);
+                this.primitiveValues[aKey] = (aPrecision.getNbDigit()) | (((long) (mantissa)) << EIGHT);
                 this.types[aKey] = FIVE_BITS_DECIMAL_TYPE;
             } catch (final ArrayIndexOutOfBoundsException e) {
                 increaseKeyMax(aKey);
@@ -872,15 +968,33 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final void set(final int aKey, final String aString) {
+        //TODO
         try {
             this.objectValues[aKey] = aString;
-            // TODO to change into STRING_TYPE
             this.types[aKey] = STRING_ISO_8859_1_TYPE;
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aString);
         }
     }
+    
+    /**
+     * set.
+     *
+     * @param aKey
+     * @param aString
+     * @param stringType
+     */
+    private void set(final int aKey, final String aString, final byte stringType) {
+        try {
+            this.objectValues[aKey] = aString;
+            this.types[aKey] = stringType;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aString);
+        }
+    }
+    
 
     /**
      * (non-Javadoc)
@@ -889,16 +1003,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final void set(final int aKey, final String aString, final boolean aForceIso88591Charset) {
-        if (aForceIso88591Charset) {
-            try {
-                this.objectValues[aKey] = aString;
-                this.types[aKey] = STRING_ISO_8859_1_TYPE;
-            } catch (final ArrayIndexOutOfBoundsException e) {
-                increaseKeyMax(aKey);
-                set(aKey, aString);
-            }
+        if (aForceIso88591Charset) { 
+            set(aKey, aString, STRING_ISO_8859_1_TYPE);
         } else {
-            set(aKey, aString);
+            set(aKey, aString, STRING_UTF_16_TYPE);
         }
     }
 
@@ -909,7 +1017,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final void set(final int aKey, final IMsg aMsg) {
-        //Copy or not
         try {
             this.objectValues[aKey] = aMsg;
             this.types[aKey] = MSG_TYPE;
@@ -927,7 +1034,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     public final void set(final int aKey, final Object[] aObjectArray) {
         try {
             this.objectValues[aKey] = aObjectArray;
-            this.types[aKey] = ARRAY_FIXED_VALUE_TYPE;
+            this.types[aKey] = ARRAY_VARIABLE_VALUE_TYPE;
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aObjectArray);
@@ -982,10 +1089,12 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final void setAll(final IMsg aMsg) {
-        // TODO to optimize
-        final int[] keys = aMsg.getKeys();
-        for (int i = 0; i < keys.length; i++) {
-            set(keys[i], aMsg.getAsObject(keys[i]));
+        // TODO to optimize with getType
+        if (aMsg != null) {
+            final int[] keys = aMsg.getKeys();
+            for (int i = 0; i < keys.length; i++) {
+                set(keys[i], aMsg.getAsObject(keys[i]));
+            }
         }
     }
 
@@ -996,7 +1105,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final void set(final int aKey, final boolean... aBooleans) {
-        //TODO copy or not
         try {
             this.objectValues[aKey] = aBooleans;
             this.types[aKey] = ARRAY_FIXED_VALUE_TYPE;
@@ -1013,7 +1121,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final void set(final int aKey, final byte... aBytes) {
-        //TODO copy or not
         try {
             this.objectValues[aKey] = aBytes;
             this.types[aKey] = ARRAY_FIXED_VALUE_TYPE;
@@ -1030,7 +1137,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final void set(final int aKey, final short... aShorts) {
-        //TODO copy or not
         try {
             this.objectValues[aKey] = aShorts;
             this.types[aKey] = ARRAY_FIXED_VALUE_TYPE;
@@ -1047,7 +1153,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final void set(final int aKey, final int... aInts) {
-        //TODO copy or not
         try {
             this.objectValues[aKey] = aInts;
             this.types[aKey] = ARRAY_FIXED_VALUE_TYPE;
@@ -1064,7 +1169,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final void set(final int aKey, final long... aLongs) {
-        //TODO copy or not
         try {
             this.objectValues[aKey] = aLongs;
             this.types[aKey] = ARRAY_FIXED_VALUE_TYPE;
@@ -1081,7 +1185,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final void set(final int aKey, final float... aFloats) {
-        //TODO copy or not
         try {
             this.objectValues[aKey] = aFloats;
             this.types[aKey] = ARRAY_FIXED_VALUE_TYPE;
@@ -1098,7 +1201,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final void set(final int aKey, final double... aDoubles) {
-        //TODO copy or not
         try {
             this.objectValues[aKey] = aDoubles;
             this.types[aKey] = ARRAY_FIXED_VALUE_TYPE;
@@ -1132,7 +1234,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public void set(final int aKey, final IMsg... aMsgs) {
-        //TODO copy or not
         try {
             this.objectValues[aKey] = aMsgs;
             this.types[aKey] = ARRAY_VARIABLE_VALUE_TYPE;
@@ -1171,7 +1272,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @return
      */
     //TODO potential for to 1, 2, 4 bits
-    private final int writeVariableLength(final byte[] bytes, int pos, final int length, boolean forceEncodingZeroOn2Bits) {
+    private int writeVariableLength(final byte[] bytes, int pos, final int length, boolean forceEncodingZeroOn2Bits) {
         if (length < LENGTH_ENCODED_IN_A_BIT && !(forceEncodingZeroOn2Bits && length == 0)) {
             bytes[pos++] |= (byte) length;
         } else {
@@ -1179,9 +1280,36 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             bytes[pos++] |= (byte) ((isEncodedInAnInt) ? LENGTH_ENCODED_IN_AN_INT : LENGTH_ENCODED_IN_A_BIT);
             bytes[pos++] = (byte) (length);
             if (isEncodedInAnInt) {
-                bytes[pos++] = (byte) (length >> 8);
-                bytes[pos++] = (byte) (length >> 16);
-                bytes[pos++] = (byte) (length >> 24);
+                bytes[pos++] = (byte) (length >> EIGHT);
+                bytes[pos++] = (byte) (length >> SIXTEEN);
+                bytes[pos++] = (byte) (length >> TWENTY_FOUR);
+            }
+        }
+        return pos;
+    }
+    
+    
+    /**
+     * writeVariableLength2.
+     *
+     * @param bytes
+     * @param pos
+     * @param length
+     * @param forceEncodingAtLeastOn
+     * @return
+     */
+    private int writeVariableLength(final byte[] bytes, int pos, final int length, final int forceEncodingAtLeastOn) {
+        //TODO implement it
+        if (length < LENGTH_ENCODED_IN_A_BIT && !(forceEncodingAtLeastOn == 0 && length == 0)) {
+            bytes[pos++] |= (byte) length;
+        } else {
+            final boolean isEncodedInAnInt = (length > Byte.MAX_VALUE);
+            bytes[pos++] |= (byte) ((isEncodedInAnInt) ? LENGTH_ENCODED_IN_AN_INT : LENGTH_ENCODED_IN_A_BIT);
+            bytes[pos++] = (byte) (length);
+            if (isEncodedInAnInt) {
+                bytes[pos++] = (byte) (length >> EIGHT);
+                bytes[pos++] = (byte) (length >> SIXTEEN);
+                bytes[pos++] = (byte) (length >> TWENTY_FOUR);
             }
         }
         return pos;
@@ -1193,9 +1321,23 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @param length
      * @return
      */
-    private final int getVariableLength(final int length, final boolean forceEncodingZeroOn2Bits) {
-        return (length < LENGTH_ENCODED_IN_A_BIT && !(forceEncodingZeroOn2Bits && length == 0)) ? 1 : (length <= Byte.MAX_VALUE) ? 2 : 5;
+    private int getVariableLength(final int length, final boolean forceEncodingZeroOn2Bits) {
+        return (length < LENGTH_ENCODED_IN_A_BIT && !(forceEncodingZeroOn2Bits && length == 0)) ? ONE : (length <= Byte.MAX_VALUE) ? TWO : FIVE;
     }
+    
+    
+    /**
+     * getVariableLength.
+     *
+     * @param length
+     * @param forceEncodingAtLeastOn
+     * @return
+     */
+    //TODO implement it
+    private int getVariableLength(final int length, final int forceEncodingAtLeastOn) {
+        return (length < LENGTH_ENCODED_IN_A_BIT && !(forceEncodingAtLeastOn == 0 && length == 0)) ? ONE : (length <= Byte.MAX_VALUE) ? TWO : FIVE;
+    }
+
 
     /**
      * getValueLength (with the length of the type).
@@ -1204,7 +1346,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @return
      */
     // TODO to optimize
-    private final int getValueLength(final int key) {
+    private int getValueLength(final int key) {
         final int lengthMask = (this.types[key] & LENGTH_MASK);
         // Fixed value
         if (lengthMask != 0) {
@@ -1214,12 +1356,12 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             switch (this.types[key]) {
             // TODO refactor it
             case STRING_ISO_8859_1_TYPE:
-                final int stringAsciilength = (this.objectValues[key] != null) ? ((String) this.objectValues[key]).length() : 0;
-                return getVariableLength(stringAsciilength, FORCE_ENCODING_ZERO_ON_2BITS) + stringAsciilength;
+                final int stringIso88591length = (this.objectValues[key] != null) ? ((String) this.objectValues[key]).length() : 0;
+                return getVariableLength(stringIso88591length, FORCE_ENCODING_ZERO_ON_2BITS) + stringIso88591length;
              
-            case STRING_UTF16_TYPE:
-                final int stringlength = (this.objectValues[key] != null) ? ((String) this.objectValues[key]).getBytes().length : 0;
-                return getVariableLength(stringlength, FORCE_ENCODING_ZERO_ON_2BITS) + stringlength;
+            case STRING_UTF_16_TYPE:
+                final int stringUtf16length = (this.objectValues[key] != null) ? ((String) this.objectValues[key]).getBytes(UTF_16_CHARSET).length : 0;
+                return getVariableLength(stringUtf16length, FORCE_ENCODING_ZERO_ON_2BITS) + stringUtf16length;
                 
             case MSG_TYPE:
                 // TODO change to Serializer.getSize();
@@ -1286,7 +1428,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * 
      * @return length
      */
-    // TODO to optimize
     @Override
     public final int getLength() {
         int length = 0;
@@ -1327,7 +1468,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     public final int serializeToBytes(final byte[] bytes, final int offset) {
 
         // Calculate length
-        // TODO to optimize with a try catch
+        // TODO to optimize with a try catch, generally we know (called by serializeToBytes())
         final int length = getLength();
         if (bytes.length - offset < length) {
             throw new IllegalArgumentException("Bytes array too small from the offset");
@@ -1355,42 +1496,42 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                 case SHORT_TYPE:
                     final int aShort = (short) this.primitiveValues[i];
                     bytes[pos++] = (byte) (aShort);
-                    bytes[pos++] = (byte) (aShort >> 8);
+                    bytes[pos++] = (byte) (aShort >> EIGHT);
                     break;
 
                 case INT_TYPE:
                     final int aInt = (int) this.primitiveValues[i];
                     bytes[pos++] = (byte) (aInt);
-                    bytes[pos++] = (byte) (aInt >> 8);
-                    bytes[pos++] = (byte) (aInt >> 16);
-                    bytes[pos++] = (byte) (aInt >> 24);
+                    bytes[pos++] = (byte) (aInt >> EIGHT);
+                    bytes[pos++] = (byte) (aInt >> SIXTEEN);
+                    bytes[pos++] = (byte) (aInt >> TWENTY_FOUR);
                     break;
 
                 case DOUBLE_TYPE:
                     final long longBits = this.primitiveValues[i];
                     bytes[pos++] = (byte) (longBits);
-                    bytes[pos++] = (byte) (longBits >> 8);
-                    bytes[pos++] = (byte) (longBits >> 16);
-                    bytes[pos++] = (byte) (longBits >> 24);
-                    bytes[pos++] = (byte) (longBits >> 32);
-                    bytes[pos++] = (byte) (longBits >> 40);
-                    bytes[pos++] = (byte) (longBits >> 48);
-                    bytes[pos++] = (byte) (longBits >> 56);
+                    bytes[pos++] = (byte) (longBits >> EIGHT);
+                    bytes[pos++] = (byte) (longBits >> SIXTEEN);
+                    bytes[pos++] = (byte) (longBits >> TWENTY_FOUR);
+                    bytes[pos++] = (byte) (longBits >> THIRTY_TWO);
+                    bytes[pos++] = (byte) (longBits >> FORTY);
+                    bytes[pos++] = (byte) (longBits >> FORTY_EIGHT);
+                    bytes[pos++] = (byte) (longBits >> FIFTY_SIX);
                     break;
 
                 case FIVE_BITS_DECIMAL_TYPE:
-                    final int anInt = (int) (this.primitiveValues[i] >> 8);
+                    final int anInt = (int) (this.primitiveValues[i] >> EIGHT);
                     bytes[pos++] = (byte) (anInt);
-                    bytes[pos++] = (byte) (anInt >> 8);
-                    bytes[pos++] = (byte) (anInt >> 16);
-                    bytes[pos++] = (byte) (anInt >> 24);
+                    bytes[pos++] = (byte) (anInt >> EIGHT);
+                    bytes[pos++] = (byte) (anInt >> SIXTEEN);
+                    bytes[pos++] = (byte) (anInt >> TWENTY_FOUR);
                     bytes[pos++] = (byte) (this.primitiveValues[i]);
                     break;
 
                 // case 3BITS_DECIMAL:
-                // final short aShort1 = (short) (this.primitiveValues[i] >> 8);
+                // final short aShort1 = (short) (this.primitiveValues[i] >> EIGHT);
                 // bytes[pos++] = (byte) (aShort1);
-                // bytes[pos++] = (byte) (aShort1 >> 8);
+                // bytes[pos++] = (byte) (aShort1 >> EIGHT);
                 // bytes[pos++] = (byte) (this.primitiveValues[i]);
                 //
                 // break;
@@ -1398,21 +1539,21 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                 case FLOAT_TYPE:
                     final int intBits = (int) (this.primitiveValues[i]);
                     bytes[pos++] = (byte) (intBits);
-                    bytes[pos++] = (byte) (intBits >> 8);
-                    bytes[pos++] = (byte) (intBits >> 16);
-                    bytes[pos++] = (byte) (intBits >> 24);
+                    bytes[pos++] = (byte) (intBits >> EIGHT);
+                    bytes[pos++] = (byte) (intBits >> SIXTEEN);
+                    bytes[pos++] = (byte) (intBits >> TWENTY_FOUR);
                     break;
 
                 case LONG_TYPE:
                     final long aLong = this.primitiveValues[i];
                     bytes[pos++] = (byte) (aLong);
-                    bytes[pos++] = (byte) (aLong >> 8);
-                    bytes[pos++] = (byte) (aLong >> 16);
-                    bytes[pos++] = (byte) (aLong >> 24);
-                    bytes[pos++] = (byte) (aLong >> 32);
-                    bytes[pos++] = (byte) (aLong >> 40);
-                    bytes[pos++] = (byte) (aLong >> 48);
-                    bytes[pos++] = (byte) (aLong >> 56);
+                    bytes[pos++] = (byte) (aLong >> EIGHT);
+                    bytes[pos++] = (byte) (aLong >> SIXTEEN);
+                    bytes[pos++] = (byte) (aLong >> TWENTY_FOUR);
+                    bytes[pos++] = (byte) (aLong >> THIRTY_TWO);
+                    bytes[pos++] = (byte) (aLong >> FORTY);
+                    bytes[pos++] = (byte) (aLong >> FORTY_EIGHT);
+                    bytes[pos++] = (byte) (aLong >> FIFTY_SIX);
                     break;
 
                 case STRING_ISO_8859_1_TYPE:
@@ -1426,10 +1567,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                     }
                     break;
                     
-                case STRING_UTF16_TYPE:
+                case STRING_UTF_16_TYPE:
                     final String aString = (String) this.objectValues[i];
                     if (aString != null) {
-                        final byte[] stringBytes = aString.getBytes();
+                        final byte[] stringBytes = aString.getBytes(UTF_16_CHARSET);
                         final int stringLength = stringBytes.length;
                         pos = writeVariableLength(bytes, pos - 1, stringLength, FORCE_ENCODING_ZERO_ON_2BITS);
                         for (int j = 0; j < stringLength; j++) {
@@ -1483,13 +1624,13 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             if ((bytes[pos] & TYPE_MASK) == NULL_TYPE) {
                 final int sizeMask = bytes[pos++] & LENGTH_MASK;
                 key += (((sizeMask < LENGTH_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos++]
-                        : (bytes[pos++] & 0xFF) | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos++] & 0xFF) << 24))) + 1;
+                        : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR))) + 1;
             } else {
                 final int sizeMask = bytes[pos++] & LENGTH_MASK;
                 // TODO to optimize
-                pos += (((sizeMask < LENGTH_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos] : ((bytes[pos] & 0xFF)
-                        | ((bytes[pos + 1] & 0xFF) << 8) | ((bytes[pos + 2] & 0xFF) << 16) | ((bytes[pos + 3] & 0xFF) << 24))));
-                pos += (sizeMask < LENGTH_ENCODED_IN_A_BIT) ? 0 : (sizeMask == LENGTH_ENCODED_IN_A_BIT) ? 1 : 4;
+                pos += (((sizeMask < LENGTH_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos] : ((bytes[pos] & XFF)
+                        | ((bytes[pos + ONE] & XFF) << EIGHT) | ((bytes[pos + TWO] & XFF) << SIXTEEN) | ((bytes[pos + THREE] & XFF) << TWENTY_FOUR))));
+                pos += (sizeMask < LENGTH_ENCODED_IN_A_BIT) ? 0 : (sizeMask == LENGTH_ENCODED_IN_A_BIT) ? ONE : FOUR;
 
                 key++;
             }
@@ -1506,7 +1647,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             if ((type & TYPE_MASK) == NULL_TYPE) {
                 final int sizeMask = type & LENGTH_MASK;
                 key += ((sizeMask < LENGTH_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos++]
-                        : (bytes[pos++] & 0xFF) | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos++] & 0xFF) << 24)) + 1;
+                        : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR)) + 1;
             }
             // Decode values
             else {
@@ -1515,44 +1656,44 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                 switch (type) {
                 //  All fixed type
                 case BYTE_TYPE:
-                    this.primitiveValues[key] = (byte) ((bytes[pos++] & 0xFF));
+                    this.primitiveValues[key] = (byte) ((bytes[pos++] & XFF));
                     break;
 
                 case SHORT_TYPE:
-                    this.primitiveValues[key] = (((short) bytes[pos++] & 0xFF)) | (((short) bytes[pos++] & 0xFF) << 8);
+                    this.primitiveValues[key] = (((short) bytes[pos++] & XFF)) | (((short) bytes[pos++] & XFF) << EIGHT);
                     break;
 
                 case INT_TYPE:
-                    this.primitiveValues[key] = (((int) bytes[pos++] & 0xFF)) | (((int) bytes[pos++] & 0xFF) << 8)
-                            | (((int) bytes[pos++] & 0xFF) << 16) | (((int) bytes[pos++] & 0xFF) << 24);
+                    this.primitiveValues[key] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
+                            | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
                     break;
 
                 case DOUBLE_TYPE:
-                    this.primitiveValues[key] = (((long) bytes[pos++] & 0xFF) | (((long) bytes[pos++] & 0xFF) << 8)
-                            | (((long) bytes[pos++] & 0xFF) << 16) | (((long) bytes[pos++] & 0xFF) << 24) | (((long) bytes[pos++] & 0xFF) << 32)
-                            | (((long) bytes[pos++] & 0xFF) << 40) | (((long) bytes[pos++] & 0xFF) << 48) | (((long) bytes[pos++] & 0xFF) << 56));
+                    this.primitiveValues[key] = (((long) bytes[pos++] & XFF) | (((long) bytes[pos++] & XFF) << EIGHT)
+                            | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR) | (((long) bytes[pos++] & XFF) << THIRTY_TWO)
+                            | (((long) bytes[pos++] & XFF) << FORTY) | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX));
                     break;
 
                 case FIVE_BITS_DECIMAL_TYPE:
-                    this.primitiveValues[key] = (((long) bytes[pos++] & 0xFF) << 8) | (((long) bytes[pos++] & 0xFF) << 16)
-                            | (((long) bytes[pos++] & 0xFF) << 24) | (((long) bytes[pos++] & 0xFF) << 32) | ((byte) bytes[pos++] & 0xFF);
+                    this.primitiveValues[key] = (((long) bytes[pos++] & XFF) << EIGHT) | (((long) bytes[pos++] & XFF) << SIXTEEN)
+                            | (((long) bytes[pos++] & XFF) << TWENTY_FOUR) | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | ((byte) bytes[pos++] & XFF);
                     break;
 
                 // case THREE_BITS_DECIMAL_TYPE:
                 // this.primitiveValues[key] = this.primitiveValues[key] =
-                // ((bytes[pos++] & 0xFF) << 8)
-                // | ((bytes[pos++] & 0xFF) << 16) | (bytes[pos++] & 0xFF);
+                // ((bytes[pos++] & XFF) << EIGHT)
+                // | ((bytes[pos++] & XFF) << SIXTEEN) | (bytes[pos++] & XFF);
                 // break;
 
                 case FLOAT_TYPE:
-                    this.primitiveValues[key] = (((int) bytes[pos++] & 0xFF)) | (((int) bytes[pos++] & 0xFF) << 8)
-                            | (((int) bytes[pos++] & 0xFF) << 16) | (((int) bytes[pos++] & 0xFF) << 24);
+                    this.primitiveValues[key] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
+                            | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
                     break;
 
                 case LONG_TYPE:
-                    this.primitiveValues[key] = (((long) bytes[pos++] & 0xFF)) | (((long) bytes[pos++] & 0xFF) << 8)
-                            | (((long) bytes[pos++] & 0xFF) << 16) | (((long) bytes[pos++] & 0xFF) << 24) | (((long) bytes[pos++] & 0xFF) << 32)
-                            | (((long) bytes[pos++] & 0xFF) << 40) | (((long) bytes[pos++] & 0xFF) << 48) | (((long) bytes[pos++] & 0xFF) << 56);
+                    this.primitiveValues[key] = (((long) bytes[pos++] & XFF)) | (((long) bytes[pos++] & XFF) << EIGHT)
+                            | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR) | (((long) bytes[pos++] & XFF) << THIRTY_TWO)
+                            | (((long) bytes[pos++] & XFF) << FORTY) | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX);
                     break;
 
                 // All non fixed type
@@ -1561,7 +1702,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                     this.types[key] = typeMask;
                     final int lengthMask = (LENGTH_MASK & type);
                     final int fieldLength = (lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos++]
-                            : (bytes[pos++] & 0xFF) | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos++] & 0xFF) << 24);
+                            : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR);
 
                     switch (typeMask) {
                     case STRING_ISO_8859_1_TYPE:
@@ -1575,10 +1716,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                         }
                         break;
                         
-                    case STRING_UTF16_TYPE:
+                    case STRING_UTF_16_TYPE:
                         // TODO manage null value
                         if (lengthMask != 0) {    
-                            this.objectValues[key] = new String(bytes, pos, fieldLength);
+                            this.objectValues[key] = new String(bytes, pos, fieldLength, UTF_16_CHARSET);
                         }
                         break;
 
@@ -1657,7 +1798,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public void deserializeFrom(final ByteBuffer aSrcByteBuffer) {
-        // TODO to optimize
         final byte[] bytes = new byte[aSrcByteBuffer.remaining()];
         aSrcByteBuffer.get(bytes);
         this.deserializeFrom(bytes, 0, bytes.length);

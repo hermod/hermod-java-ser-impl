@@ -7,15 +7,28 @@ import static com.github.hermod.ser.Types.STRING_ISO_8859_1_TYPE;
 import static com.github.hermod.ser.Types.TYPE_MASK;
 import static com.github.hermod.ser.impl.Msgs.BYTE_TYPE;
 import static com.github.hermod.ser.impl.Msgs.DOUBLE_TYPE;
+import static com.github.hermod.ser.impl.Msgs.EIGHT;
+import static com.github.hermod.ser.impl.Msgs.FIFTY_SIX;
+import static com.github.hermod.ser.impl.Msgs.FIVE;
 import static com.github.hermod.ser.impl.Msgs.FIVE_BITS_DECIMAL_TYPE;
 import static com.github.hermod.ser.impl.Msgs.FLOAT_TYPE;
 import static com.github.hermod.ser.impl.Msgs.FORCE_ENCODING_ZERO_ON_2BITS;
+import static com.github.hermod.ser.impl.Msgs.FORTY;
+import static com.github.hermod.ser.impl.Msgs.FORTY_EIGHT;
+import static com.github.hermod.ser.impl.Msgs.FOUR;
 import static com.github.hermod.ser.impl.Msgs.INT_TYPE;
+import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_AN_INT;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_A_BIT;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_MASK;
-import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_AN_INT;
 import static com.github.hermod.ser.impl.Msgs.LONG_TYPE;
+import static com.github.hermod.ser.impl.Msgs.ONE;
 import static com.github.hermod.ser.impl.Msgs.SHORT_TYPE;
+import static com.github.hermod.ser.impl.Msgs.SIXTEEN;
+import static com.github.hermod.ser.impl.Msgs.THIRTY_TWO;
+import static com.github.hermod.ser.impl.Msgs.THREE;
+import static com.github.hermod.ser.impl.Msgs.TWENTY_FOUR;
+import static com.github.hermod.ser.impl.Msgs.TWO;
+import static com.github.hermod.ser.impl.Msgs.XFF;
 
 import com.github.hermod.ser.IBytesMsgSerializer;
 import com.github.hermod.ser.IBytesSerializable;
@@ -25,7 +38,7 @@ import com.github.hermod.ser.IMsg;
  * <p>DefaultSerializer. </p>
  * 
  * @author anavarro - Mar 11, 2013
- * 
+ *      
  */
 public final class DefaultMsgSerializer implements IBytesMsgSerializer {
 
@@ -50,14 +63,14 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer {
                 if ((bytes[pos] & TYPE_MASK) == NULL_TYPE) {
                     final int lengthMask = bytes[pos++] & LENGTH_MASK;
                     key += (((lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos++]
-                            : (bytes[pos++] & 0xFF) | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos++] & 0xFF) << 24))) + 1;
+                            : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR))) + 1;
                 } else {
                     final int lengthMask = bytes[pos++] & LENGTH_MASK;
                     // TODO to optimize
                     pos += (((lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask
-                            : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos] : ((bytes[pos] & 0xFF) | ((bytes[pos + 1] & 0xFF) << 8)
-                                    | ((bytes[pos + 2] & 0xFF) << 16) | ((bytes[pos + 3] & 0xFF) << 24))));
-                    pos += (lengthMask < LENGTH_ENCODED_IN_A_BIT) ? 0 : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? 1 : 4;
+                            : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos] : ((bytes[pos] & XFF) | ((bytes[pos + ONE] & XFF) << EIGHT)
+                                    | ((bytes[pos + TWO] & XFF) << SIXTEEN) | ((bytes[pos + THREE] & XFF) << TWENTY_FOUR))));
+                    pos += (lengthMask < LENGTH_ENCODED_IN_A_BIT) ? 0 : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? 1 : FOUR;
 
                     key++;
                 }
@@ -74,52 +87,52 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer {
                 if ((type & TYPE_MASK) == NULL_TYPE) {
                     final int lengthMask = type & LENGTH_MASK;
                     key += ((lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos++]
-                            : (bytes[pos++] & 0xFF) | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos++] & 0xFF) << 24)) + 1;
+                            : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR)) + 1;
                 }
                 // Decode values
                 else {
                     switch (type) {
                     //  All fixed type
                     case BYTE_TYPE:
-                        aDestMsg.set(key, (byte) ((bytes[pos++] & 0xFF)));
+                        aDestMsg.set(key, (byte) ((bytes[pos++] & XFF)));
                         break;
 
                     case SHORT_TYPE:
-                        aDestMsg.set(key, (((short) bytes[pos++] & 0xFF)) | (((short) bytes[pos++] & 0xFF) << 8));
+                        aDestMsg.set(key, (((short) bytes[pos++] & XFF)) | (((short) bytes[pos++] & XFF) << EIGHT));
                         break;
 
                     case INT_TYPE:
-                        aDestMsg.set(key, (((int) bytes[pos++] & 0xFF)) | (((int) bytes[pos++] & 0xFF) << 8) | (((int) bytes[pos++] & 0xFF) << 16)
-                                | (((int) bytes[pos++] & 0xFF) << 24));
+                        aDestMsg.set(key, (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT) | (((int) bytes[pos++] & XFF) << SIXTEEN)
+                                | (((int) bytes[pos++] & XFF) << TWENTY_FOUR));
                         break;
 
                     case DOUBLE_TYPE:
                         aDestMsg.set(
                                 key,
-                                Double.longBitsToDouble((((long) bytes[pos++] & 0xFF) | (((long) bytes[pos++] & 0xFF) << 8)
-                                        | (((long) bytes[pos++] & 0xFF) << 16) | (((long) bytes[pos++] & 0xFF) << 24)
-                                        | (((long) bytes[pos++] & 0xFF) << 32) | (((long) bytes[pos++] & 0xFF) << 40)
-                                        | (((long) bytes[pos++] & 0xFF) << 48) | (((long) bytes[pos++] & 0xFF) << 56))));
+                                Double.longBitsToDouble((((long) bytes[pos++] & XFF) | (((long) bytes[pos++] & XFF) << EIGHT)
+                                        | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
+                                        | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
+                                        | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX))));
                         break;
 
                     case FIVE_BITS_DECIMAL_TYPE:
                         aDestMsg.set(
                                 key,
-                                Double.longBitsToDouble((((long) bytes[pos++] & 0xFF) << 8) | (((long) bytes[pos++] & 0xFF) << 16)
-                                        | (((long) bytes[pos++] & 0xFF) << 24) | (((long) bytes[pos++] & 0xFF) << 32)), ((byte) bytes[pos++] & 0xFF));
+                                Double.longBitsToDouble((((long) bytes[pos++] & XFF) << EIGHT) | (((long) bytes[pos++] & XFF) << SIXTEEN)
+                                        | (((long) bytes[pos++] & XFF) << TWENTY_FOUR) | (((long) bytes[pos++] & XFF) << THIRTY_TWO)), ((byte) bytes[pos++] & XFF));
                         break;
 
                     case FLOAT_TYPE:
                         aDestMsg.set(
                                 key,
-                                Float.intBitsToFloat((((int) bytes[pos++] & 0xFF)) | (((int) bytes[pos++] & 0xFF) << 8)
-                                        | (((int) bytes[pos++] & 0xFF) << 16) | (((int) bytes[pos++] & 0xFF) << 24)));
+                                Float.intBitsToFloat((((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
+                                        | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR)));
                         break;
 
                     case LONG_TYPE:
-                        aDestMsg.set(key, (((long) bytes[pos++] & 0xFF)) | (((long) bytes[pos++] & 0xFF) << 8) | (((long) bytes[pos++] & 0xFF) << 16)
-                                | (((long) bytes[pos++] & 0xFF) << 24) | (((long) bytes[pos++] & 0xFF) << 32) | (((long) bytes[pos++] & 0xFF) << 40)
-                                | (((long) bytes[pos++] & 0xFF) << 48) | (((long) bytes[pos++] & 0xFF) << 56));
+                        aDestMsg.set(key, (((long) bytes[pos++] & XFF)) | (((long) bytes[pos++] & XFF) << EIGHT) | (((long) bytes[pos++] & XFF) << SIXTEEN)
+                                | (((long) bytes[pos++] & XFF) << TWENTY_FOUR) | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
+                                | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX));
                         break;
 
                     // All non fixed type
@@ -127,8 +140,8 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer {
                         final byte typeMask = (byte) (type & TYPE_MASK);
                         final int lengthMask = (LENGTH_MASK & type);
                         final int fieldLength = (lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask
-                                : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos++] : (bytes[pos++] & 0xFF) | ((bytes[pos++] & 0xFF) << 8)
-                                        | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos++] & 0xFF) << 24);
+                                : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos++] : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT)
+                                        | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR);
 
                         switch (typeMask) {
                         case STRING_ISO_8859_1_TYPE:
@@ -156,6 +169,7 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer {
                             final byte arrayType = bytes[pos++];
                             if (arrayType == NULL_TYPE) {
                                 // For variable type
+                                // TODO 
 
                             } else {
                                 // For Fixed typed
@@ -249,43 +263,43 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer {
                     final int aShort = (short) aSrcMsg.getAsShort(key);
                     aDestBytes[pos++] = SHORT_TYPE;
                     aDestBytes[pos++] = (byte) (aShort);
-                    aDestBytes[pos++] = (byte) (aShort >> 8);
+                    aDestBytes[pos++] = (byte) (aShort >> EIGHT);
                 } else if (object instanceof Byte) {
                     final int aInt = (int) aSrcMsg.getAsInt(key);
                     aDestBytes[pos++] = INT_TYPE;
                     aDestBytes[pos++] = (byte) (aInt);
-                    aDestBytes[pos++] = (byte) (aInt >> 8);
-                    aDestBytes[pos++] = (byte) (aInt >> 16);
-                    aDestBytes[pos++] = (byte) (aInt >> 24);
+                    aDestBytes[pos++] = (byte) (aInt >> EIGHT);
+                    aDestBytes[pos++] = (byte) (aInt >> SIXTEEN);
+                    aDestBytes[pos++] = (byte) (aInt >> TWENTY_FOUR);
                 } else if (object instanceof Double) {
                     final long longBits = Double.doubleToLongBits(aSrcMsg.getAsDouble(key));
                     aDestBytes[pos++] = DOUBLE_TYPE;
                     aDestBytes[pos++] = (byte) (longBits);
-                    aDestBytes[pos++] = (byte) (longBits >> 8);
-                    aDestBytes[pos++] = (byte) (longBits >> 16);
-                    aDestBytes[pos++] = (byte) (longBits >> 24);
-                    aDestBytes[pos++] = (byte) (longBits >> 32);
-                    aDestBytes[pos++] = (byte) (longBits >> 40);
-                    aDestBytes[pos++] = (byte) (longBits >> 48);
-                    aDestBytes[pos++] = (byte) (longBits >> 56);
+                    aDestBytes[pos++] = (byte) (longBits >> EIGHT);
+                    aDestBytes[pos++] = (byte) (longBits >> SIXTEEN);
+                    aDestBytes[pos++] = (byte) (longBits >> TWENTY_FOUR);
+                    aDestBytes[pos++] = (byte) (longBits >> THIRTY_TWO);
+                    aDestBytes[pos++] = (byte) (longBits >> FORTY);
+                    aDestBytes[pos++] = (byte) (longBits >> FORTY_EIGHT);
+                    aDestBytes[pos++] = (byte) (longBits >> FIFTY_SIX);
                 } else if (object instanceof Float) {
                     final int intBits = Float.floatToIntBits(aSrcMsg.getAsFloat(key));
                     aDestBytes[pos++] = FLOAT_TYPE;
                     aDestBytes[pos++] = (byte) (intBits);
-                    aDestBytes[pos++] = (byte) (intBits >> 8);
-                    aDestBytes[pos++] = (byte) (intBits >> 16);
-                    aDestBytes[pos++] = (byte) (intBits >> 24);
+                    aDestBytes[pos++] = (byte) (intBits >> EIGHT);
+                    aDestBytes[pos++] = (byte) (intBits >> SIXTEEN);
+                    aDestBytes[pos++] = (byte) (intBits >> TWENTY_FOUR);
                 } else if (object instanceof Long) {
                     final long aLong = aSrcMsg.getAsLong(key);
                     aDestBytes[pos++] = LONG_TYPE;
                     aDestBytes[pos++] = (byte) (aLong);
-                    aDestBytes[pos++] = (byte) (aLong >> 8);
-                    aDestBytes[pos++] = (byte) (aLong >> 16);
-                    aDestBytes[pos++] = (byte) (aLong >> 24);
-                    aDestBytes[pos++] = (byte) (aLong >> 32);
-                    aDestBytes[pos++] = (byte) (aLong >> 40);
-                    aDestBytes[pos++] = (byte) (aLong >> 48);
-                    aDestBytes[pos++] = (byte) (aLong >> 56);
+                    aDestBytes[pos++] = (byte) (aLong >> EIGHT);
+                    aDestBytes[pos++] = (byte) (aLong >> SIXTEEN);
+                    aDestBytes[pos++] = (byte) (aLong >> TWENTY_FOUR);
+                    aDestBytes[pos++] = (byte) (aLong >> THIRTY_TWO);
+                    aDestBytes[pos++] = (byte) (aLong >> FORTY);
+                    aDestBytes[pos++] = (byte) (aLong >> FORTY_EIGHT);
+                    aDestBytes[pos++] = (byte) (aLong >> FIFTY_SIX);
                 } else if (object instanceof String) {
                     final String aString = (String) aSrcMsg.getAsString(key);
                     if (aString != null) {
@@ -321,7 +335,7 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer {
      * @param forceEncodingZeroOn2Bits
      * @return
      */
-    private final int writeVariableLength(final byte[] bytes, int pos, final int length, boolean forceEncodingZeroOn2Bits) {
+    private int writeVariableLength(final byte[] bytes, int pos, final int length, boolean forceEncodingZeroOn2Bits) {
         if (length < LENGTH_ENCODED_IN_A_BIT && !(forceEncodingZeroOn2Bits && length == 0)) {
             bytes[pos++] |= (byte) length;
         } else {
@@ -329,9 +343,9 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer {
             bytes[pos++] |= (byte) ((isEncodedInAnInt) ? LENGTH_ENCODED_IN_AN_INT : LENGTH_ENCODED_IN_A_BIT);
             bytes[pos++] = (byte) (length);
             if (isEncodedInAnInt) {
-                bytes[pos++] = (byte) (length >> 8);
-                bytes[pos++] = (byte) (length >> 16);
-                bytes[pos++] = (byte) (length >> 24);
+                bytes[pos++] = (byte) (length >> EIGHT);
+                bytes[pos++] = (byte) (length >> SIXTEEN);
+                bytes[pos++] = (byte) (length >> TWENTY_FOUR);
             }
         }
         return pos;
@@ -371,8 +385,8 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer {
      * @param forceEncodingZeroOn2Bits
      * @return
      */
-    private final int getVariableLength(final int length, final boolean forceEncodingZeroOn2Bits) {
-        return (length < LENGTH_ENCODED_IN_A_BIT && !(forceEncodingZeroOn2Bits && length == 0)) ? 1 : (length <= Byte.MAX_VALUE) ? 2 : 5;
+    private int getVariableLength(final int length, final boolean forceEncodingZeroOn2Bits) {
+        return (length < LENGTH_ENCODED_IN_A_BIT && !(forceEncodingZeroOn2Bits && length == 0)) ? ONE : (length <= Byte.MAX_VALUE) ? TWO : FIVE;
     }
 
     /**
@@ -381,21 +395,20 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer {
      * @param object
      * @return
      */
-    private final int getValueLength(final Object object) {
+    private int getValueLength(final Object object) {
         if (object instanceof Byte) {
             return 1;
         } else if (object instanceof Short) {
             return 2;
         } else if (object instanceof Integer || object instanceof Float) {
-            return 4;
+            return FOUR;
         } else if (object instanceof Long || object instanceof Double) {
-            return 8;
+            return EIGHT;
         } else if (object instanceof String) {
-            final int length = (object != null) ? ((String) object).length() : 0;
+            final int length = ((String) object).length();
             return getVariableLength(length, FORCE_ENCODING_ZERO_ON_2BITS) + length;
         } else if (object instanceof IMsg) {
-            // TODO remove getSize
-            final int length = (object != null) ? getLength((IMsg) object) : 0;
+            final int length = getLength((IMsg) object);
             return getVariableLength(length, FORCE_ENCODING_ZERO_ON_2BITS) + length;
         } else {
             return 0;

@@ -12,6 +12,14 @@ import com.github.hermod.ser.IMsg;
  */
 public final class KeyObjectMsgs {
 
+    /**
+     * Constructor.
+     *
+     */
+    private KeyObjectMsgs() {
+        super();
+    }
+
 
     /**
      * newMsg.

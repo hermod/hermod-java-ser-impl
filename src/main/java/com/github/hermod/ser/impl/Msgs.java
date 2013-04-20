@@ -2,7 +2,6 @@ package com.github.hermod.ser.impl;
 
 import com.github.hermod.ser.EPrecision;
 import com.github.hermod.ser.EType;
-import com.github.hermod.ser.IMsg;
 import com.github.hermod.ser.Types;
 
 /**
@@ -13,62 +12,123 @@ import com.github.hermod.ser.Types;
  */
 public final class Msgs
 {
+    /**
+     * Constructor.
+     *
+     */
+    private Msgs() {
+        super();
+    }
     
-    // Might be set in another interface
+    /**
+     * ZERO
+     */
+    static final int ZERO = 0;
     
-//    // Null key
-//    public static final byte TYPE_NULL = EType.NULL.getId();
-//    
-//    // Msg
-//    public static final byte TYPE_MSG = EType.MSG.getId();
-//    
-//    // Integer (long / int / short / byte / boolean)
-//    public static final byte TYPE_INTEGER = EType.INTEGER.getId();
+    /**
+     * ONE
+     */
+    static final int ONE = 1;
     
+    /**
+     * TWO
+     */
+    static final int TWO = 2;
     
+    /**
+     * THREE
+     */
+    static final int THREE = 3;
+    
+    /**
+     * FOUR
+     */
+    static final int FOUR = 4;
+    
+    /**
+     * FIVE
+     */
+    static final int FIVE = 5;
+    
+    /**
+     * SIX
+     */
+    static final int SIX = 6;
+    
+    /**
+     * SEVEN
+     */
+    static final int SEVEN = 7;
+    
+    /**
+     * EIGHT
+     */
+    static final int EIGHT = 8;
+    
+    /**
+     * SIXTEEN
+     */
+    static final int SIXTEEN = 16;
+    
+    /**
+     * TWENTY_FOUR
+     */
+    static final int TWENTY_FOUR = 24;
+    
+    /**
+     * THIRTY_TWO
+     */
+    static final int THIRTY_TWO = 32;
+    
+    /**
+     * FORTY
+     */
+    static final int FORTY = 40;
+    
+    /**
+     * FORTY_EIGHT
+     */
+    static final int FORTY_EIGHT = 48;
+    
+    /**
+     * FIFTY_SIX
+     */
+    static final int FIFTY_SIX = 56;
+
+    /**
+     * SIXTY_FOUR
+     */
+    static final int SIXTY_FOUR = 64;
+
+
     // byte / boolean
-    public static final byte BYTE_TYPE = (byte) (Types.INTEGER_TYPE | 1);
+    static final byte BYTE_TYPE = (byte) (Types.INTEGER_TYPE | ONE);
     
     // short
-    public static final byte SHORT_TYPE = (byte) (Types.INTEGER_TYPE | 2);
+    static final byte SHORT_TYPE = (byte) (Types.INTEGER_TYPE | TWO);
     
     // int
-    public static final byte INT_TYPE = (byte) (Types.INTEGER_TYPE | 4);
+    static final byte INT_TYPE = (byte) (Types.INTEGER_TYPE | FOUR);
     
     // long
-    public static final byte LONG_TYPE = (byte) (Types.INTEGER_TYPE | 8);
+    static final byte LONG_TYPE = (byte) (Types.INTEGER_TYPE | EIGHT);
     
     
     // float / double or double encoded on 5 bits
-    public static final byte TYPE_DECIMAL = EType.DECIMAL.getId();
+    static final byte TYPE_DECIMAL = EType.DECIMAL.getId();
     
     // float
-    public static final byte FLOAT_TYPE = (byte) (Types.DECIMAL_TYPE | 4);
+    static final byte FLOAT_TYPE = (byte) (Types.DECIMAL_TYPE | FOUR);
     
     // double
-    public static final byte DOUBLE_TYPE = (byte) (Types.DECIMAL_TYPE | 8);
+    static final byte DOUBLE_TYPE = (byte) (Types.DECIMAL_TYPE | EIGHT);
     
     // double (encoded on 3 bits)
-    public static final byte THREE_BITS_DECIMAL_TYPE = (byte) (Types.DECIMAL_TYPE | 3);
+    static final byte THREE_BITS_DECIMAL_TYPE = (byte) (Types.DECIMAL_TYPE | THREE);
     
     // double (encoded on 5 bits)
-    public static final byte FIVE_BITS_DECIMAL_TYPE = (byte) (Types.DECIMAL_TYPE | 5);
-    
-    
-//    // String (Extended ASCII) or byte[]
-//    public static final byte TYPE_STRING_ISO_8859_1 = EType.STRING_ISO_8859_1.getId();
-//    
-//    // TODO not implement
-//    // String (UTF16) or char[]
-//    public static final byte TYPE_STRING_UTF16 = EType.STRING_UTF16.getId();
-//    
-//    // TODO not implemented
-//    // Fixed Value Length Array
-//    public static final byte TYPE_FIXED_VALUE_LENGTH_ARRAY = EType.FIXED_VALUE_LENGTH_ARRAY.getId();
-//    
-//    // TODO not implemented
-//    // Variable Value Length Array
-//    public static final byte TYPE_VARIABLE_VALUE_LENGTH_ARRAY = EType.VARIABLE_VALUE_LENGTH_ARRAY.getId();
+    static final byte FIVE_BITS_DECIMAL_TYPE = (byte) (Types.DECIMAL_TYPE | FIVE);
+
     
     // Length is implemented as
     // 1-29, the length is in the last 5 bits of the type
@@ -78,121 +138,66 @@ public final class Msgs
     // Size = 0 on the last 5 bites of type, null value
     // Size = 0 on the next byte (Empty value like "" for String)
     
+    
+    /**
+     * XFF
+     */
+    static final int XFF = 0xFF; 
+
     /**
      * 
      */
-    //public static final byte TYPE_MASK = (byte) 0b1110_0000;
+    static final byte LENGTH_MASK = (byte) 0b0001_1111;
     
     /**
      * 
      */
-    public static final byte LENGTH_MASK = (byte) 0b0001_1111;
+    static final int LENGTH_ENCODED_IN_A_BIT = LENGTH_MASK - ONE;
     
     /**
      * 
      */
-    public static final int LENGTH_ENCODED_IN_A_BIT = LENGTH_MASK - 1;
-    
-    /**
-     * 
-     */
-    public static final int LENGTH_ENCODED_IN_AN_INT = LENGTH_MASK;
+    static final int LENGTH_ENCODED_IN_AN_INT = LENGTH_MASK;
     
     /**
      * DEFAULT_MSG_SIZE
      */
-    public static final int DEFAULT_MSG_LENGTH = 64;
+    static final int DEFAULT_MSG_LENGTH = SIXTY_FOUR;
     
     /**
      * DEFAULT_MAX_KEY
      */
-    public static final int DEFAULT_MAX_KEY = DEFAULT_MSG_LENGTH / 4;
+    static final int DEFAULT_MAX_KEY = DEFAULT_MSG_LENGTH / FOUR;
     
     /**
      * FIRST_KEY
      */
-    public static final int FIRST_AUTHORIZED_KEY = 0;
-    
-    public static final int DEFAULT_VALUE = 0;
+    static final int FIRST_AUTHORIZED_KEY = ZERO;
     
     /**
-     * DEFAULT_INT_VALUE
+     * DEFAULT_VALUE
      */
-    //public static final int DEFAULT_INT_VALUE = 0;
-    
-    /**
-     * DEFAULT_SHORT_VALUE
-     */
-    //public static final short DEFAULT_SHORT_VALUE = (short) DEFAULT_INT_VALUE;
-    
-    /**
-     * DEFAULT_BYTE_VALUE
-     */
-    //public static final byte DEFAULT_BYTE_VALUE = (byte) DEFAULT_INT_VALUE;
-    
-    /**
-     * DEFAULT_BOOLEAN_VALUE
-     */
-    //public static final boolean DEFAULT_BOOLEAN_VALUE = false;
-    
-    /**
-     * DEFAULT_LONG_VALUE
-     */
-    //public static final long DEFAULT_LONG_VALUE = DEFAULT_INT_VALUE;
-    
-    /**
-     * DEFAULT_DOUBLE_VALUE
-     */
-    //public static final double DEFAULT_DOUBLE_VALUE = Double.NaN;
-    
-    /**
-     * DEFAULT_FLOAT_VALUE
-     */
-    //public static final float DEFAULT_FLOAT_VALUE = (float) DEFAULT_DOUBLE_VALUE;
-    
-    
-    /**
-     * DEFAULT_STRING_VALUE
-     */
-    //public static final String DEFAULT_STRING_VALUE = "";
-    
-    
-    /**
-     * DEFAULT_BYTES_VALUE
-     */
-    //public static final byte[] DEFAULT_BYTES_VALUE = new byte[0];
-    
-    
-    /**
-     * DEFAULT_MSG_VALUE
-     */
-    //public static final IMsg DEFAULT_MSG_VALUE = KeyObjectMsgs.newByteableMsg();
-    
-    /**
-     * DEFAULT_ARRAY_VALUE
-     */
-    //public static final Object[] DEFAULT_ARRAY_VALUE = new Object[0];
+    static final int DEFAULT_VALUE = ZERO;
 
     
     /**
      * DOZENS
      */
-    
-    public static double[] DOZENS =
+    //TODO replace
+    static final double[] DOZENS =
     { 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0, 100000000.0 };
     
-    public static final double[] DOZENS2 = {EPrecision.UNITS.getPrecision()};
     
+    static final double[] DOZENS2 = {1.0 / EPrecision.UNITS.getPrecision(), 1.0 / EPrecision.TENS.getPrecision(), 1.0 / EPrecision.HUNDREDS.getPrecision(), 1.0 / EPrecision.THOUSANDS.getPrecision(), 1.0 / EPrecision.TEN_THOUSANDS.getPrecision(), 1.0 / EPrecision.HUNDRED_THOUSANDS.getPrecision(), 1.0 / EPrecision.MILLIONS.getPrecision(), 1.0 / EPrecision.TEN_MILLIONS.getPrecision(), 1.0 / EPrecision.HUNDRED_MILLIONS.getPrecision()};
     
     /**
      * FORCE_ENCODING_ZERO_ON_2BITS
      * 
      * We encode variable size on 2 bits (1 byte in addition of type) instead on 1 byte (in type) to distinct null and Object with 0 size. 
      */
-    public static boolean FORCE_ENCODING_ZERO_ON_2BITS = true;
+    //TODO to remove
+    static final boolean FORCE_ENCODING_ZERO_ON_2BITS = true;
     
-    
-    
-  
 
+    
 }
