@@ -1,6 +1,6 @@
 package com.github.hermod.ser.impl;
 
-import com.github.hermod.ser.IByteableMsg;
+import com.github.hermod.ser.IMsg;
 
 
 
@@ -26,10 +26,10 @@ public final class KeyObjectMsgTest
     /**
      * (non-Javadoc)
      *
-     * @see com.github.hermod.ser.impl.AbstractMsgTest#newByteableMsg()
+     * @see com.github.hermod.ser.impl.AbstractMsgTest#newMsg()
      */
     @Override
-    public IByteableMsg newByteableMsg() {
+    public IMsg newMsg() {
         return new KeyObjectMsg();
     }
 

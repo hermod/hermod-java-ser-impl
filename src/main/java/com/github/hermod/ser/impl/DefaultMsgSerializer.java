@@ -27,9 +27,8 @@ import com.github.hermod.ser.IMsg;
  * @author anavarro - Mar 11, 2013
  * 
  */
-public final class DefaultSerializer implements IBytesMsgSerializer {
+public final class DefaultMsgSerializer implements IBytesMsgSerializer {
 
-    
     /**
      * (non-Javadoc)
      * 
@@ -55,8 +54,9 @@ public final class DefaultSerializer implements IBytesMsgSerializer {
                 } else {
                     final int lengthMask = bytes[pos++] & LENGTH_MASK;
                     // TODO to optimize
-                    pos += (((lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos] : ((bytes[pos] & 0xFF)
-                            | ((bytes[pos + 1] & 0xFF) << 8) | ((bytes[pos + 2] & 0xFF) << 16) | ((bytes[pos + 3] & 0xFF) << 24))));
+                    pos += (((lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask
+                            : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos] : ((bytes[pos] & 0xFF) | ((bytes[pos + 1] & 0xFF) << 8)
+                                    | ((bytes[pos + 2] & 0xFF) << 16) | ((bytes[pos + 3] & 0xFF) << 24))));
                     pos += (lengthMask < LENGTH_ENCODED_IN_A_BIT) ? 0 : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? 1 : 4;
 
                     key++;
@@ -126,9 +126,9 @@ public final class DefaultSerializer implements IBytesMsgSerializer {
                     default:
                         final byte typeMask = (byte) (type & TYPE_MASK);
                         final int lengthMask = (LENGTH_MASK & type);
-                        final int fieldLength = (lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos++]
-                                : (bytes[pos++] & 0xFF) | ((bytes[pos++] & 0xFF) << 8) | ((bytes[pos++] & 0xFF) << 16)
-                                        | ((bytes[pos++] & 0xFF) << 24);
+                        final int fieldLength = (lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask
+                                : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos++] : (bytes[pos++] & 0xFF) | ((bytes[pos++] & 0xFF) << 8)
+                                        | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos++] & 0xFF) << 24);
 
                         switch (typeMask) {
                         case STRING_ISO_8859_1_TYPE:
@@ -217,101 +217,104 @@ public final class DefaultSerializer implements IBytesMsgSerializer {
      * @see com.github.hermod.ser.IMsgSerializer#writeTo(com.github.hermod.ser.IMsg, byte[], int)
      */
     @Override
-    public int serializeToBytes(final IMsg aSrcMsg, byte[] aDestbytes, int aDestoffset) {
+    public int serializeToBytes(final IMsg aSrcMsg, byte[] aDestBytes, int aDestOffset) {
+        if (aSrcMsg instanceof IBytesSerializable) {
+            return ((IBytesSerializable) aSrcMsg).serializeToBytes(aDestBytes, aDestOffset);
+        } else {
+            // Calculate length
+            // TODO to optimize with a try catch
+            final int msgLength = getLength(aSrcMsg);
+            if (aDestBytes.length - aDestOffset < msgLength) {
+                throw new IllegalArgumentException("Bytes array too small from the offset");
+            }
+            int pos = aDestOffset;
 
-        // Calculate length
-        // TODO to optimize with a try catch
-        final int msgLength = getLength(aSrcMsg);
-        if (aDestbytes.length - aDestoffset < msgLength) {
-            throw new IllegalArgumentException("Bytes array too small from the offset");
-        }
-        int pos = aDestoffset;
-        
-        // Write Type / Values
-        final int[] keys = aSrcMsg.getKeys();
-        int previousKey = 0;
-        for (int j = 0; j < keys.length; j++) {
+            // Write Type / Values
+            final int[] keys = aSrcMsg.getKeys();
+            int previousKey = 0;
+            for (int j = 0; j < keys.length; j++) {
                 final int key = keys[j];
                 final int delta = key - previousKey;
                 if (delta > 1) {
-                    pos = writeVariableLength(aDestbytes, pos, delta - 1, false);
+                    pos = writeVariableLength(aDestBytes, pos, delta - 1, false);
                 }
                 previousKey = key;
 
-                final Object object = aSrcMsg.getAsObject(key); 
+                final Object object = aSrcMsg.getAsObject(key);
                 //  all fixed type
                 if (object instanceof Byte) {
-                    aDestbytes[pos++] = BYTE_TYPE;
-                    aDestbytes[pos++] = (byte) aSrcMsg.getAsByte(key);
+                    aDestBytes[pos++] = BYTE_TYPE;
+                    aDestBytes[pos++] = (byte) aSrcMsg.getAsByte(key);
                 } else if (object instanceof Short) {
                     final int aShort = (short) aSrcMsg.getAsShort(key);
-                    aDestbytes[pos++] = SHORT_TYPE;
-                    aDestbytes[pos++] = (byte) (aShort);
-                    aDestbytes[pos++] = (byte) (aShort >> 8);
+                    aDestBytes[pos++] = SHORT_TYPE;
+                    aDestBytes[pos++] = (byte) (aShort);
+                    aDestBytes[pos++] = (byte) (aShort >> 8);
                 } else if (object instanceof Byte) {
                     final int aInt = (int) aSrcMsg.getAsInt(key);
-                    aDestbytes[pos++] = INT_TYPE;
-                    aDestbytes[pos++] = (byte) (aInt);
-                    aDestbytes[pos++] = (byte) (aInt >> 8);
-                    aDestbytes[pos++] = (byte) (aInt >> 16);
-                    aDestbytes[pos++] = (byte) (aInt >> 24);
+                    aDestBytes[pos++] = INT_TYPE;
+                    aDestBytes[pos++] = (byte) (aInt);
+                    aDestBytes[pos++] = (byte) (aInt >> 8);
+                    aDestBytes[pos++] = (byte) (aInt >> 16);
+                    aDestBytes[pos++] = (byte) (aInt >> 24);
                 } else if (object instanceof Double) {
                     final long longBits = Double.doubleToLongBits(aSrcMsg.getAsDouble(key));
-                    aDestbytes[pos++] = DOUBLE_TYPE;
-                    aDestbytes[pos++] = (byte) (longBits);
-                    aDestbytes[pos++] = (byte) (longBits >> 8);
-                    aDestbytes[pos++] = (byte) (longBits >> 16);
-                    aDestbytes[pos++] = (byte) (longBits >> 24);
-                    aDestbytes[pos++] = (byte) (longBits >> 32);
-                    aDestbytes[pos++] = (byte) (longBits >> 40);
-                    aDestbytes[pos++] = (byte) (longBits >> 48);
-                    aDestbytes[pos++] = (byte) (longBits >> 56);
+                    aDestBytes[pos++] = DOUBLE_TYPE;
+                    aDestBytes[pos++] = (byte) (longBits);
+                    aDestBytes[pos++] = (byte) (longBits >> 8);
+                    aDestBytes[pos++] = (byte) (longBits >> 16);
+                    aDestBytes[pos++] = (byte) (longBits >> 24);
+                    aDestBytes[pos++] = (byte) (longBits >> 32);
+                    aDestBytes[pos++] = (byte) (longBits >> 40);
+                    aDestBytes[pos++] = (byte) (longBits >> 48);
+                    aDestBytes[pos++] = (byte) (longBits >> 56);
                 } else if (object instanceof Float) {
                     final int intBits = Float.floatToIntBits(aSrcMsg.getAsFloat(key));
-                    aDestbytes[pos++] = FLOAT_TYPE;
-                    aDestbytes[pos++] = (byte) (intBits);
-                    aDestbytes[pos++] = (byte) (intBits >> 8);
-                    aDestbytes[pos++] = (byte) (intBits >> 16);
-                    aDestbytes[pos++] = (byte) (intBits >> 24);
+                    aDestBytes[pos++] = FLOAT_TYPE;
+                    aDestBytes[pos++] = (byte) (intBits);
+                    aDestBytes[pos++] = (byte) (intBits >> 8);
+                    aDestBytes[pos++] = (byte) (intBits >> 16);
+                    aDestBytes[pos++] = (byte) (intBits >> 24);
                 } else if (object instanceof Long) {
                     final long aLong = aSrcMsg.getAsLong(key);
-                    aDestbytes[pos++] = LONG_TYPE;
-                    aDestbytes[pos++] = (byte) (aLong);
-                    aDestbytes[pos++] = (byte) (aLong >> 8);
-                    aDestbytes[pos++] = (byte) (aLong >> 16);
-                    aDestbytes[pos++] = (byte) (aLong >> 24);
-                    aDestbytes[pos++] = (byte) (aLong >> 32);
-                    aDestbytes[pos++] = (byte) (aLong >> 40);
-                    aDestbytes[pos++] = (byte) (aLong >> 48);
-                    aDestbytes[pos++] = (byte) (aLong >> 56);
+                    aDestBytes[pos++] = LONG_TYPE;
+                    aDestBytes[pos++] = (byte) (aLong);
+                    aDestBytes[pos++] = (byte) (aLong >> 8);
+                    aDestBytes[pos++] = (byte) (aLong >> 16);
+                    aDestBytes[pos++] = (byte) (aLong >> 24);
+                    aDestBytes[pos++] = (byte) (aLong >> 32);
+                    aDestBytes[pos++] = (byte) (aLong >> 40);
+                    aDestBytes[pos++] = (byte) (aLong >> 48);
+                    aDestBytes[pos++] = (byte) (aLong >> 56);
                 } else if (object instanceof String) {
                     final String aString = (String) aSrcMsg.getAsString(key);
                     if (aString != null) {
                         final int length = aString.length();
-                        pos = writeVariableLength(aDestbytes, pos - 1, length, FORCE_ENCODING_ZERO_ON_2BITS);
+                        pos = writeVariableLength(aDestBytes, pos - 1, length, FORCE_ENCODING_ZERO_ON_2BITS);
                         for (int k = 0; k < length; k++) {
-                            aDestbytes[pos++] = (byte) aString.charAt(k);
+                            aDestBytes[pos++] = (byte) aString.charAt(k);
                         }
                     }
                 } else if (object instanceof IMsg) {
                     final IMsg aMsg = (IMsg) aSrcMsg.getAsMsg(key);
                     if (aMsg != null) {
                         final int length = ((IBytesSerializable) aMsg).getLength();
-                        pos = writeVariableLength(aDestbytes, pos - 1, length, FORCE_ENCODING_ZERO_ON_2BITS);
-                        pos = ((IBytesSerializable) aMsg).serializeToBytes(aDestbytes, pos);
+                        pos = writeVariableLength(aDestBytes, pos - 1, length, FORCE_ENCODING_ZERO_ON_2BITS);
+                        pos = ((IBytesSerializable) aMsg).serializeToBytes(aDestBytes, pos);
                     }
                     break;
 
                 } else if (object instanceof Object[]) {
                     // TODO
                 }
+            }
+            return pos;
         }
-        return pos;
     }
 
     /**
      * writeVariableSize.
-     *
+     * 
      * @param bytes
      * @param pos
      * @param length

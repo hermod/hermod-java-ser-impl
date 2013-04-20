@@ -7,29 +7,28 @@ import static com.github.hermod.ser.Types.INTEGER_TYPE;
 import static com.github.hermod.ser.Types.MSG_TYPE;
 import static com.github.hermod.ser.Types.NULL_TYPE;
 import static com.github.hermod.ser.Types.STRING_ISO_8859_1_TYPE;
-import static com.github.hermod.ser.Types.STRING_TYPE;
+import static com.github.hermod.ser.Types.STRING_UTF16_TYPE;
 import static com.github.hermod.ser.Types.TYPE_MASK;
 import static com.github.hermod.ser.impl.Msgs.BYTE_TYPE;
-import static com.github.hermod.ser.impl.Msgs.DEFAULT_VALUE;
 import static com.github.hermod.ser.impl.Msgs.DEFAULT_MAX_KEY;
+import static com.github.hermod.ser.impl.Msgs.DEFAULT_VALUE;
 import static com.github.hermod.ser.impl.Msgs.DOUBLE_TYPE;
 import static com.github.hermod.ser.impl.Msgs.DOZENS;
 import static com.github.hermod.ser.impl.Msgs.FIVE_BITS_DECIMAL_TYPE;
 import static com.github.hermod.ser.impl.Msgs.FLOAT_TYPE;
 import static com.github.hermod.ser.impl.Msgs.FORCE_ENCODING_ZERO_ON_2BITS;
 import static com.github.hermod.ser.impl.Msgs.INT_TYPE;
-import static com.github.hermod.ser.impl.Msgs.LONG_TYPE;
-import static com.github.hermod.ser.impl.Msgs.SHORT_TYPE;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_AN_INT;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_A_BIT;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_MASK;
+import static com.github.hermod.ser.impl.Msgs.LONG_TYPE;
+import static com.github.hermod.ser.impl.Msgs.SHORT_TYPE;
 
 import java.nio.ByteBuffer;
 
 import com.github.hermod.ser.EPrecision;
 import com.github.hermod.ser.EType;
-import com.github.hermod.ser.IByteBufferableMsg;
-import com.github.hermod.ser.IByteableMsg;
+import com.github.hermod.ser.IByteBufferSerializable;
 import com.github.hermod.ser.IBytesSerializable;
 import com.github.hermod.ser.IMsg;
 import com.github.hermod.ser.Types;
@@ -40,7 +39,7 @@ import com.github.hermod.ser.Types;
  * @author anavarro - Jan 21, 2013
  * 
  */
-public class KeyObjectMsg implements IByteableMsg, IByteBufferableMsg {
+public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerializable {
 
     private byte[] types;
     private long[] primitiveValues;
@@ -410,7 +409,7 @@ public class KeyObjectMsg implements IByteableMsg, IByteBufferableMsg {
             case STRING_ISO_8859_1_TYPE:
                 return aClazz.cast(getAsString(aKey));
 
-            case STRING_TYPE:
+            case STRING_UTF16_TYPE:
                 return aClazz.cast(getAsString(aKey));
 
             case MSG_TYPE:
@@ -1218,7 +1217,7 @@ public class KeyObjectMsg implements IByteableMsg, IByteBufferableMsg {
                 final int stringAsciilength = (this.objectValues[key] != null) ? ((String) this.objectValues[key]).length() : 0;
                 return getVariableLength(stringAsciilength, FORCE_ENCODING_ZERO_ON_2BITS) + stringAsciilength;
              
-            case STRING_TYPE:
+            case STRING_UTF16_TYPE:
                 final int stringlength = (this.objectValues[key] != null) ? ((String) this.objectValues[key]).getBytes().length : 0;
                 return getVariableLength(stringlength, FORCE_ENCODING_ZERO_ON_2BITS) + stringlength;
                 
@@ -1427,7 +1426,7 @@ public class KeyObjectMsg implements IByteableMsg, IByteBufferableMsg {
                     }
                     break;
                     
-                case STRING_TYPE:
+                case STRING_UTF16_TYPE:
                     final String aString = (String) this.objectValues[i];
                     if (aString != null) {
                         final byte[] stringBytes = aString.getBytes();
@@ -1576,7 +1575,7 @@ public class KeyObjectMsg implements IByteableMsg, IByteBufferableMsg {
                         }
                         break;
                         
-                    case STRING_TYPE:
+                    case STRING_UTF16_TYPE:
                         // TODO manage null value
                         if (lengthMask != 0) {    
                             this.objectValues[key] = new String(bytes, pos, fieldLength);
@@ -1586,8 +1585,8 @@ public class KeyObjectMsg implements IByteableMsg, IByteBufferableMsg {
                     case MSG_TYPE:
                         // TODO manage null value
                         if (lengthMask != 0) {
-                            final IByteableMsg msg = new KeyObjectMsg();
-                            (msg).deserializeFrom(bytes, pos, fieldLength);
+                            final KeyObjectMsg msg = new KeyObjectMsg();
+                            msg.deserializeFrom(bytes, pos, fieldLength);
                             pos += fieldLength;
                             this.objectValues[key] = msg;
                         }
@@ -1650,15 +1649,6 @@ public class KeyObjectMsg implements IByteableMsg, IByteBufferableMsg {
         aDestByteBuffer.put(this.serializeToBytes());
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.IByteBufferSerializable#serializeToByteBuffer()
-     */
-    @Override
-    public ByteBuffer serializeToByteBuffer() {
-        return ByteBuffer.wrap(this.serializeToBytes());
-    }
 
     /**
      * (non-Javadoc)
@@ -1666,11 +1656,11 @@ public class KeyObjectMsg implements IByteableMsg, IByteBufferableMsg {
      * @see com.github.hermod.ser.IByteBufferSerializable#deserializeFrom(java.nio.ByteBuffer, int)
      */
     @Override
-    public void deserializeFrom(final ByteBuffer aSrcByteBuffer, int aSrcLength) {
+    public void deserializeFrom(final ByteBuffer aSrcByteBuffer) {
         // TODO to optimize
-        final byte[] bytes = new byte[aSrcLength];
+        final byte[] bytes = new byte[aSrcByteBuffer.remaining()];
         aSrcByteBuffer.get(bytes);
-        this.deserializeFrom(bytes, 0, aSrcLength);
+        this.deserializeFrom(bytes, 0, bytes.length);
     }
 
 }
