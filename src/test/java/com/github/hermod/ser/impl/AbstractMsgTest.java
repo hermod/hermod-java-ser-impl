@@ -20,6 +20,7 @@ import com.github.hermod.ser.IMsg;
  */
 public abstract class AbstractMsgTest {
 
+    private static final boolean BOOLEAN_TEST = true;
     private static final byte BYTE_TEST = Byte.MIN_VALUE;
     private static final short SHORT_TEST = Short.MAX_VALUE;
     private static final int INT_TEST = Integer.MIN_VALUE;
@@ -136,6 +137,50 @@ public abstract class AbstractMsgTest {
         assertThat( keys).isEqualTo(new int[]{KEY_ONE, KEY_TWO});
     }
 
+    
+    /**
+     * testGetAsByte.
+     * 
+     */
+    @Test
+    public void testSetGetAsBoolean() {
+        srcMsg.set(KEY_ZERO, BOOLEAN_TEST);
+        srcMsg.set(KEY_ONE, BOOLEAN_TEST);
+        srcMsg.set(KEY_NINETY, !BOOLEAN_TEST);
+        srcMsg.set(KEY_THREE_HUNDRED, !BOOLEAN_TEST);
+
+        final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
+
+        this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
+        
+        assertThat(destMsg.getAsBoolean(KEY_ONE)).isEqualTo(BOOLEAN_TEST);
+        assertThat(destMsg.getAsBoolean(KEY_NINETY)).isEqualTo(!BOOLEAN_TEST);
+        assertThat(destMsg.getAsBoolean(KEY_THREE_HUNDRED)).isEqualTo(!BOOLEAN_TEST);
+        assertThat(destMsg.contains(KEY_ZERO)).isTrue();
+        
+        try {
+            assertThat(destMsg.getAsBoolean(KEY_NINETYNINE));
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        try {
+            assertThat(destMsg.getAsBoolean(KEY_NINETYNINE));
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        
+        try {
+            assertThat(destMsg.getAsBoolean(KEY_MINUS_ONE));
+            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(IllegalArgumentException.class);
+        }
+        assertThat(destMsg.getAsBoolean(KEY_ZERO)).isEqualTo(BOOLEAN_TEST);
+    }
+    
+    
     /**
      * testGetAsByte.
      * 
@@ -545,9 +590,19 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsMsg(KEY_FOUR)).isNull();
         assertThat(destMsg.contains(KEY_ZERO)).isFalse();
         
+        final IMsg msg = newMsg();
+        destMsg.getAsMsg(KEY_NINETY, msg);
+        
+//        assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(msg.getAsMsg(KEY_ONE).getAsByte(KEY_ONE));
+//        assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(msg.getAsMsg(KEY_NINETY).getAsByte(KEY_ONE));
+//        assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(msg.getAsMsg(KEY_THREE_HUNDRED).getAsByte(KEY_ONE));
+//        
         assertThat(destMsg.getAsMsg(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsMsg(KEY_ZERO)).isNull();
         assertThat(destMsg.getAsMsg(KEY_MINUS_ONE)).isNull();
+        
+        
+        
         
     }
 
