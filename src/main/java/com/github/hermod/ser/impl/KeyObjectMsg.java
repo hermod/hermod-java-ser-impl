@@ -171,10 +171,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
         }
         throw new IllegalArgumentException(String.format(ERROR_WHEN_KEY_NOT_PRESENT, aKey));
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#getAsNullableBoolean(int)
      */
     @Override
@@ -201,10 +201,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
         }
         throw new IllegalArgumentException(String.format(ERROR_WHEN_KEY_NOT_PRESENT, aKey));
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#getAsNullableByte(int)
      */
     @Override
@@ -231,10 +231,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
         }
         throw new IllegalArgumentException(String.format(ERROR_WHEN_KEY_NOT_PRESENT, aKey));
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#getAsNullableShort(int)
      */
     @Override
@@ -261,10 +261,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
         }
         throw new IllegalArgumentException(String.format(ERROR_WHEN_KEY_NOT_PRESENT, aKey));
     }
-    
+
     /**
      * getAsNullableInteger.
-     *
+     * 
      * @param aKey
      * @return
      */
@@ -324,10 +324,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
         }
         throw new IllegalArgumentException(String.format(ERROR_WHEN_KEY_NOT_PRESENT, aKey));
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#getAsNullableFloat(int)
      */
     @Override
@@ -438,7 +438,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     @Override
     public final IMsg getAsMsg(final int aKey) {
         try {
-
             return ((this.types[aKey] & TYPE_MASK) == MSG_TYPE && this.objectValues[aKey] != null) ? new KeyObjectMsg((IMsg) this.objectValues[aKey])
                     : null;
         } catch (final ArrayIndexOutOfBoundsException e) {
@@ -553,16 +552,31 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             return null;
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#getAsNullableBooleans(int)
      */
     @Override
     public final Boolean[] getAsNullableBooleans(final int aKey) {
-        //TODO
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        try {
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof boolean[])) {
+                final boolean[] booleans = (boolean[]) this.objectValues[aKey];
+                final Boolean[] results = new Boolean[booleans.length];
+                System.arraycopy(booleans, 0, results, 0, booleans.length);
+                return results;
+            } else if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof Boolean[])) {
+                final Boolean[] booleans = (Boolean[]) this.objectValues[aKey];
+                final Boolean[] results = new Boolean[booleans.length];
+                System.arraycopy(booleans, 0, results, 0, booleans.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
     /**
@@ -585,16 +599,31 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             return null;
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#getAsNullableBytes(int)
      */
     @Override
     public final Byte[] getAsNullableBytes(final int aKey) {
-        //TODO
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        try {
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof byte[])) {
+                final byte[] bytes = (byte[]) this.objectValues[aKey];
+                final Byte[] results = new Byte[bytes.length];
+                System.arraycopy(bytes, 0, results, 0, bytes.length);
+                return results;
+            } else if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof Byte[])) {
+                final Byte[] bytes = (Byte[]) this.objectValues[aKey];
+                final Byte[] results = new Byte[bytes.length];
+                System.arraycopy(bytes, 0, results, 0, bytes.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
     /**
@@ -617,16 +646,31 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             return null;
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#getAsNullableBytes(int)
      */
     @Override
     public final Short[] getAsNullableShorts(final int aKey) {
-        //TODO
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        try {
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof short[])) {
+                final short[] shorts = (short[]) this.objectValues[aKey];
+                final Short[] results = new Short[shorts.length];
+                System.arraycopy(shorts, 0, results, 0, shorts.length);
+                return results;
+            } else if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof Short[])) {
+                final Short[] shorts = (Short[]) this.objectValues[aKey];
+                final Short[] results = new Short[shorts.length];
+                System.arraycopy(shorts, 0, results, 0, shorts.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
     /**
@@ -650,19 +694,32 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
         }
     }
 
-    
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#getAsNullableIntegers(int)
      */
     @Override
     public final Integer[] getAsNullableIntegers(final int aKey) {
-        //TODO
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        try {
+            if (((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof int[]))) {
+                final int[] ints = (int[]) this.objectValues[aKey];
+                final Integer[] results = new Integer[ints.length];
+                System.arraycopy(ints, 0, results, 0, ints.length);
+                return results;
+            } else if (((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof Integer[]))) {
+                final Integer[] ints = (Integer[]) this.objectValues[aKey];
+                final Integer[] results = new Integer[ints.length];
+                System.arraycopy(ints, 0, results, 0, ints.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
-    
-    
+
     /**
      * (non-Javadoc)
      * 
@@ -683,11 +740,31 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             return null;
         }
     }
-    
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.IMsg#getAsNullableLongs(int)
+     */
     @Override
     public final Long[] getAsNullableLongs(final int aKey) {
-        //TODO
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        try {
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof long[])) {
+                final long[] longs = (long[]) this.objectValues[aKey];
+                final Long[] results = new Long[longs.length];
+                System.arraycopy(longs, 0, results, 0, longs.length);
+                return results;
+            } else if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof Long[])) {
+                final Long[] longs = (Long[]) this.objectValues[aKey];
+                final Long[] results = new Long[longs.length];
+                System.arraycopy(longs, 0, results, 0, longs.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
     /**
@@ -710,16 +787,31 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             return null;
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#getAsNullableFloats(int)
      */
     @Override
     public final Float[] getAsNullableFloats(final int aKey) {
-        //TODO
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        try {
+            if (((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof float[]))) {
+                final float[] floats = (float[]) this.objectValues[aKey];
+                final Float[] results = new Float[floats.length];
+                System.arraycopy(floats, 0, results, 0, floats.length);
+                return results;
+            } else if (((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof Float[]))) {
+                final Float[] floats = (Float[]) this.objectValues[aKey];
+                final Float[] results = new Float[floats.length];
+                System.arraycopy(floats, 0, results, 0, floats.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
     /**
@@ -742,16 +834,31 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             return null;
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#getAsNullableDoubles(int)
      */
     @Override
     public final Double[] getAsNullableDoubles(final int aKey) {
-        //TODO
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        try {
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof double[])) {
+                final double[] doubles = (double[]) this.objectValues[aKey];
+                final Double[] results = new Double[doubles.length];
+                System.arraycopy(doubles, 0, results, 0, doubles.length);
+                return results;
+            } else if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof Double[])) {
+                final Double[] doubles = (Double[]) this.objectValues[aKey];
+                final Double[] results = new Double[doubles.length];
+                System.arraycopy(doubles, 0, results, 0, doubles.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
     /**
@@ -958,10 +1065,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             set(aKey, aBoolean);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.Boolean)
      */
     @Override
@@ -993,10 +1100,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             set(aKey, aByte);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte)
      */
     @Override
@@ -1028,10 +1135,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             set(aKey, aShort);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte)
      */
     @Override
@@ -1063,10 +1170,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             set(aKey, aInt);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte)
      */
     @Override
@@ -1100,10 +1207,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             set(aKey, aLong);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte)
      */
     @Override
@@ -1135,10 +1242,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             set(aKey, aFloat);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte)
      */
     @Override
@@ -1171,10 +1278,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             set(aKey, aDouble);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte)
      */
     @Override
@@ -1225,10 +1332,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             throw new IllegalArgumentException("NbDigit must be between 0 and " + (DOZENS.length - 1), e);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte)
      */
     @Override
@@ -1265,10 +1372,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             this.set(aKey, aDouble);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte)
      */
     @Override
@@ -1284,7 +1391,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             }
         }
     }
-
 
     /*
      * (non-Javadoc)
@@ -1438,10 +1544,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             set(aKey, aBooleans);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.Boolean[])
      */
     @Override
@@ -1470,10 +1576,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             set(aKey, aBytes);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte[])
      */
     @Override
@@ -1502,10 +1608,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             set(aKey, aShorts);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.Short[])
      */
     @Override
@@ -1534,10 +1640,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             set(aKey, aInts);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.Integer[])
      */
     @Override
@@ -1566,10 +1672,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             set(aKey, aLongs);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.Long[])
      */
     @Override
@@ -1598,10 +1704,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             set(aKey, aFloats);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.Float[])
      */
     @Override
@@ -1630,10 +1736,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             set(aKey, aDoubles);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.Double[])
      */
     @Override
@@ -1649,7 +1755,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.String[])
      */
     @Override
@@ -1663,7 +1769,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             set(aKey, aStrings);
         }
     }
-    
+
     /**
      * (non-Javadoc)
      * 
