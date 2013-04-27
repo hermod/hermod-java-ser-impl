@@ -154,6 +154,7 @@ public abstract class AbstractMsgTest {
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
         
         assertThat(destMsg.getAsBoolean(KEY_ONE)).isEqualTo(BOOLEAN_TEST);
+        assertThat(destMsg.getAsNullableBoolean(KEY_ONE)).isEqualTo(BOOLEAN_TEST);
         assertThat(destMsg.getAsBoolean(KEY_NINETY)).isEqualTo(!BOOLEAN_TEST);
         assertThat(destMsg.getAsBoolean(KEY_THREE_HUNDRED)).isEqualTo(!BOOLEAN_TEST);
         assertThat(destMsg.contains(KEY_ZERO)).isTrue();
@@ -164,6 +165,8 @@ public abstract class AbstractMsgTest {
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
         }
+        assertThat(destMsg.getAsNullableBoolean(KEY_NINETYNINE)).isNull();
+        
         try {
             assertThat(destMsg.getAsBoolean(KEY_NINETYNINE));
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -197,6 +200,7 @@ public abstract class AbstractMsgTest {
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
         
         assertThat(destMsg.getAsByte(KEY_ONE)).isEqualTo(BYTE_TEST);
+        assertThat(destMsg.getAsNullableByte(KEY_ONE)).isEqualTo(BYTE_TEST);
         assertThat(destMsg.getAsByte(KEY_NINETY)).isEqualTo(BYTE_TEST);
         assertThat(destMsg.getAsByte(KEY_THREE_HUNDRED)).isEqualTo(BYTE_TEST);
         assertThat(destMsg.contains(KEY_ZERO)).isTrue();
@@ -207,6 +211,7 @@ public abstract class AbstractMsgTest {
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
         }
+        assertThat(destMsg.getAsNullableByte(KEY_NINETYNINE));
         try {
             assertThat(destMsg.getAsByte(KEY_NINETYNINE));
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -248,6 +253,7 @@ public abstract class AbstractMsgTest {
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
         
         assertThat(destMsg.getAsShort(KEY_ONE)).isEqualTo(SHORT_TEST);
+        assertThat(destMsg.getAsNullableShort(KEY_ONE)).isEqualTo(SHORT_TEST);
         assertThat(destMsg.getAsShort(KEY_NINETY)).isEqualTo(SHORT_TEST);
         assertThat(destMsg.getAsShort(KEY_THREE_HUNDRED)).isEqualTo(SHORT_TEST);
         assertThat(destMsg.getAsShort(KEY_TWO)).isEqualTo(BYTE_TEST);
@@ -260,6 +266,7 @@ public abstract class AbstractMsgTest {
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
         }
+        assertThat(destMsg.getAsNullableShort(KEY_NINETYNINE)).isNull();
         try {
             destMsg.getAsShort(KEY_ZERO);
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -301,6 +308,7 @@ public abstract class AbstractMsgTest {
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
         
         assertThat(destMsg.getAsInt(KEY_ONE)).isEqualTo(INT_TEST);
+        assertThat(destMsg.getAsNullableInteger(KEY_ONE)).isEqualTo(INT_TEST);
         assertThat(destMsg.getAsInt(KEY_TWO)).isEqualTo(SHORT_TEST);
         assertThat(destMsg.getAsInt(KEY_THREE)).isEqualTo(BYTE_TEST);
         assertThat(destMsg.getAsInt(KEY_FOUR)).isEqualTo(BYTE_TEST);
@@ -315,6 +323,7 @@ public abstract class AbstractMsgTest {
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
         }
+        assertThat(destMsg.getAsNullableInteger(KEY_NINETYNINE)).isNull();
         try {
             destMsg.getAsInt(KEY_ZERO);
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -358,6 +367,7 @@ public abstract class AbstractMsgTest {
 
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
         assertThat(destMsg.getAsLong(KEY_ONE)).isEqualTo(LONG_TEST);
+        assertThat(destMsg.getAsNullableLong(KEY_ONE)).isEqualTo(LONG_TEST);
         assertThat(destMsg.getAsLong(KEY_TWO)).isEqualTo(INT_TEST);
         assertThat(destMsg.getAsLong(KEY_THREE)).isEqualTo(SHORT_TEST);
         assertThat(destMsg.getAsLong(KEY_FOUR)).isEqualTo(BYTE_TEST);
@@ -374,6 +384,7 @@ public abstract class AbstractMsgTest {
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
         }
+        assertThat(destMsg.getAsNullableLong(KEY_NINETYNINE)).isNull();
         try {
             destMsg.getAsLong(KEY_ZERO);
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -411,6 +422,7 @@ public abstract class AbstractMsgTest {
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
 
         assertThat(destMsg.getAsFloat(KEY_ONE)).isEqualTo(FLOAT_TEST);
+        assertThat(destMsg.getAsNullableFloat(KEY_ONE)).isEqualTo(FLOAT_TEST);
         assertThat(destMsg.getAsFloat(KEY_ONE)).isEqualTo(FLOAT_TEST);
         assertThat(destMsg.getAsDouble(KEY_NINETY)).isEqualTo(FLOAT_TEST);
         assertThat(destMsg.getAsDouble(KEY_THREE_HUNDRED)).isEqualTo(FLOAT_TEST);
@@ -422,6 +434,7 @@ public abstract class AbstractMsgTest {
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
         }
+        assertThat(destMsg.getAsNullableFloat(KEY_NINETYNINE)).isNull();
         try {
             destMsg.getAsFloat(KEY_ZERO);
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -475,9 +488,11 @@ public abstract class AbstractMsgTest {
         //assertThat(msg2.getAsDouble(KEY_THREE)).isEqualTo(DOUBLE_TEST);
         assertThat(destMsg.getAsDouble(KEY_FOUR)).isEqualTo(FLOAT_TEST);
         assertThat(destMsg.getAsDouble(KEY_FIVE)).isEqualTo(DOUBLE_TEST2);
+        assertThat(destMsg.getAsNullableDouble(KEY_FIVE)).isEqualTo(DOUBLE_TEST2);
         
         for (int i = 0; i < Msgs.DOZENS.length; i++) {
             assertThat(destMsg.getAsDouble(KEY_TEN + i)).isEqualTo(DOUBLE_TEST1);
+            assertThat(destMsg.getAsNullableDouble(KEY_TEN + i)).isEqualTo(DOUBLE_TEST1);
             //Assert.assertEquals(DOUBLE_TEST1, msg2.getAsDouble(KEY_TEN + i), (i == 0) ? 1 : (1 / (10 * i)));
         }
         
@@ -489,6 +504,7 @@ public abstract class AbstractMsgTest {
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
         }
+        assertThat(destMsg.getAsNullableDouble(KEY_NINETYNINE)).isNull();
         try {
             destMsg.getAsDouble(KEY_ZERO);
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
