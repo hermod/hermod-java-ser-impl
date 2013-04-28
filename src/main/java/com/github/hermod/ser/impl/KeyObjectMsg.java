@@ -995,8 +995,30 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     @Override
     public int getArrayLength(final int aKey) {
         try {
-            return ((((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE) || ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE)) && ((this.objectValues[aKey] instanceof Object[]))) ? ((Object[]) this.objectValues[aKey]).length
-                    : 0;
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE || (this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE) {
+                if ((this.objectValues[aKey] instanceof Object[])) {
+                    return ((Object[]) this.objectValues[aKey]).length;
+                } else if ((this.objectValues[aKey] instanceof byte[])) {
+                    return ((byte[]) this.objectValues[aKey]).length;
+                } else if ((this.objectValues[aKey] instanceof short[])) {
+                    return ((short[]) this.objectValues[aKey]).length;
+                } else if ((this.objectValues[aKey] instanceof int[])) {
+                    return ((int[]) this.objectValues[aKey]).length;
+                } else if ((this.objectValues[aKey] instanceof long[])) {
+                    return ((long[]) this.objectValues[aKey]).length;
+                } else if ((this.objectValues[aKey] instanceof float[])) {
+                    return ((float[]) this.objectValues[aKey]).length;
+                } else if ((this.objectValues[aKey] instanceof double[])) {
+                    return ((double[]) this.objectValues[aKey]).length;
+                } else if ((this.objectValues[aKey] instanceof boolean[])) {
+                    return ((boolean[]) this.objectValues[aKey]).length;
+                } else {
+                    // Should not occur
+                    return 0;
+                }
+            } else {
+                return 0;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             return 0;
         }
@@ -2000,24 +2022,27 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                     if ((this.objectValues[key] != null)) {
                         if (this.objectValues[key] instanceof byte[]) {
                             final byte[] fieldBytes = (byte[]) this.objectValues[key];
-                            final int bytesLength = fieldBytes.length;
+                            final int bytesLength = fieldBytes.length + 1;
                             arrayFixedValueLength = getVariableLength(bytesLength, (bytesLength == 0) ? TWO : ONE) + bytesLength;
                             pos = writeVariableLength(bytes, pos - 1, arrayFixedValueLength, (arrayFixedValueLength == 0) ? TWO : ONE);
+                            bytes[pos++] = BYTE_TYPE;
                             System.arraycopy(fieldBytes, 0, bytes, pos, bytesLength);
                         } else if (this.objectValues[key] instanceof short[]) {
                             final short[] shorts = (short[]) this.objectValues[key];
-                            final int shortsLength = shorts.length;
+                            final int shortsLength = (shorts.length << 1) + 1;
                             arrayFixedValueLength = getVariableLength(shortsLength, (shortsLength == 0) ? TWO : ONE) + shortsLength;
                             pos = writeVariableLength(bytes, pos - 1, arrayFixedValueLength, (arrayFixedValueLength == 0) ? TWO : ONE);
+                            bytes[pos++] = SHORT_TYPE;
                             for (final short currentShort : shorts) {
                                 bytes[pos++] = (byte) (currentShort);
                                 bytes[pos++] = (byte) (currentShort >> EIGHT);
                             }
                         } else if (this.objectValues[key] instanceof int[]) {
                             final int[] ints = (int[]) this.objectValues[key];
-                            final int intsLength = ints.length;
+                            final int intsLength = (ints.length << TWO) + 1;
                             arrayFixedValueLength = getVariableLength(intsLength, (intsLength == 0) ? TWO : ONE) + intsLength;
                             pos = writeVariableLength(bytes, pos - 1, arrayFixedValueLength, (arrayFixedValueLength == 0) ? TWO : ONE);
+                            bytes[pos++] = INT_TYPE;
                             for (final int currentInt : ints) {
                                 bytes[pos++] = (byte) (currentInt);
                                 bytes[pos++] = (byte) (currentInt >> EIGHT);
@@ -2026,9 +2051,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                             }
                         } else if (this.objectValues[key] instanceof long[]) {
                             final long[] longs = (long[]) this.objectValues[key];
-                            final int longsLength = longs.length;
+                            final int longsLength = (longs.length << THREE) + 1;
                             arrayFixedValueLength = getVariableLength(longsLength, (longsLength == 0) ? TWO : ONE) + longsLength;
                             pos = writeVariableLength(bytes, pos - 1, arrayFixedValueLength, (arrayFixedValueLength == 0) ? TWO : ONE);
+                            bytes[pos++] = LONG_TYPE;
                             for (final long currentLong : longs) {
                                 bytes[pos++] = (byte) (currentLong);
                                 bytes[pos++] = (byte) (currentLong >> EIGHT);
@@ -2041,9 +2067,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                             }
                         } else if (this.objectValues[key] instanceof double[]) {
                             final double[] doubles = (double[]) this.objectValues[key];
-                            final int doublesLength = doubles.length;
+                            final int doublesLength = (doubles.length << THREE) + 1;
                             arrayFixedValueLength = getVariableLength(doublesLength, (doublesLength == 0) ? TWO : ONE) + doublesLength;
                             pos = writeVariableLength(bytes, pos - 1, arrayFixedValueLength, (arrayFixedValueLength == 0) ? TWO : ONE);
+                            bytes[pos++] = DOUBLE_TYPE;
                             for (final double currentDouble : doubles) {
                                 final long currentLong = Double.doubleToLongBits(currentDouble);
                                 bytes[pos++] = (byte) (currentLong);
@@ -2057,9 +2084,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                             }
                         } else if (this.objectValues[key] instanceof float[]) {
                             final float[] floats = (float[]) this.objectValues[key];
-                            final int floatsLength = floats.length;
+                            final int floatsLength = (floats.length << TWO) + 1;
                             arrayFixedValueLength = getVariableLength(floatsLength, (floatsLength == 0) ? TWO : ONE) + floatsLength;
                             pos = writeVariableLength(bytes, pos - 1, arrayFixedValueLength, (arrayFixedValueLength == 0) ? TWO : ONE);
+                            bytes[pos++] = FLOAT_TYPE;
                             for (final float currentFloat : floats) {
                                 final int currentInt = Float.floatToIntBits(currentFloat);
                                 bytes[pos++] = (byte) (currentInt);
@@ -2069,9 +2097,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                             }
                         } else if (this.objectValues[key] instanceof boolean[]) {
                             final boolean[] booleans = (boolean[]) this.objectValues[key];
-                            final int booleanLength = booleans.length;
+                            final int booleanLength = booleans.length + 1;
                             arrayFixedValueLength = getVariableLength(booleanLength, (booleanLength == 0) ? TWO : ONE) + booleanLength;
                             pos = writeVariableLength(bytes, pos - 1, arrayFixedValueLength, (arrayFixedValueLength == 0) ? TWO : ONE);
+                            bytes[pos++] = BYTE_TYPE;
                             System.arraycopy(booleans, 0, bytes, pos, booleanLength);
                             for (final boolean currentBoolean : booleans) {
                                 bytes[pos++] = (byte) (currentBoolean ? ONE : ZERO);
@@ -2240,107 +2269,108 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
 
                     case ARRAY_FIXED_VALUE_TYPE:
                         final byte arrayType = bytes[pos++];
-                        if (arrayType == NULL_TYPE) {
-                            // For variable type
-                            // TODO
-                            final KeyObjectMsg arrayAsMsg = new KeyObjectMsg();
-                            arrayAsMsg.deserializeFrom(bytes, pos, fieldLength);
-                            final int arrayLength = arrayAsMsg.countKeys();
-                            // TODO fix, check if the the first key not null (here we consider the first one is always not null)
-                            final EType arraytype = arrayAsMsg.getType(0);
-                            switch (arraytype) {
-                            case INTEGER:
-                                final Long[] longs = new Long[arrayLength];
-                                for (int arrayKey = 0; arrayKey < arrayLength; arrayKey++) {
-                                    longs[arrayKey] = arrayAsMsg.getAsNullableLong(arrayKey);
-                                }
-                                this.objectValues[key] = longs;
-                                break;
 
-                            case DECIMAL:
-                                final Double[] doubles = new Double[arrayLength];
-                                for (int arrayKey = 0; arrayKey < arrayLength; arrayKey++) {
-                                    doubles[arrayKey] = arrayAsMsg.getAsNullableDouble(arrayKey);
-                                }
-                                this.objectValues[key] = doubles;
-                                break;
-
-                            case STRING_UTF16:
-                            case STRING_ISO_8859_1:
-                                final String[] strings = new String[arrayLength];
-                                for (int arrayKey = 0; arrayKey < arrayLength; arrayKey++) {
-                                    strings[arrayKey] = arrayAsMsg.getAsString(arrayKey);
-                                }
-                                this.objectValues[key] = strings;
-                                break;
-
-                            case MSG:
-                                final IMsg[] msgs = new KeyObjectMsg[arrayLength];
-                                for (int arrayKey = 0; arrayKey < arrayLength; arrayKey++) {
-                                    msgs[arrayKey] = arrayAsMsg.getAsMsg(arrayKey);
-                                }
-                                this.objectValues[key] = msgs;
-                                break;
-
-                            default:
-                                // TODO manage the other types like ARRAY_FIXED_VALUE_TYPE or ARRAY_VARIABLE_VALUE_TYPE
-                                break;
+                        // For Fixed typed
+                        switch (arrayType) {
+                        case BYTE_TYPE:
+                            final byte[] byteArray = new byte[(fieldLength - 1)];
+                            System.arraycopy(bytes, pos, byteArray, 0, fieldLength);
+                            // TODO to optimize
+                            this.set(key, byteArray);
+                            break;
+                        case SHORT_TYPE:
+                            final short[] shorts = new short[(fieldLength - 1) >> ONE];
+                            for (int i = 0; i < fieldLength; i++) {
+                                shorts[i] = (short) ((((short) bytes[pos++] & XFF)) | (((short) bytes[pos++] & XFF) << EIGHT));
                             }
-                        } else {
-                            // For Fixed typed
-                            switch (arrayType) {
-                            case BYTE_TYPE:
-                                final byte[] byteArray = new byte[(fieldLength - 1)];
-                                System.arraycopy(bytes, pos, byteArray, 0, fieldLength);
-                                // TODO to optimize
-                                this.set(key, byteArray);
-                                break;
-                            case SHORT_TYPE:
-                                final short[] shorts = new short[(fieldLength - 1) >> ONE];
-                                for (int i = 0; i < fieldLength; i++) {
-                                    shorts[i] = (short) ((((short) bytes[pos++] & XFF)) | (((short) bytes[pos++] & XFF) << EIGHT));
-                                }
-                                this.set(key, shorts);
-                                break;
-                            case INT_TYPE:
-                                final int[] ints = new int[(fieldLength - 1) >> TWO];
-                                for (int i = 0; i < fieldLength; i++) {
-                                    ints[i] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
-                                            | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
-                                }
-                                this.set(key, ints);
-                                break;
-                            case DOUBLE_TYPE:
-                                final double[] doubles = new double[(fieldLength - 1) >> THREE];
-                                for (int i = 0; i < fieldLength; i++) {
-                                    doubles[i] = (((long) bytes[pos++] & XFF) | (((long) bytes[pos++] & XFF) << EIGHT)
-                                            | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
-                                            | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
-                                            | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX));
-                                }
-                                this.set(key, doubles);
-                                break;
-                            case LONG_TYPE:
-                                final long[] longs = new long[(fieldLength - 1) >> THREE];
-                                for (int i = 0; i < fieldLength; i++) {
-                                    longs[i] = (((long) bytes[pos++] & XFF)) | (((long) bytes[pos++] & XFF) << EIGHT)
-                                            | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
-                                            | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
-                                            | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX);
-                                }
-                                this.set(key, longs);
-                                break;
-                            case FLOAT_TYPE:
-                                final float[] floats = new float[(fieldLength - 1) >> TWO];
-                                for (int i = 0; i < fieldLength; i++) {
-                                    floats[i] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
-                                            | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
-                                }
-                                this.set(key, floats);
-                                break;
-                            default:
-                                break;
+                            this.set(key, shorts);
+                            break;
+                        case INT_TYPE:
+                            final int[] ints = new int[(fieldLength - 1) >> TWO];
+                            for (int i = 0; i < fieldLength; i++) {
+                                ints[i] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
+                                        | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
                             }
+                            this.set(key, ints);
+                            break;
+                        case DOUBLE_TYPE:
+                            final double[] doubles = new double[(fieldLength - 1) >> THREE];
+                            for (int i = 0; i < fieldLength; i++) {
+                                doubles[i] = (((long) bytes[pos++] & XFF) | (((long) bytes[pos++] & XFF) << EIGHT)
+                                        | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
+                                        | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
+                                        | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX));
+                            }
+                            this.set(key, doubles);
+                            break;
+                        case LONG_TYPE:
+                            final long[] longs = new long[(fieldLength - 1) >> THREE];
+                            for (int i = 0; i < fieldLength; i++) {
+                                longs[i] = (((long) bytes[pos++] & XFF)) | (((long) bytes[pos++] & XFF) << EIGHT)
+                                        | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
+                                        | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
+                                        | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX);
+                            }
+                            this.set(key, longs);
+                            break;
+                        case FLOAT_TYPE:
+                            final float[] floats = new float[(fieldLength - 1) >> TWO];
+                            for (int i = 0; i < fieldLength; i++) {
+                                floats[i] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
+                                        | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
+                            }
+                            this.set(key, floats);
+                            break;
+                        default:
+                            break;
+                        }
+
+                    case ARRAY_VARIABLE_VALUE_TYPE:
+
+                        // For variable type
+                        // TODO
+                        final KeyObjectMsg arrayAsMsg = new KeyObjectMsg();
+                        arrayAsMsg.deserializeFrom(bytes, pos, fieldLength);
+                        final int arrayLength = arrayAsMsg.countKeys();
+                        // TODO fix, check if the the first key not null (here we consider the first one is always not null)
+                        final EType arraytype = arrayAsMsg.getType(0);
+                        switch (arraytype) {
+                        case INTEGER:
+                            final Long[] longs = new Long[arrayLength];
+                            for (int arrayKey = 0; arrayKey < arrayLength; arrayKey++) {
+                                longs[arrayKey] = arrayAsMsg.getAsNullableLong(arrayKey);
+                            }
+                            this.objectValues[key] = longs;
+                            break;
+
+                        case DECIMAL:
+                            final Double[] doubles = new Double[arrayLength];
+                            for (int arrayKey = 0; arrayKey < arrayLength; arrayKey++) {
+                                doubles[arrayKey] = arrayAsMsg.getAsNullableDouble(arrayKey);
+                            }
+                            this.objectValues[key] = doubles;
+                            break;
+
+                        case STRING_UTF16:
+                        case STRING_ISO_8859_1:
+                            final String[] strings = new String[arrayLength];
+                            for (int arrayKey = 0; arrayKey < arrayLength; arrayKey++) {
+                                strings[arrayKey] = arrayAsMsg.getAsString(arrayKey);
+                            }
+                            this.objectValues[key] = strings;
+                            break;
+
+                        case MSG:
+                            final IMsg[] msgs = new KeyObjectMsg[arrayLength];
+                            for (int arrayKey = 0; arrayKey < arrayLength; arrayKey++) {
+                                msgs[arrayKey] = arrayAsMsg.getAsMsg(arrayKey);
+                            }
+                            this.objectValues[key] = msgs;
+                            break;
+
+                        default:
+                            // TODO manage the other types like ARRAY_FIXED_VALUE_TYPE or ARRAY_VARIABLE_VALUE_TYPE
+                            break;
                         }
 
                     default:
@@ -2352,7 +2382,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                 key++;
             }
         }
-
     }
 
     /**
