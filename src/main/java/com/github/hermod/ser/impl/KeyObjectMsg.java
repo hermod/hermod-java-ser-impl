@@ -2356,6 +2356,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                         // TODO
                         final KeyObjectMsg arrayAsMsg = new KeyObjectMsg();
                         arrayAsMsg.deserializeFrom(bytes, pos, fieldLength);
+                        pos += fieldLength;
                         final int variableArrayLength = arrayAsMsg.countKeys();
                         // TODO fix, check if the the first key not null (here we consider the first one is always not null)
                         final EType arraytype = arrayAsMsg.getType(0);
