@@ -659,13 +659,13 @@ public abstract class AbstractMsgTest {
     @Test
     public void testSetGetAsBytes() {
         srcMsg.set(KEY_ONE, BYTES_TEST);
-        //srcMsg.set(KEY_THREE, BYTES_TEST2);
+        srcMsg.set(KEY_THREE, BYTES_TEST2);
         
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
         
         assertThat(destMsg.getAsBytes(KEY_ONE)).isEqualTo(BYTES_TEST);
-        //assertThat(destMsg.getAsNullableBytes(KEY_THREE)).isEqualTo(BYTES_TEST2);
+        assertThat(destMsg.getAsNullableBytes(KEY_THREE)).isEqualTo(BYTES_TEST2);
         assertThat(destMsg.getAsBytes(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsBytes(KEY_ZERO)).isNull();
         assertThat(destMsg.getAsBytes(KEY_MINUS_ONE)).isNull();
