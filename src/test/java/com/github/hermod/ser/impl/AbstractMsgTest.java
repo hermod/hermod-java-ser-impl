@@ -35,6 +35,7 @@ public abstract class AbstractMsgTest {
     private static final String STRING_TEST132 = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012";
     private static final Object[] OBJECT_ARRAY_TEST = {};
     private static final byte[] BYTES_TEST = {0, 1, 2, 3};
+    private static final Byte[] BYTES_TEST2 = {0, 1, 2, 3};
     private static final String[] STRINGS_TEST = {"string1", "string2", "string3", "string4"};
 
     private static final int KEY_MINUS_ONE = -1;
@@ -658,17 +659,16 @@ public abstract class AbstractMsgTest {
     @Test
     public void testSetGetAsBytes() {
         srcMsg.set(KEY_ONE, BYTES_TEST);
-        srcMsg.set(KEY_NINETY, BYTES_TEST);
+        //srcMsg.set(KEY_THREE, BYTES_TEST2);
         
-//        final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
-//        this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
+        final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
+        this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
         
-//        assertThat(destMsg.getAsBytes(KEY_ONE)).isEqualTo(BYTES_TEST);
-//        assertThat(destMsg.getAsBytes(KEY_NINETY)).isEqualTo(BYTES_TEST);
-//        assertThat(destMsg.getAsMsg(KEY_NINETYNINE)).isNull();
-//        assertThat(destMsg.getAsMsg(KEY_ZERO)).isNull();
-//        assertThat(destMsg.getAsMsg(KEY_MINUS_ONE)).isNull();
-        
+        assertThat(destMsg.getAsBytes(KEY_ONE)).isEqualTo(BYTES_TEST);
+        //assertThat(destMsg.getAsNullableBytes(KEY_THREE)).isEqualTo(BYTES_TEST2);
+        assertThat(destMsg.getAsBytes(KEY_NINETYNINE)).isNull();
+        assertThat(destMsg.getAsBytes(KEY_ZERO)).isNull();
+        assertThat(destMsg.getAsBytes(KEY_MINUS_ONE)).isNull();
 
     }
     
