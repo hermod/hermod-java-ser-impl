@@ -30,7 +30,7 @@ public abstract class AbstractMsgTest {
     private static final double DOUBLE_TEST = 11.11;
     private static final double DOUBLE_TEST1 = 1.0;
     private static final double DOUBLE_TEST2 = Double.MAX_VALUE / 2;
-    private static final String STRING_TEST_UTF16 = "€";
+    private static final String STRING_TEST_UTF16 = "€" + new String(Character.toChars(119070));
     private static final String STRING_TEST = "string";
     private static final String STRING_TEST32 = "12345678901234567890123456789012";
     private static final String STRING_TEST132 = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012";
