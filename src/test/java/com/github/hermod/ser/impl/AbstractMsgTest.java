@@ -608,7 +608,7 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_TWO, STRING_TEST32);
         srcMsg.set(KEY_THREE, STRING_TEST132);
         srcMsg.set(KEY_FOUR, (String) null);
-        //srcMsg.set(KEY_FIVE, STRING_TEST_UTF16);
+        srcMsg.set(KEY_FIVE, STRING_TEST_UTF16);
         
         srcMsg.set(KEY_NINETY, STRING_TEST);
         srcMsg.set(KEY_THREE_HUNDRED, STRING_TEST);
@@ -621,7 +621,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsString(KEY_TWO)).isEqualTo(STRING_TEST32);
         assertThat(destMsg.getAsString(KEY_THREE)).isEqualTo(STRING_TEST132);
         assertThat(destMsg.getAsString(KEY_FOUR)).isNull();
-        //assertThat(destMsg.getAsString(KEY_FIVE)).isEqualTo(STRING_TEST_UTF16);
+        assertThat(destMsg.getAsString(KEY_FIVE)).isEqualTo(STRING_TEST_UTF16);
         assertThat(destMsg.getAsString(KEY_NINETY)).isEqualTo(STRING_TEST);
         assertThat(destMsg.getAsString(KEY_THREE_HUNDRED)).isEqualTo(STRING_TEST);
         assertThat(destMsg.getAsString(KEY_FOUR_HUNDRED)).isNull();
@@ -668,7 +668,7 @@ public abstract class AbstractMsgTest {
 //        assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(msg.getAsMsg(KEY_ONE).getAsByte(KEY_ONE));
 //        assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(msg.getAsMsg(KEY_NINETY).getAsByte(KEY_ONE));
 //        assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(msg.getAsMsg(KEY_THREE_HUNDRED).getAsByte(KEY_ONE));
-//        
+     
         assertThat(destMsg.getAsMsg(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsMsg(KEY_ZERO)).isNull();
         assertThat(destMsg.getAsMsg(KEY_MINUS_ONE)).isNull();
@@ -698,6 +698,7 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_THREE, (Byte[]) null);
         srcMsg.set(KEY_FOUR, SHORTS_TEST);
         srcMsg.set(KEY_NINETY, BYTES_TEST2);
+        srcMsg.set(KEY_THREE_HUNDRED, BYTES_TEST);
         
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
@@ -711,8 +712,8 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsBytes(KEY_FOUR)).isNull();
         assertThat(destMsg.getAsBytes(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsNullableBytes(KEY_NINETYNINE)).isNull();
+        assertThat(destMsg.getAsBytes(KEY_THREE_HUNDRED)).isEqualTo(BYTES_TEST);
         assertThat(destMsg.getAsBytes(KEY_MINUS_ONE)).isNull();
-        assertThat(destMsg.getAsNullableBytes(KEY_THREE_HUNDRED)).isNull();
 
     }
     
@@ -835,7 +836,7 @@ public abstract class AbstractMsgTest {
     @Test
     public void testGetType() {
         assertThat(srcMsg.getType(KEY_NINETY)).isEqualTo(EType.NULL);
-        assertThat(srcMsg.getTypeAsByte(KEY_NINETY)).isEqualTo(EType.NULL.getId());
+        assertThat(srcMsg.getTypeAsByte(KEY_THREE_HUNDRED)).isEqualTo(EType.NULL.getId());
         srcMsg.set(KEY_ONE, 1);
         assertThat(srcMsg.getType(KEY_ONE)).isEqualTo(EType.INTEGER);
         assertThat(srcMsg.getTypeAsByte(KEY_ONE)).isEqualTo(EType.INTEGER.getId());
@@ -943,21 +944,11 @@ public abstract class AbstractMsgTest {
      * 
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testSerialiseToBytesWithIllegalArgument() {
+    public void testSerializeToBytesWithIllegalArgument() {
         final IMsg srcMsg = newMsg();
         srcMsg.set(KEY_ONE, BYTE_TEST);
         final byte[] bytes = new byte[0];
         this.serializer.serializeToBytes(srcMsg, bytes, 0);
     }
 
-    
-    public static void main(String[] args) throws UnsupportedEncodingException {
-        String s = "a";
-        int i = 0;
-        for (final byte byt : s.getBytes("UTF-16")) {
-            System.out.print(byt);
-            i++;
-        }
-        System.out.println("i" + i);
-    }
 }
