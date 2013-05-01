@@ -2383,7 +2383,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                     final byte typeMask = (byte) (type & TYPE_MASK);
                     this.types[key] = typeMask;
                     final int lengthMask = (LENGTH_MASK & type);
-                    final int posBeforeLength = pos;
                     final int fieldLength = (lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask
                             : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos++] : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT)
                                     | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR);
@@ -2499,7 +2498,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                                         }
                                         this.objectValues[key] = shorts;
                                         break;
-                                    case INTEGER_TYPE:
+                                    case INT_TYPE:
                                         final Integer[] integers = new Integer[variableArrayLength];
                                         for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
                                             integers[arrayKey] = arrayAsMsg.getAsNullableInteger(arrayKey);

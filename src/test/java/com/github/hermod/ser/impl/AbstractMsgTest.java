@@ -814,8 +814,7 @@ public abstract class AbstractMsgTest {
         
         assertThat(destMsg.getAsInts(KEY_ONE)).isEqualTo(INTS_TEST);
         assertThat(destMsg.getAsNullableIntegers(KEY_ONE)).isEqualTo(INTS_TEST2);
-        //TODO FIXME  
-        //assertThat(destMsg.getAsNullableIntegers(KEY_NINETY)).isEqualTo(INTS_TEST2);
+        assertThat(destMsg.getAsNullableIntegers(KEY_NINETY)).isEqualTo(INTS_TEST2);
         assertThat(destMsg.getAsInts(KEY_ZERO)).isNull();
         assertThat(destMsg.getAsNullableIntegers(KEY_TWO)).isNull();
         assertThat(destMsg.getAsNullableIntegers(KEY_THREE)).isNull();
