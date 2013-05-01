@@ -541,10 +541,15 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     @Override
     public final boolean[] getAsBooleans(final int aKey) {
         try {
-            if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof boolean[])) {
-                final boolean[] booleans = (boolean[]) this.objectValues[aKey];
-                final boolean[] results = new boolean[booleans.length];
-                System.arraycopy(booleans, 0, results, 0, booleans.length);
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof byte[])) {
+                final byte[] bytes = (byte[]) this.objectValues[aKey];
+                final boolean[] results = new boolean[bytes.length];
+                for (int i = 0; i < bytes.length; i++) {
+                    if (bytes[i] != 0 && bytes[i] != 1) {
+                        return null;
+                    }
+                    results[i] = (bytes[i] == 0) ? true : false;
+                }
                 return results;
             } else {
                 return null;
@@ -563,14 +568,24 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     public final Boolean[] getAsNullableBooleans(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof boolean[])) {
-                final boolean[] booleans = (boolean[]) this.objectValues[aKey];
-                final Boolean[] results = new Boolean[booleans.length];
-                System.arraycopy(booleans, 0, results, 0, booleans.length);
+                final byte[] bytes = (byte[]) this.objectValues[aKey];
+                final Boolean[] results = new Boolean[bytes.length];
+                for (int i = 0; i < bytes.length; i++) {
+                    if (bytes[i] != 0 && bytes[i] != 1) {
+                        return null;
+                    }
+                    results[i] = (bytes[i] == 0) ? true : false;
+                }
                 return results;
             } else if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof Boolean[])) {
-                final Boolean[] booleans = (Boolean[]) this.objectValues[aKey];
-                final Boolean[] results = new Boolean[booleans.length];
-                System.arraycopy(booleans, 0, results, 0, booleans.length);
+                final Byte[] bytes = (Byte[]) this.objectValues[aKey];
+                final Boolean[] results = new Boolean[bytes.length];
+                for (int i = 0; i < bytes.length; i++) {
+                    if (bytes[i] != 0 && bytes[i] != 1 && bytes[i] != null) {
+                        return null;
+                    }
+                    results[i] = (bytes[i] == null) ? null : (bytes[i] == 0) ? true : false;
+                }
                 return results;
             } else {
                 return null;
@@ -1693,7 +1708,15 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     @Override
     public final void set(final int aKey, final boolean... aBooleans) {
         try {
-            this.objectValues[aKey] = aBooleans;
+            if (aBooleans != null) {
+                final byte[] bytes = new byte[aBooleans.length];
+                for (int i = 0; i < aBooleans.length; i++) {
+                    bytes[i] = (byte) ((aBooleans[i] == true) ? 1 : 0);
+                }
+                this.objectValues[aKey] = bytes;
+            } else {
+                this.objectValues[aKey] = null;
+            }
             this.types[aKey] = ARRAY_FIXED_VALUE_TYPE;
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
@@ -1709,7 +1732,15 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     @Override
     public final void set(final int aKey, final Boolean... aBooleans) {
         try {
-            this.objectValues[aKey] = aBooleans;
+            if (aBooleans != null) {
+                final Byte[] bytes = new Byte[aBooleans.length];
+                for (int i = 0; i < aBooleans.length; i++) {
+                    bytes[i] = Boolean.TRUE.equals(aBooleans[i]) ? (byte) 1 : (Boolean.FALSE.equals(aBooleans[i])) ? (byte) 0 : null;
+                }
+                this.objectValues[aKey] = bytes;
+            } else {
+                this.objectValues[aKey] = null;
+            }
             this.types[aKey] = ARRAY_VARIABLE_VALUE_TYPE;
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);

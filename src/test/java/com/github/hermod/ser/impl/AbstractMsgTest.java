@@ -711,8 +711,7 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_TWO, (boolean[]) null);
         srcMsg.set(KEY_THREE, (Boolean[]) null);
         srcMsg.set(KEY_FOUR, SHORTS_TEST);
-      //TODO FIXME  
-        //srcMsg.set(KEY_NINETY, BOOLEANS_TEST2);
+        srcMsg.set(KEY_NINETY, BOOLEANS_TEST2);
         srcMsg.set(KEY_THREE_HUNDRED, BOOLEANS_TEST);
         
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
@@ -722,15 +721,15 @@ public abstract class AbstractMsgTest {
 //        assertThat(destMsg.getAsBooleans(KEY_ONE)).isEqualTo(BOOLEANS_TEST);
 //        assertThat(destMsg.getAsNullableBooleans(KEY_ONE)).isEqualTo(BOOLEANS_TEST2);
 //        assertThat(destMsg.getAsNullableBooleans(KEY_NINETY)).isEqualTo(BOOLEANS_TEST2);
-//        assertThat(destMsg.getAsBooleans(KEY_ZERO)).isNull();
-//        assertThat(destMsg.getAsNullableBooleans(KEY_TWO)).isNull();
-//        assertThat(destMsg.getAsNullableBooleans(KEY_THREE)).isNull();
-//        assertThat(destMsg.getAsBooleans(KEY_FOUR)).isNull();
-//        assertThat(destMsg.getAsBooleans(KEY_NINETYNINE)).isNull();
-//        assertThat(destMsg.getAsNullableBooleans(KEY_NINETYNINE)).isNull();
+        assertThat(destMsg.getAsBooleans(KEY_ZERO)).isNull();
+        assertThat(destMsg.getAsNullableBooleans(KEY_TWO)).isNull();
+        assertThat(destMsg.getAsNullableBooleans(KEY_THREE)).isNull();
+        assertThat(destMsg.getAsBooleans(KEY_FOUR)).isNull();
+        assertThat(destMsg.getAsBooleans(KEY_NINETYNINE)).isNull();
+        assertThat(destMsg.getAsNullableBooleans(KEY_NINETYNINE)).isNull();
 //        assertThat(destMsg.getAsBooleans(KEY_THREE_HUNDRED)).isEqualTo(BOOLEANS_TEST);
-//        assertThat(destMsg.getAsBooleans(KEY_MINUS_ONE)).isNull();
-//        assertThat(destMsg.getAsNullableBooleans(KEY_FOUR_HUNDRED)).isNull();
+        assertThat(destMsg.getAsBooleans(KEY_MINUS_ONE)).isNull();
+        assertThat(destMsg.getAsNullableBooleans(KEY_FOUR_HUNDRED)).isNull();
     }
 
     /**
