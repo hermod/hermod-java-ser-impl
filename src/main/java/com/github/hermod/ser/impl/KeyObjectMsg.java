@@ -48,7 +48,6 @@ import com.github.hermod.ser.EType;
 import com.github.hermod.ser.IByteBufferSerializable;
 import com.github.hermod.ser.IBytesSerializable;
 import com.github.hermod.ser.IMsg;
-import com.github.hermod.ser.ISerializable;
 import com.github.hermod.ser.Types;
 
 /**
@@ -769,7 +768,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                     results[i] = longs[i];
                 }
                 return results;
-            } else if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof Long[])) {
+            } else if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof Long[])) {
                 final Long[] longs = (Long[]) this.objectValues[aKey];
                 final Long[] results = new Long[longs.length];
                 System.arraycopy(longs, 0, results, 0, longs.length);
@@ -1188,16 +1187,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
         }
     }
 
-    /**
-     * set.
-     * 
-     * @param aKey
-     * @param aShort
-     * @param forceNoLengthOptimization
-     */
-    private final void set(final int aKey, final short aShort, final boolean forceNoLengthOptimization) {
-        set(aKey, aShort, SHORT_TYPE);
-    }
 
     /**
      * (non-Javadoc)
@@ -1234,16 +1223,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
         }
     }
 
-    /**
-     * set.
-     * 
-     * @param aKey
-     * @param aInt
-     * @param forceNoLengthOptimization
-     */
-    private final void set(final int aKey, final int aInt, final boolean forceNoLengthOptimization) {
-        set(aKey, aInt, INT_TYPE);
-    }
 
     /**
      * (non-Javadoc)
@@ -1281,16 +1260,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
         }
     }
 
-    /**
-     * set.
-     * 
-     * @param aKey
-     * @param aLong
-     * @param forceNoLengthOptimization
-     */
-    private final void set(final int aKey, final long aLong, final boolean forceNoLengthOptimization) {
-        set(aKey, aLong, LONG_TYPE);
-    }
 
     /**
      * set.
@@ -1299,7 +1268,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @param aLong
      * @param length
      */
-    private final void set(final int aKey, final long aLong, final byte integerType) {
+    private void set(final int aKey, final long aLong, final byte integerType) {
         try {
             this.primitiveValues[aKey] = aLong;
             this.types[aKey] = integerType;
@@ -1659,9 +1628,9 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
         if (forceNoLengthOptimization) {
             try {
 
-                if (aObject instanceof Byte | aObject instanceof Short | aObject instanceof Integer | aObject instanceof Long) {
+                if (aObject instanceof Boolean | aObject instanceof Byte | aObject instanceof Short | aObject instanceof Integer | aObject instanceof Long) {
                     if (aObject != null) {
-                        final byte integerType = (aObject instanceof Byte) ? BYTE_TYPE : (aObject instanceof Short) ? SHORT_TYPE
+                        final byte integerType = (aObject instanceof Byte || aObject instanceof Boolean) ? BYTE_TYPE : (aObject instanceof Short) ? SHORT_TYPE
                                 : (aObject instanceof Integer) ? INT_TYPE : LONG_TYPE;
                         set(aKey, ((Number) aObject).longValue(), integerType);
                     } else {
@@ -1671,9 +1640,9 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                 } else if (aObject instanceof Float | aObject instanceof Double) {
                     if (aObject != null) {
                         if (aObject instanceof Double) {
-                            set(aKey, ((Number) aObject).doubleValue(), true);
+                            set(aKey, ((Double) aObject).doubleValue(), true);
                         } else {
-                            set(aKey, ((Number) aObject).floatValue());
+                            set(aKey, ((Float) aObject).floatValue());
                         }
                     } else {
                         this.types[aKey] = DECIMAL_TYPE;
@@ -1963,7 +1932,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#set(int, java.lang.String[], boolean)
      */
     @Override
-    public final void set(final int aKey, final String[] aStrings, final boolean aForceIso88591Charset) {
+    public final void set(final int aKey, final String[] aStrings, final boolean forceNoLengthOptimization) {
         // TODO copy or not, Caution pb with aForceIso88591Charset, must transform String[] with the good charset
         try {
             this.objectValues[aKey] = aStrings;
@@ -2258,7 +2227,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                             final int booleanLength = booleans.length + 1;
                             pos = writeVariableLength(bytes, pos - 1, booleanLength, (booleanLength == 0) ? TWO : ONE);
                             bytes[pos++] = BYTE_TYPE;
-                            System.arraycopy(booleans, 0, bytes, pos, booleanLength);
                             for (final boolean currentBoolean : booleans) {
                                 bytes[pos++] = (byte) (currentBoolean ? ONE : ZERO);
                             }
@@ -2302,7 +2270,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             int i = 0;
             boolean firstElementSet = false;
             //  Force first element without compression
-            while (i < objects.length && objects[i] == null && !firstElementSet) {
+            while (i < objects.length && objects[i] != null && !firstElementSet) {
                 msg.set(i, objects[i], true);
                 i++;
                 firstElementSet = true;
@@ -2336,7 +2304,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                         : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN)
                                 | ((bytes[pos++] & XFF) << TWENTY_FOUR))) + 1;
             } else {
-                // final int lengthMask = bytes[pos] & LENGTH_MASK;
                 final int lengthMask = bytes[pos++] & LENGTH_MASK;
                 // TODO to optimize
                 pos += (((lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask
@@ -2445,8 +2412,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
 
                         case ARRAY_FIXED_VALUE_TYPE:
                                 final byte arrayType = bytes[pos++];
-                                final int fixedArrayLength = fieldLength - (pos - posBeforeLength);
-
+                                final int fixedArrayLength = fieldLength - ONE;
                                 // For Fixed typed
                                 switch (arrayType) {
                                 case BYTE_TYPE:
@@ -2473,10 +2439,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                                 case DOUBLE_TYPE:
                                     final double[] doubles = new double[fixedArrayLength >> THREE];
                                     for (int i = 0; i < doubles.length; i++) {
-                                        doubles[i] = (((long) bytes[pos++] & XFF) | (((long) bytes[pos++] & XFF) << EIGHT)
+                                        doubles[i] = Double.longBitsToDouble((((long) bytes[pos++] & XFF) | (((long) bytes[pos++] & XFF) << EIGHT)
                                                 | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
                                                 | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
-                                                | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX));
+                                                | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX)));
                                     }
                                     this.set(key, doubles);
                                     break;
@@ -2493,8 +2459,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                                 case FLOAT_TYPE:
                                     final float[] floats = new float[fixedArrayLength >> TWO];
                                     for (int i = 0; i < floats.length; i++) {
-                                        floats[i] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
-                                                | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
+                                        floats[i] = Float.intBitsToFloat((((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
+                                                | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR));
                                     }
                                     this.set(key, floats);
                                     break;
