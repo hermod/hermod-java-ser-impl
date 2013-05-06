@@ -42,6 +42,11 @@ import static com.github.hermod.ser.impl.Msgs.XFF;
 import static com.github.hermod.ser.impl.Msgs.ZERO;
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
+
+import checkers.nullness.quals.NonNull;
+import checkers.nullness.quals.Nullable;
 
 import com.github.hermod.ser.EPrecision;
 import com.github.hermod.ser.EType;
@@ -178,7 +183,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsNullableBoolean(int)
      */
     @Override
-    public final Boolean getAsNullableBoolean(final int aKey) {
+    public final @Nullable
+    Boolean getAsNullableBoolean(final int aKey) {
         try {
             return Boolean.valueOf(getAsBoolean(aKey));
         } catch (IllegalArgumentException e) {
@@ -208,7 +214,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsNullableByte(int)
      */
     @Override
-    public final Byte getAsNullableByte(final int aKey) {
+    public final @Nullable
+    Byte getAsNullableByte(final int aKey) {
         try {
             return Byte.valueOf(getAsByte(aKey));
         } catch (IllegalArgumentException e) {
@@ -238,7 +245,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsNullableShort(int)
      */
     @Override
-    public final Short getAsNullableShort(final int aKey) {
+    public final @Nullable
+    Short getAsNullableShort(final int aKey) {
         try {
             return Short.valueOf(getAsShort(aKey));
         } catch (IllegalArgumentException e) {
@@ -269,7 +277,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @return
      */
     @Override
-    public final Integer getAsNullableInteger(final int aKey) {
+    public final @Nullable
+    Integer getAsNullableInteger(final int aKey) {
         try {
             return Integer.valueOf(getAsInt(aKey));
         } catch (IllegalArgumentException e) {
@@ -300,7 +309,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @return
      */
     @Override
-    public final Long getAsNullableLong(final int aKey) {
+    public final @Nullable
+    Long getAsNullableLong(final int aKey) {
         try {
             return Long.valueOf(getAsLong(aKey));
         } catch (IllegalArgumentException e) {
@@ -331,7 +341,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsNullableFloat(int)
      */
     @Override
-    public final Float getAsNullableFloat(final int aKey) {
+    public final @Nullable
+    Float getAsNullableFloat(final int aKey) {
         try {
             return getAsFloat(aKey);
         } catch (IllegalArgumentException e) {
@@ -374,7 +385,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @return
      */
     @Override
-    public final Double getAsNullableDouble(final int aKey) {
+    public final @Nullable
+    Double getAsNullableDouble(final int aKey) {
         try {
             return getAsDouble(aKey);
         } catch (IllegalArgumentException e) {
@@ -422,7 +434,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsString(int)
      */
     @Override
-    public final String getAsString(final int aKey) {
+    public final @Nullable
+    String getAsString(final int aKey) {
         try {
             return ((this.types[aKey] & TYPE_MASK) == STRING_ISO_8859_1_TYPE || (this.types[aKey] & TYPE_MASK) == STRING_UTF_16_TYPE) ? (String) this.objectValues[aKey]
                     : null;
@@ -434,10 +447,11 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser3.intmap.ReadIntMap#getAsMap(int)
+     * @see com.github.hermod.ser.IMsg#getAsMsg(int)
      */
     @Override
-    public final IMsg getAsMsg(final int aKey) {
+    public final @Nullable
+    IMsg getAsMsg(final int aKey) {
         try {
             return ((this.types[aKey] & TYPE_MASK) == MSG_TYPE && this.objectValues[aKey] != null) ? new KeyObjectMsg((IMsg) this.objectValues[aKey])
                     : null;
@@ -445,6 +459,26 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             return null;
         }
     }
+
+    /**
+     * getAsMap.
+     * 
+     * @param aKey
+     * @return
+     */
+    // private final Map<Integer, Object> getAsMap(final int aKey) {
+    // final IMsg msg = this.getAsMsg(aKey);
+    // if (msg != null) {
+    // final int[] keys = msg.getKeys();
+    // final Map<Integer, Object> map = new HashMap<>(keys.length);
+    // for (final int key : keys) {
+    // map.put(key, msg.getAsObject(key));
+    // }
+    // return map;
+    // } else {
+    // return null;
+    // }
+    // }
 
     /**
      * (non-Javadoc)
@@ -467,7 +501,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsObject(int)
      */
     @Override
-    public final Object getAsObject(final int aKey) {
+    public final @Nullable
+    Object getAsObject(final int aKey) {
         return getAsObject(aKey, Object.class);
     }
 
@@ -477,7 +512,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsObject(int, java.lang.Class)
      */
     @Override
-    public final <T> T getAsObject(final int aKey, final Class<T> aClazz) {
+    public final @Nullable
+    <T> T getAsObject(final int aKey, final Class<T> aClazz) {
         try {
             final byte type = this.types[aKey];
             switch (type) {
@@ -518,10 +554,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                 return aClazz.cast(getAsMsg(aKey));
 
             case ARRAY_FIXED_VALUE_TYPE:
-                return aClazz.cast(getAsObject(aKey));
+                return aClazz.cast(getAsObjects(aKey));
 
             case ARRAY_VARIABLE_VALUE_TYPE:
-                return aClazz.cast(getAsObject(aKey));
+                return aClazz.cast(getAsObjects(aKey));
 
             default:
                 return null;
@@ -539,7 +575,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsBooleans(int)
      */
     @Override
-    public final boolean[] getAsBooleans(final int aKey) {
+    public final @Nullable
+    boolean[] getAsBooleans(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof byte[])) {
                 final byte[] bytes = (byte[]) this.objectValues[aKey];
@@ -548,7 +585,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                     if (bytes[i] != 0 && bytes[i] != 1) {
                         return null;
                     }
-                    results[i] = (bytes[i] == 0) ? true : false;
+                    results[i] = (bytes[i] == 0) ? false : true;
                 }
                 return results;
             } else {
@@ -565,26 +602,27 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsNullableBooleans(int)
      */
     @Override
-    public final Boolean[] getAsNullableBooleans(final int aKey) {
+    public final @Nullable
+    Boolean[] getAsNullableBooleans(final int aKey) {
         try {
-            if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof boolean[])) {
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof byte[])) {
                 final byte[] bytes = (byte[]) this.objectValues[aKey];
                 final Boolean[] results = new Boolean[bytes.length];
                 for (int i = 0; i < bytes.length; i++) {
                     if (bytes[i] != 0 && bytes[i] != 1) {
                         return null;
                     }
-                    results[i] = (bytes[i] == 0) ? true : false;
+                    results[i] = (bytes[i] == 0) ? false : true;
                 }
                 return results;
-            } else if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof Boolean[])) {
+            } else if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof Byte[])) {
                 final Byte[] bytes = (Byte[]) this.objectValues[aKey];
                 final Boolean[] results = new Boolean[bytes.length];
                 for (int i = 0; i < bytes.length; i++) {
                     if (bytes[i] != 0 && bytes[i] != 1 && bytes[i] != null) {
                         return null;
                     }
-                    results[i] = (bytes[i] == null) ? null : (bytes[i] == 0) ? true : false;
+                    results[i] = (bytes[i] == null) ? null : (bytes[i] == 0) ? false : true;
                 }
                 return results;
             } else {
@@ -601,7 +639,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsBytes(int)
      */
     @Override
-    public final byte[] getAsBytes(final int aKey) {
+    public final @Nullable
+    byte[] getAsBytes(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof byte[])) {
                 final byte[] bytes = (byte[]) this.objectValues[aKey];
@@ -622,7 +661,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsNullableBytes(int)
      */
     @Override
-    public final Byte[] getAsNullableBytes(final int aKey) {
+    public final @Nullable
+    Byte[] getAsNullableBytes(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof byte[])) {
                 final byte[] bytes = (byte[]) this.objectValues[aKey];
@@ -652,7 +692,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsShorts(int)
      */
     @Override
-    public final short[] getAsShorts(final int aKey) {
+    public final @Nullable
+    short[] getAsShorts(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof short[])) {
                 final short[] shorts = (short[]) this.objectValues[aKey];
@@ -673,7 +714,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsNullableBytes(int)
      */
     @Override
-    public final Short[] getAsNullableShorts(final int aKey) {
+    public final @Nullable
+    Short[] getAsNullableShorts(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof short[])) {
                 final short[] shorts = (short[]) this.objectValues[aKey];
@@ -702,7 +744,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsInts(int)
      */
     @Override
-    public final int[] getAsInts(final int aKey) {
+    public final @Nullable
+    int[] getAsInts(final int aKey) {
         try {
             if (((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof int[]))) {
                 final int[] ints = (int[]) this.objectValues[aKey];
@@ -723,7 +766,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsNullableIntegers(int)
      */
     @Override
-    public final Integer[] getAsNullableIntegers(final int aKey) {
+    public final @Nullable
+    Integer[] getAsNullableIntegers(final int aKey) {
         try {
             if (((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof int[]))) {
                 final int[] ints = (int[]) this.objectValues[aKey];
@@ -752,7 +796,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsLongs(int)
      */
     @Override
-    public final long[] getAsLongs(final int aKey) {
+    public final @Nullable
+    long[] getAsLongs(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof long[])) {
                 final long[] longs = (long[]) this.objectValues[aKey];
@@ -773,7 +818,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsNullableLongs(int)
      */
     @Override
-    public final Long[] getAsNullableLongs(final int aKey) {
+    public final @Nullable
+    Long[] getAsNullableLongs(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof long[])) {
                 final long[] longs = (long[]) this.objectValues[aKey];
@@ -802,7 +848,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsFloats(int)
      */
     @Override
-    public final float[] getAsFloats(final int aKey) {
+    public final @Nullable
+    float[] getAsFloats(final int aKey) {
         try {
             if (((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof float[]))) {
                 final float[] floats = (float[]) this.objectValues[aKey];
@@ -823,7 +870,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsNullableFloats(int)
      */
     @Override
-    public final Float[] getAsNullableFloats(final int aKey) {
+    public final @Nullable
+    Float[] getAsNullableFloats(final int aKey) {
         try {
             if (((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof float[]))) {
                 final float[] floats = (float[]) this.objectValues[aKey];
@@ -852,7 +900,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsDoubles(int)
      */
     @Override
-    public final double[] getAsDoubles(final int aKey) {
+    public final @Nullable
+    double[] getAsDoubles(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof double[])) {
                 final double[] doubles = (double[]) this.objectValues[aKey];
@@ -873,7 +922,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsNullableDoubles(int)
      */
     @Override
-    public final Double[] getAsNullableDoubles(final int aKey) {
+    public final @Nullable
+    Double[] getAsNullableDoubles(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof double[])) {
                 final double[] doubles = (double[]) this.objectValues[aKey];
@@ -902,7 +952,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsStrings(int)
      */
     @Override
-    public final String[] getAsStrings(final int aKey) {
+    public final @Nullable
+    String[] getAsStrings(final int aKey) {
         try {
             if (((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof String[]))) {
                 final String[] strings = (String[]) this.objectValues[aKey];
@@ -923,7 +974,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getAsMsgs(int)
      */
     @Override
-    public final IMsg[] getAsMsgs(final int aKey) {
+    public final @Nullable
+    IMsg[] getAsMsgs(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof IMsg[])) {
                 final IMsg[] msgs = (IMsg[]) this.objectValues[aKey];
@@ -963,20 +1015,77 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
         }
     }
 
+    // @Override
+    /**
+     * getAsObjects.
+     * 
+     * @param aKey
+     * @return
+     */
+    private final @Nullable
+    Object[] getAsObjects(final int aKey) {
+        try {
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE) {
+                if (this.objectValues[aKey] instanceof byte[]) {
+                    return getAsNullableBytes(aKey);
+                } else if (this.objectValues[aKey] instanceof short[]) {
+                    return getAsNullableShorts(aKey);
+                } else if (this.objectValues[aKey] instanceof int[]) {
+                    return getAsNullableIntegers(aKey);
+                } else if (this.objectValues[aKey] instanceof long[]) {
+                    return getAsNullableLongs(aKey);
+                } else if (this.objectValues[aKey] instanceof float[]) {
+                    return getAsNullableFloats(aKey);
+                } else if (this.objectValues[aKey] instanceof double[]) {
+                    return getAsNullableDoubles(aKey);
+                } else {
+                    // Should not occur
+                    return null;
+                }
+            } else if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof Object[])) {
+                final Object[] objects = (Object[]) this.objectValues[aKey];
+                final Object[] results = new Object[objects.length];
+                System.arraycopy(objects, 0, results, 0, objects.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
+    }
+
     /**
      * (non-Javadoc)
      * 
      * @see com.github.hermod.ser.IMsg#getAll()
      */
     @Override
-    public final IMsg getAll() {
+    public final @NonNull
+    IMsg getAll() {
         // TODO to optimize
         final int[] keys = this.getKeys();
         final IMsg msg = new KeyObjectMsg(keys[keys.length - 1]);
-        for (int key = 0; key < keys.length; key++) {
+        for (final int key : keys) {
             msg.set(key, this.getAsObject(key));
         }
         return msg;
+    }
+
+    /**
+     * getAllAsMap.
+     * 
+     * @return
+     */
+    final @NonNull
+    Map<Integer, Object> getAllAsMap() {
+        // TODO to optimize
+        final int[] keys = this.getKeys();
+        final Map<Integer, Object> map = new HashMap<>(keys.length);
+        for (final int key : keys) {
+            map.put(key, this.getAsObject(key));
+        }
+        return map;
     }
 
     /**
@@ -985,7 +1094,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser.IMsg#getType(int)
      */
     @Override
-    public final EType getType(final int aKey) {
+    public final @NonNull
+    EType getType(final int aKey) {
         try {
             return EType.valueOf((byte) (this.types[aKey] & TYPE_MASK));
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -1054,8 +1164,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                     return ((float[]) this.objectValues[aKey]).length;
                 } else if ((this.objectValues[aKey] instanceof double[])) {
                     return ((double[]) this.objectValues[aKey]).length;
-                } else if ((this.objectValues[aKey] instanceof boolean[])) {
-                    return ((boolean[]) this.objectValues[aKey]).length;
                 } else {
                     // Should not occur
                     return 0;
@@ -1074,7 +1182,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @see com.github.hermod.ser3.intmap.ReadIntMap#getKeys()
      */
     @Override
-    public final int[] getKeys() {
+    public final @NonNull
+    int[] getKeys() {
         final int[] keys = new int[countKeys()];
         int index = 0;
         for (int i = 0; i < this.types.length; i++) {
@@ -1202,7 +1311,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
         }
     }
 
-
     /**
      * (non-Javadoc)
      * 
@@ -1237,7 +1345,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             set(aKey, aInt);
         }
     }
-
 
     /**
      * (non-Javadoc)
@@ -1274,7 +1381,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             set(aKey, aLong);
         }
     }
-
 
     /**
      * set.
@@ -1523,7 +1629,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     private final boolean checkIfEncodableInIso88591(final String aString) {
         if (aString != null) {
-            // TODO is it really correct if the one of characher is encoded on more than 2 bytes on UTF16
             for (int i = 0; i < aString.length(); i++) {
                 final char c = aString.charAt(i);
                 if (c != (byte) c) {
@@ -1643,10 +1748,11 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
         if (forceNoLengthOptimization) {
             try {
 
-                if (aObject instanceof Boolean | aObject instanceof Byte | aObject instanceof Short | aObject instanceof Integer | aObject instanceof Long) {
+                if (aObject instanceof Boolean | aObject instanceof Byte | aObject instanceof Short | aObject instanceof Integer
+                        | aObject instanceof Long) {
                     if (aObject != null) {
-                        final byte integerType = (aObject instanceof Byte || aObject instanceof Boolean) ? BYTE_TYPE : (aObject instanceof Short) ? SHORT_TYPE
-                                : (aObject instanceof Integer) ? INT_TYPE : LONG_TYPE;
+                        final byte integerType = (aObject instanceof Byte || aObject instanceof Boolean) ? BYTE_TYPE
+                                : (aObject instanceof Short) ? SHORT_TYPE : (aObject instanceof Integer) ? INT_TYPE : LONG_TYPE;
                         set(aKey, ((Number) aObject).longValue(), integerType);
                     } else {
                         this.types[aKey] = INTEGER_TYPE;
@@ -1997,14 +2103,16 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      */
     @Override
     public final void remove(final int... aKeys) {
-        for (final int aKey : aKeys) {
-            try {
-                this.types[aKey] = NULL_TYPE;
-                this.objectValues[aKey] = null;
-                this.primitiveValues[aKey] = DEFAULT_VALUE;
-            } catch (final ArrayIndexOutOfBoundsException e) {
-                increaseKeyMax(aKey);
-                remove(aKey);
+        if (aKeys != null) {
+            for (final int aKey : aKeys) {
+                try {
+                    this.types[aKey] = NULL_TYPE;
+                    this.objectValues[aKey] = null;
+                    this.primitiveValues[aKey] = DEFAULT_VALUE;
+                } catch (final ArrayIndexOutOfBoundsException e) {
+                    increaseKeyMax(aKey);
+                    remove(aKey);
+                }
             }
         }
     }
@@ -2253,14 +2361,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                                 bytes[pos++] = (byte) (currentInt >> SIXTEEN);
                                 bytes[pos++] = (byte) (currentInt >> TWENTY_FOUR);
                             }
-                        } else if (this.objectValues[key] instanceof boolean[]) {
-                            final boolean[] booleans = (boolean[]) this.objectValues[key];
-                            final int booleanLength = booleans.length + 1;
-                            pos = writeVariableLength(bytes, pos - 1, booleanLength, (booleanLength == 0) ? TWO : ONE);
-                            bytes[pos++] = BYTE_TYPE;
-                            for (final boolean currentBoolean : booleans) {
-                                bytes[pos++] = (byte) (currentBoolean ? ONE : ZERO);
-                            }
                         } else {
                             // TODO should not occur, just log
                         }
@@ -2421,84 +2521,83 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                     if (lengthMask != 0) {
                         switch (typeMask) {
                         case STRING_ISO_8859_1_TYPE:
-                                final char[] chars = new char[fieldLength];
-                                for (int i = 0; i < fieldLength; i++) {
-                                    chars[i] = (char) bytes[pos++];
-                                }
-                                this.objectValues[key] = new String(chars);
+                            final char[] chars = new char[fieldLength];
+                            for (int i = 0; i < fieldLength; i++) {
+                                chars[i] = (char) bytes[pos++];
+                            }
+                            this.objectValues[key] = new String(chars);
                             break;
 
                         case STRING_UTF_16_TYPE:
-                                this.objectValues[key] = new String(bytes, pos, fieldLength, UTF_16_CHARSET);
-                                pos += fieldLength;
+                            this.objectValues[key] = new String(bytes, pos, fieldLength, UTF_16_CHARSET);
+                            pos += fieldLength;
                             break;
 
                         case MSG_TYPE:
-                                final KeyObjectMsg msg = new KeyObjectMsg();
-                                msg.deserializeFrom(bytes, pos, fieldLength);
-                                pos += fieldLength;
-                                this.objectValues[key] = msg;
+                            final KeyObjectMsg msg = new KeyObjectMsg();
+                            msg.deserializeFrom(bytes, pos, fieldLength);
+                            pos += fieldLength;
+                            this.objectValues[key] = msg;
                             break;
 
                         case ARRAY_FIXED_VALUE_TYPE:
-                                final byte arrayType = bytes[pos++];
-                                final int fixedArrayLength = fieldLength - ONE;
-                                // For Fixed typed
-                                switch (arrayType) {
-                                case BYTE_TYPE:
-                                    final byte[] byteArray = new byte[fixedArrayLength];
-                                    System.arraycopy(bytes, pos, byteArray, 0, fixedArrayLength);
-                                    pos += fixedArrayLength;
-                                    this.set(key, byteArray);
-                                    break;
-                                case SHORT_TYPE:
-                                    final short[] shorts = new short[fixedArrayLength >> ONE];
-                                    for (int i = 0; i < shorts.length; i++) {
-                                        shorts[i] = (short) ((((short) bytes[pos++] & XFF)) | (((short) bytes[pos++] & XFF) << EIGHT));
-                                    }
-                                    this.set(key, shorts);
-                                    break;
-                                case INT_TYPE:
-                                    final int[] ints = new int[fixedArrayLength >> TWO];
-                                    for (int i = 0; i < ints.length; i++) {
-                                        ints[i] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
-                                                | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
-                                    }
-                                    this.set(key, ints);
-                                    break;
-                                case DOUBLE_TYPE:
-                                    final double[] doubles = new double[fixedArrayLength >> THREE];
-                                    for (int i = 0; i < doubles.length; i++) {
-                                        doubles[i] = Double.longBitsToDouble((((long) bytes[pos++] & XFF) | (((long) bytes[pos++] & XFF) << EIGHT)
-                                                | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
-                                                | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
-                                                | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX)));
-                                    }
-                                    this.set(key, doubles);
-                                    break;
-                                case LONG_TYPE:
-                                    final long[] longs = new long[fixedArrayLength >> THREE];
-                                    for (int i = 0; i < longs.length; i++) {
-                                        longs[i] = (((long) bytes[pos++] & XFF)) | (((long) bytes[pos++] & XFF) << EIGHT)
-                                                | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
-                                                | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
-                                                | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX);
-                                    }
-                                    this.set(key, longs);
-                                    break;
-                                case FLOAT_TYPE:
-                                    final float[] floats = new float[fixedArrayLength >> TWO];
-                                    for (int i = 0; i < floats.length; i++) {
-                                        floats[i] = Float.intBitsToFloat((((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
-                                                | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR));
-                                    }
-                                    this.set(key, floats);
-                                    break;
-                                default:
-                                    break;
-                                }
+                            final byte arrayType = bytes[pos++];
+                            final int fixedArrayLength = fieldLength - ONE;
+                            // For Fixed typed
+                            switch (arrayType) {
+                            case BYTE_TYPE:
+                                final byte[] byteArray = new byte[fixedArrayLength];
+                                System.arraycopy(bytes, pos, byteArray, 0, fixedArrayLength);
+                                pos += fixedArrayLength;
+                                this.set(key, byteArray);
                                 break;
-                            
+                            case SHORT_TYPE:
+                                final short[] shorts = new short[fixedArrayLength >> ONE];
+                                for (int i = 0; i < shorts.length; i++) {
+                                    shorts[i] = (short) ((((short) bytes[pos++] & XFF)) | (((short) bytes[pos++] & XFF) << EIGHT));
+                                }
+                                this.set(key, shorts);
+                                break;
+                            case INT_TYPE:
+                                final int[] ints = new int[fixedArrayLength >> TWO];
+                                for (int i = 0; i < ints.length; i++) {
+                                    ints[i] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
+                                            | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
+                                }
+                                this.set(key, ints);
+                                break;
+                            case DOUBLE_TYPE:
+                                final double[] doubles = new double[fixedArrayLength >> THREE];
+                                for (int i = 0; i < doubles.length; i++) {
+                                    doubles[i] = Double.longBitsToDouble((((long) bytes[pos++] & XFF) | (((long) bytes[pos++] & XFF) << EIGHT)
+                                            | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
+                                            | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
+                                            | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX)));
+                                }
+                                this.set(key, doubles);
+                                break;
+                            case LONG_TYPE:
+                                final long[] longs = new long[fixedArrayLength >> THREE];
+                                for (int i = 0; i < longs.length; i++) {
+                                    longs[i] = (((long) bytes[pos++] & XFF)) | (((long) bytes[pos++] & XFF) << EIGHT)
+                                            | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
+                                            | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
+                                            | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX);
+                                }
+                                this.set(key, longs);
+                                break;
+                            case FLOAT_TYPE:
+                                final float[] floats = new float[fixedArrayLength >> TWO];
+                                for (int i = 0; i < floats.length; i++) {
+                                    floats[i] = Float.intBitsToFloat((((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
+                                            | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR));
+                                }
+                                this.set(key, floats);
+                                break;
+                            default:
+                                break;
+                            }
+                            break;
 
                         case ARRAY_VARIABLE_VALUE_TYPE:
 
@@ -2741,9 +2840,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                     } else if (this.objectValues[key] instanceof float[]) {
                         final int floatsLength = ((float[]) this.objectValues[key]).length << TWO + 1;
                         arrayFixedValueLength = getVariableLength(floatsLength, (floatsLength == 0) ? TWO : ONE) + floatsLength;
-                    } else if (this.objectValues[key] instanceof boolean[]) {
-                        final int booleansLength = ((boolean[]) this.objectValues[key]).length + 1;
-                        arrayFixedValueLength = getVariableLength(booleansLength, (booleansLength == 0) ? TWO : ONE) + booleansLength;
                     }
                 }
                 return arrayFixedValueLength;
@@ -2774,19 +2870,101 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("{");
-        for (int i = 0; i < this.types.length; i++) {
-            if (this.types[i] != NULL_TYPE) {
-                sb.append(i);
-                sb.append("=");
-                // TODO manage better array, double/float, use just get()
-                sb.append((this.types[i] == STRING_ISO_8859_1_TYPE || this.types[i] == MSG_TYPE || this.types[i] == ARRAY_FIXED_VALUE_TYPE) ? this.objectValues[i]
-                        : this.primitiveValues[i]);
+        final int[] keys = this.getKeys();
+        for (final int key : keys) {
+            final byte typeAsByte = this.getTypeAsByte(key);
+            if (typeAsByte != NULL_TYPE) {
+                sb.append("\"");
+                sb.append(key);
+                sb.append("\"");
+                sb.append(":");
+                if (typeAsByte == ARRAY_FIXED_VALUE_TYPE || typeAsByte == ARRAY_VARIABLE_VALUE_TYPE) {
+                    final Object[] objects = this.getAsObjects(key);
+                    if (objects != null) {
+                        sb.append("[");
+                        for (Object object : objects) {
+                            sb.append(object);
+                            sb.append(",");
+                        }
+                        if (objects.length != 0) {
+                            sb.deleteCharAt(sb.length() - 1);
+                        }
+                        sb.append("]");
+                    } else {
+                        sb.append("null");
+                    }
+                } else if (typeAsByte == INTEGER_TYPE) {
+                    sb.append(this.getAsNullableLong(key));
+                } else if (typeAsByte == DECIMAL_TYPE) {
+                    sb.append(this.getAsNullableDouble(key));
+                } else if (typeAsByte == STRING_ISO_8859_1_TYPE || this.types[key] == STRING_UTF_16_TYPE) {
+                    final String s = this.getAsString(key);
+                    if (s != null) {
+                        sb.append("\"");
+                        sb.append(s);
+                        sb.append("\"");
+                    } else {
+                        sb.append("null");
+                    }
+                } else if (typeAsByte == MSG_TYPE) {
+                    IMsg msg = this.getAsMsg(key);
+                    if (msg != null) {
+                        sb.append(msg);
+                    } else {
+                        sb.append("null");
+                    }
+                } else {
+                    // should not occur
+                }
                 sb.append(",");
             }
         }
-        sb.deleteCharAt(sb.length() - 1);
+        if (keys.length > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
         sb.append("}");
         return sb.toString();
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        int hashcode = 0;
+        // TODO to optimize
+        final int[] keys = this.getKeys();
+        for (final int key : keys) {
+            hashcode += key ^ this.getAsObject(key).hashCode();
+        }
+        return hashcode;
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object aObj) {
+        // TODO to optimize
+        if (aObj != null && aObj instanceof IMsg) {
+            IMsg msg = (IMsg) aObj;
+            final int[] keys = this.getKeys();
+            if (keys.length != msg.countKeys()) {
+                return false;
+            }
+            for (final int key : keys) {
+                if (!this.getAsObject(key).equals(msg.getAsObject(key))) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

@@ -4,14 +4,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.github.hermod.ser.EType;
+import com.github.hermod.ser.IByteBufferMsgSerializer;
+import com.github.hermod.ser.IByteBufferSerializable;
 import com.github.hermod.ser.IBytesMsgSerializer;
+import com.github.hermod.ser.IBytesSerializable;
 import com.github.hermod.ser.IMsg;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * AbstractMsgTest.
@@ -35,24 +43,24 @@ public abstract class AbstractMsgTest {
     private static final String STRING_TEST32 = "12345678901234567890123456789012";
     private static final String STRING_TEST132 = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012";
     private static final Object[] OBJECT_ARRAY_TEST = {};
-    private static final boolean[] BOOLEANS_TEST = {true, false};
-    private static final Boolean[] BOOLEANS_TEST2 = {true, false};
-    private static final byte[] BYTES_TEST = {0, 1, 2, 3, Byte.MAX_VALUE};
-    private static final Byte[] BYTES_TEST2 = {0, 1, 2, 3, Byte.MAX_VALUE};
-    private static final short[] SHORTS_TEST = {0, 1, 2, 3, Short.MAX_VALUE};
-    private static final Short[] SHORTS_TEST2 = {0, 1, 2, 3, Short.MAX_VALUE};
-    private static final int[] INTS_TEST = {0, 1, 2, 3, Integer.MAX_VALUE};
-    private static final Integer[] INTS_TEST2 = {0, 1, 2, 3, Integer.MAX_VALUE};
-    private static final long[] LONGS_TEST = {0, 1, 2, 3, Long.MAX_VALUE};
-    private static final Long[] LONGS_TEST2 = {0l, 1l, 2l, 3l, Long.MAX_VALUE};
-    private static final Long[] LONGS_TEST3 = {null, 1l, 2l, 3l, Long.MAX_VALUE};
-    private static final float[] FLOATS_TEST = {0, 1, 2, 3, Float.MAX_VALUE};
-    private static final Float[] FLOATS_TEST2 = {0f, 1f, 2f, 3f, Float.MAX_VALUE};
-    private static final double[] DOUBLES_TEST = {0, 1, 2, 3, Double.MAX_VALUE};
-    private static final Double[] DOUBLES_TEST2 = {0d, 1d, 2d, 3d, Double.MAX_VALUE};
-    
-    
-    private static final String[] STRINGS_TEST = {"string1", "string2", "string3", "string4"};
+    private static final boolean[] BOOLEANS_TEST = { true, false };
+    private static final Boolean[] BOOLEANS_TEST2 = { true, false };
+    private static final byte[] BYTES_TEST = { 0, 1, 2, 3, Byte.MAX_VALUE };
+    private static final Byte[] BYTES_TEST2 = { 0, 1, 2, 3, Byte.MAX_VALUE };
+    private static final short[] SHORTS_TEST = { 0, 1, 2, 3, Short.MAX_VALUE };
+    private static final Short[] SHORTS_TEST2 = { 0, 1, 2, 3, Short.MAX_VALUE };
+    private static final int[] INTS_TEST = { 0, 1, 2, 3, Integer.MAX_VALUE };
+    private static final Integer[] INTS_TEST2 = { 0, 1, 2, 3, Integer.MAX_VALUE };
+    private static final long[] LONGS_TEST = { 0, 1, 2, 3, Long.MAX_VALUE };
+    private static final Long[] LONGS_TEST2 = { 0l, 1l, 2l, 3l, Long.MAX_VALUE };
+    private static final Long[] LONGS_TEST3 = { null, 1l, 2l, 3l, Long.MAX_VALUE };
+    private static final long[] LONGS_TEST_EMPTY = {};
+    private static final float[] FLOATS_TEST = { 0, 1, 2, 3, Float.MAX_VALUE };
+    private static final Float[] FLOATS_TEST2 = { 0f, 1f, 2f, 3f, Float.MAX_VALUE };
+    private static final double[] DOUBLES_TEST = { 0, 1, 2, 3, Double.MAX_VALUE };
+    private static final Double[] DOUBLES_TEST2 = { 0d, 1d, 2d, 3d, Double.MAX_VALUE };
+
+    private static final String[] STRINGS_TEST = { "string1", "string2", "string3", "string4" };
 
     private static final int KEY_MINUS_ONE = -1;
     private static final int KEY_ZERO = 0;
@@ -77,38 +85,34 @@ public abstract class AbstractMsgTest {
 
     private static final double PRECISION = 0.00001;
 
-    
     private IBytesMsgSerializer serializer = new DefaultMsgSerializer();
-    
-    
+    private IByteBufferMsgSerializer byteBufferSerializer = new DefaultMsgSerializer();
+
     protected final IMsg msgTest;
 
     private IMsg srcMsg;
     private IMsg destMsg;
-    
-    
+
     /**
      * newMsg.
-     *
+     * 
      * @return
      */
     public abstract IMsg newMsg();
-    
 
     /**
      * Constructor.
-     *
+     * 
      */
     public AbstractMsgTest() {
         super();
         this.msgTest = newMsg();
         this.msgTest.set(KEY_ONE, BYTE_TEST);
     }
-    
 
     /**
      * setUp.
-     *
+     * 
      * @throws Exception
      */
     @Before
@@ -116,7 +120,6 @@ public abstract class AbstractMsgTest {
         this.srcMsg = newMsg();
         this.destMsg = newMsg();
     }
-    
 
     /**
      * testClear.
@@ -156,9 +159,9 @@ public abstract class AbstractMsgTest {
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
         final int[] keys = destMsg.getKeys();
 
-        assertThat( keys).isEqualTo(new int[]{KEY_ONE, KEY_TWO});
+        assertThat(keys).isEqualTo(new int[] { KEY_ONE, KEY_TWO });
     }
-    
+
     /**
      * testGetAsByte.
      * 
@@ -176,7 +179,7 @@ public abstract class AbstractMsgTest {
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
 
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
-        
+
         assertThat(destMsg.getAsBoolean(KEY_ONE)).isEqualTo(BOOLEAN_TEST);
         assertThat(destMsg.getAsNullableBoolean(KEY_ONE)).isEqualTo(BOOLEAN_TEST);
         assertThat(destMsg.getAsNullableBoolean(KEY_TWO)).isEqualTo(Boolean.valueOf(BOOLEAN_TEST));
@@ -185,7 +188,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsBoolean(KEY_THREE_HUNDRED)).isEqualTo(!BOOLEAN_TEST);
         assertThat(destMsg.getAsNullableBoolean(KEY_FOUR_HUNDRED)).isNull();
         assertThat(destMsg.contains(KEY_ZERO)).isTrue();
-        
+
         try {
             assertThat(destMsg.getAsBoolean(KEY_NINETYNINE));
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -193,14 +196,14 @@ public abstract class AbstractMsgTest {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
         }
         assertThat(destMsg.getAsNullableBoolean(KEY_NINETYNINE)).isNull();
-        
+
         try {
             assertThat(destMsg.getAsBoolean(KEY_NINETYNINE));
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
         }
-        
+
         try {
             assertThat(destMsg.getAsBoolean(KEY_MINUS_ONE));
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -208,10 +211,9 @@ public abstract class AbstractMsgTest {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
         }
         assertThat(destMsg.getAsBoolean(KEY_ZERO)).isEqualTo(BOOLEAN_TEST);
-        
+
     }
-    
-    
+
     /**
      * testGetAsByte.
      * 
@@ -225,11 +227,11 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_NINETY, BYTE_TEST);
         srcMsg.set(KEY_THREE_HUNDRED, BYTE_TEST);
         srcMsg.set(KEY_FOUR_HUNDRED, (Byte) null);
-        
+
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
 
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
-        
+
         assertThat(destMsg.getAsByte(KEY_ONE)).isEqualTo(BYTE_TEST);
         assertThat(destMsg.getAsNullableByte(KEY_ONE)).isEqualTo(BYTE_TEST);
         assertThat(destMsg.getAsNullableByte(KEY_TWO)).isEqualTo(Byte.valueOf(BYTE_TEST));
@@ -238,7 +240,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsByte(KEY_THREE_HUNDRED)).isEqualTo(BYTE_TEST);
         assertThat(destMsg.getAsNullableByte(KEY_FOUR_HUNDRED)).isNull();
         assertThat(destMsg.contains(KEY_ZERO)).isTrue();
-        
+
         try {
             assertThat(destMsg.getAsByte(KEY_NINETYNINE));
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -252,7 +254,7 @@ public abstract class AbstractMsgTest {
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
         }
-        
+
         try {
             assertThat(destMsg.getAsByte(KEY_MINUS_ONE));
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -288,7 +290,7 @@ public abstract class AbstractMsgTest {
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
 
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
-        
+
         assertThat(destMsg.getAsShort(KEY_ONE)).isEqualTo(SHORT_TEST);
         assertThat(destMsg.getAsNullableShort(KEY_ONE)).isEqualTo(SHORT_TEST);
         assertThat(destMsg.getAsShort(KEY_NINETY)).isEqualTo(SHORT_TEST);
@@ -299,7 +301,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsNullableShort(KEY_FOUR_HUNDRED)).isNull();
         assertThat(destMsg.getAsNullableShort(KEY_FOUR)).isEqualTo(Short.valueOf(SHORT_TEST));
         assertThat(destMsg.contains(KEY_ZERO)).isFalse();
-        
+
         try {
             destMsg.getAsShort(KEY_NINETYNINE);
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -349,7 +351,7 @@ public abstract class AbstractMsgTest {
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
 
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
-        
+
         assertThat(destMsg.getAsInt(KEY_ONE)).isEqualTo(INT_TEST);
         assertThat(destMsg.getAsNullableInteger(KEY_ONE)).isEqualTo(INT_TEST);
         assertThat(destMsg.getAsInt(KEY_TWO)).isEqualTo(SHORT_TEST);
@@ -362,7 +364,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsInt(KEY_THREE_HUNDRED)).isEqualTo(INT_TEST);
         assertThat(destMsg.getAsNullableInteger(KEY_FOUR_HUNDRED)).isNull();
         assertThat(destMsg.contains(KEY_ZERO)).isFalse();
-        
+
         try {
             destMsg.getAsInt(KEY_NINETYNINE);
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -427,9 +429,9 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsLong(KEY_EIGHT)).isEqualTo(Long.valueOf(LONG_TEST));
         assertThat(destMsg.getAsNullableLong(KEY_NINE)).isNull();
         assertThat(destMsg.getAsLong(KEY_THREE_HUNDRED)).isEqualTo(LONG_TEST);
-        //assertThat(destMsg.getAsNullableLong(KEY_FOUR_HUNDRED)).isNull();
+        // assertThat(destMsg.getAsNullableLong(KEY_FOUR_HUNDRED)).isNull();
         assertThat(destMsg.contains(KEY_ZERO)).isFalse();
-        
+
         try {
             destMsg.getAsLong(KEY_NINETYNINE);
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -485,7 +487,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsDouble(KEY_THREE_HUNDRED)).isEqualTo(FLOAT_TEST);
         assertThat(destMsg.getAsNullableFloat(KEY_FOUR_HUNDRED)).isNull();
         assertThat(destMsg.contains(KEY_ZERO)).isFalse();
-        
+
         try {
             destMsg.getAsFloat(KEY_NINETYNINE);
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -505,7 +507,7 @@ public abstract class AbstractMsgTest {
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
         }
-        
+
     }
 
     /**
@@ -530,35 +532,35 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_FIVE, DOUBLE_TEST2, 5);
         srcMsg.set(KEY_SIX, Double.valueOf(DOUBLE_TEST2));
         srcMsg.set(KEY_SEVEN, (Double) null);
-        
+
         for (int i = 0; i < Msgs.DOZENS.length; i++) {
             srcMsg.set(KEY_TEN + i, DOUBLE_TEST1, i);
         }
-        
+
         srcMsg.set(KEY_NINETY, DOUBLE_TEST);
         srcMsg.set(KEY_NINETYTWO, DOUBLE_TEST, 5);
         srcMsg.set(KEY_THREE_HUNDRED, DOUBLE_TEST);
         srcMsg.set(KEY_FOUR_HUNDRED, (Double) null);
-        
+
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
 
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
-        
+
         assertThat(destMsg.getAsFloat(KEY_ONE)).isEqualTo(FLOAT_TEST);
         assertThat(destMsg.getAsDouble(KEY_TWO)).isEqualTo(DOUBLE_TEST);
-        //assertThat(msg2.getAsDouble(KEY_THREE)).isEqualTo(DOUBLE_TEST);
+        // assertThat(msg2.getAsDouble(KEY_THREE)).isEqualTo(DOUBLE_TEST);
         assertThat(destMsg.getAsDouble(KEY_FOUR)).isEqualTo(FLOAT_TEST);
         assertThat(destMsg.getAsDouble(KEY_FIVE)).isEqualTo(DOUBLE_TEST2);
         assertThat(destMsg.getAsNullableDouble(KEY_FIVE)).isEqualTo(DOUBLE_TEST2);
         assertThat(destMsg.getAsNullableDouble(KEY_SIX)).isEqualTo(Double.valueOf(DOUBLE_TEST2));
         assertThat(destMsg.getAsNullableDouble(KEY_SEVEN)).isNull();
-        
+
         for (int i = 0; i < Msgs.DOZENS.length; i++) {
             assertThat(destMsg.getAsDouble(KEY_TEN + i)).isEqualTo(DOUBLE_TEST1);
             assertThat(destMsg.getAsNullableDouble(KEY_TEN + i)).isEqualTo(DOUBLE_TEST1);
-            //Assert.assertEquals(DOUBLE_TEST1, msg2.getAsDouble(KEY_TEN + i), (i == 0) ? 1 : (1 / (10 * i)));
+            // Assert.assertEquals(DOUBLE_TEST1, msg2.getAsDouble(KEY_TEN + i), (i == 0) ? 1 : (1 / (10 * i)));
         }
-        
+
         assertThat(destMsg.getAsNullableDouble(KEY_FOUR_HUNDRED)).isNull();
         assertThat(destMsg.contains(KEY_ZERO)).isFalse();
 
@@ -581,7 +583,7 @@ public abstract class AbstractMsgTest {
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IllegalArgumentException.class);
         }
-        
+
     }
 
     /**
@@ -622,14 +624,14 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_THREE, STRING_TEST132);
         srcMsg.set(KEY_FOUR, (String) null);
         srcMsg.set(KEY_FIVE, STRING_TEST_UTF16);
-        
+
         srcMsg.set(KEY_NINETY, STRING_TEST);
         srcMsg.set(KEY_THREE_HUNDRED, STRING_TEST);
         srcMsg.set(KEY_FOUR_HUNDRED, (String) null);
-        
+
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
-        
+
         assertThat(destMsg.getAsString(KEY_ONE)).isEqualTo(STRING_TEST);
         assertThat(destMsg.getAsString(KEY_TWO)).isEqualTo(STRING_TEST32);
         assertThat(destMsg.getAsString(KEY_THREE)).isEqualTo(STRING_TEST132);
@@ -642,7 +644,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsString(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsString(KEY_ZERO)).isNull();
         assertThat(destMsg.getAsString(KEY_MINUS_ONE)).isNull();
-        
+
     }
 
     /**
@@ -668,27 +670,24 @@ public abstract class AbstractMsgTest {
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
 
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
-        
+
         assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(destMsg.getAsMsg(KEY_ONE).getAsByte(KEY_ONE));
         assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(destMsg.getAsMsg(KEY_NINETY).getAsByte(KEY_ONE));
         assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(destMsg.getAsMsg(KEY_THREE_HUNDRED).getAsByte(KEY_ONE));
         assertThat(destMsg.getAsMsg(KEY_FOUR)).isNull();
         assertThat(destMsg.contains(KEY_ZERO)).isFalse();
-        
+
         final IMsg msg = newMsg();
         destMsg.getAsMsg(KEY_NINETY, msg);
-        
-//        assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(msg.getAsMsg(KEY_ONE).getAsByte(KEY_ONE));
-//        assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(msg.getAsMsg(KEY_NINETY).getAsByte(KEY_ONE));
-//        assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(msg.getAsMsg(KEY_THREE_HUNDRED).getAsByte(KEY_ONE));
-     
+
+        // assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(msg.getAsMsg(KEY_ONE).getAsByte(KEY_ONE));
+        // assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(msg.getAsMsg(KEY_NINETY).getAsByte(KEY_ONE));
+        // assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(msg.getAsMsg(KEY_THREE_HUNDRED).getAsByte(KEY_ONE));
+
         assertThat(destMsg.getAsMsg(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsMsg(KEY_ZERO)).isNull();
         assertThat(destMsg.getAsMsg(KEY_MINUS_ONE)).isNull();
-        
-        
-        
-        
+
     }
 
     /**
@@ -700,10 +699,9 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_MINUS_ONE, this.msgTest);
     }
 
-    
     /**
      * testSetGetAsBytes.
-     *
+     * 
      */
     @Test
     public void testSetGetAsBooleans() {
@@ -713,28 +711,27 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_FOUR, SHORTS_TEST);
         srcMsg.set(KEY_NINETY, BOOLEANS_TEST2);
         srcMsg.set(KEY_THREE_HUNDRED, BOOLEANS_TEST);
-        
+
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
-       
-//TODO FIXME        
-//        assertThat(destMsg.getAsBooleans(KEY_ONE)).isEqualTo(BOOLEANS_TEST);
-//        assertThat(destMsg.getAsNullableBooleans(KEY_ONE)).isEqualTo(BOOLEANS_TEST2);
-//        assertThat(destMsg.getAsNullableBooleans(KEY_NINETY)).isEqualTo(BOOLEANS_TEST2);
+
+        assertThat(destMsg.getAsBooleans(KEY_ONE)).isEqualTo(BOOLEANS_TEST);
+        assertThat(destMsg.getAsNullableBooleans(KEY_ONE)).isEqualTo(BOOLEANS_TEST2);
+        assertThat(destMsg.getAsNullableBooleans(KEY_NINETY)).isEqualTo(BOOLEANS_TEST2);
         assertThat(destMsg.getAsBooleans(KEY_ZERO)).isNull();
         assertThat(destMsg.getAsNullableBooleans(KEY_TWO)).isNull();
         assertThat(destMsg.getAsNullableBooleans(KEY_THREE)).isNull();
         assertThat(destMsg.getAsBooleans(KEY_FOUR)).isNull();
         assertThat(destMsg.getAsBooleans(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsNullableBooleans(KEY_NINETYNINE)).isNull();
-//        assertThat(destMsg.getAsBooleans(KEY_THREE_HUNDRED)).isEqualTo(BOOLEANS_TEST);
+        assertThat(destMsg.getAsBooleans(KEY_THREE_HUNDRED)).isEqualTo(BOOLEANS_TEST);
         assertThat(destMsg.getAsBooleans(KEY_MINUS_ONE)).isNull();
         assertThat(destMsg.getAsNullableBooleans(KEY_FOUR_HUNDRED)).isNull();
     }
 
     /**
      * testSetGetAsBytes.
-     *
+     * 
      */
     @Test
     public void testSetGetAsBytes() {
@@ -744,10 +741,10 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_FOUR, SHORTS_TEST);
         srcMsg.set(KEY_NINETY, BYTES_TEST2);
         srcMsg.set(KEY_THREE_HUNDRED, BYTES_TEST);
-        
+
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
-        
+
         assertThat(destMsg.getAsBytes(KEY_ONE)).isEqualTo(BYTES_TEST);
         assertThat(destMsg.getAsNullableBytes(KEY_ONE)).isEqualTo(BYTES_TEST2);
         assertThat(destMsg.getAsNullableBytes(KEY_NINETY)).isEqualTo(BYTES_TEST2);
@@ -761,11 +758,10 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsBytes(KEY_MINUS_ONE)).isNull();
         assertThat(destMsg.getAsNullableBytes(KEY_FOUR_HUNDRED)).isNull();
     }
-    
-    
+
     /**
      * testSetGetAsShorts.
-     *
+     * 
      */
     @Test
     public void testSetGetAsShorts() {
@@ -776,10 +772,10 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_FIVE, SHORTS_TEST2);
         srcMsg.set(KEY_NINETY, SHORTS_TEST2);
         srcMsg.set(KEY_THREE_HUNDRED, SHORTS_TEST);
-        
+
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
-        
+
         assertThat(destMsg.getAsShorts(KEY_ONE)).isEqualTo(SHORTS_TEST);
         assertThat(destMsg.getAsNullableShorts(KEY_ONE)).isEqualTo(SHORTS_TEST2);
         assertThat(destMsg.getAsNullableShorts(KEY_NINETY)).isEqualTo(SHORTS_TEST2);
@@ -793,10 +789,10 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsShorts(KEY_MINUS_ONE)).isNull();
         assertThat(destMsg.getAsNullableShorts(KEY_FOUR_HUNDRED)).isNull();
     }
-    
+
     /**
      * testSetGetAsLongs.
-     *
+     * 
      */
     @Test
     public void testSetGetAsInts() {
@@ -807,10 +803,10 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_FIVE, INTS_TEST2);
         srcMsg.set(KEY_NINETY, INTS_TEST2);
         srcMsg.set(KEY_THREE_HUNDRED, INTS_TEST);
-        
+
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
-        
+
         assertThat(destMsg.getAsInts(KEY_ONE)).isEqualTo(INTS_TEST);
         assertThat(destMsg.getAsNullableIntegers(KEY_ONE)).isEqualTo(INTS_TEST2);
         assertThat(destMsg.getAsNullableIntegers(KEY_NINETY)).isEqualTo(INTS_TEST2);
@@ -824,10 +820,10 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsInts(KEY_MINUS_ONE)).isNull();
         assertThat(destMsg.getAsNullableIntegers(KEY_FOUR_HUNDRED)).isNull();
     }
-    
+
     /**
      * testSetGetAsLongs.
-     *
+     * 
      */
     @Test
     public void testSetGetAsLongs() {
@@ -838,10 +834,10 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_FIVE, LONGS_TEST2);
         srcMsg.set(KEY_NINETY, LONGS_TEST2);
         srcMsg.set(KEY_THREE_HUNDRED, LONGS_TEST);
-        
+
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
-        
+
         assertThat(destMsg.getAsLongs(KEY_ONE)).isEqualTo(LONGS_TEST);
         assertThat(destMsg.getAsNullableLongs(KEY_ONE)).isEqualTo(LONGS_TEST2);
         assertThat(destMsg.getAsNullableLongs(KEY_NINETY)).isEqualTo(LONGS_TEST2);
@@ -855,11 +851,10 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsLongs(KEY_MINUS_ONE)).isNull();
         assertThat(destMsg.getAsNullableLongs(KEY_FOUR_HUNDRED)).isNull();
     }
-    
-    
+
     /**
      * testSetGetAsFloats.
-     *
+     * 
      */
     @Test
     public void testSetGetAsFloats() {
@@ -869,10 +864,10 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_FOUR, SHORTS_TEST);
         srcMsg.set(KEY_NINETY, FLOATS_TEST2);
         srcMsg.set(KEY_THREE_HUNDRED, FLOATS_TEST);
-        
+
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
-        
+
         assertThat(destMsg.getAsFloats(KEY_ONE)).isEqualTo(FLOATS_TEST);
         assertThat(destMsg.getAsNullableFloats(KEY_ONE)).isEqualTo(FLOATS_TEST2);
         assertThat(destMsg.getAsNullableFloats(KEY_NINETY)).isEqualTo(FLOATS_TEST2);
@@ -886,11 +881,10 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsFloats(KEY_MINUS_ONE)).isNull();
         assertThat(destMsg.getAsNullableFloats(KEY_FOUR_HUNDRED)).isNull();
     }
-    
-    
+
     /**
      * testSetGetAsDoubles.
-     *
+     * 
      */
     @Test
     public void testSetGetAsDoubles() {
@@ -900,10 +894,10 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_FOUR, SHORTS_TEST);
         srcMsg.set(KEY_NINETY, DOUBLES_TEST2);
         srcMsg.set(KEY_THREE_HUNDRED, DOUBLES_TEST);
-        
+
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
-        
+
         assertThat(destMsg.getAsDoubles(KEY_ONE)).isEqualTo(DOUBLES_TEST);
         assertThat(destMsg.getAsNullableDoubles(KEY_ONE)).isEqualTo(DOUBLES_TEST2);
         assertThat(destMsg.getAsNullableDoubles(KEY_NINETY)).isEqualTo(DOUBLES_TEST2);
@@ -917,20 +911,20 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsDoubles(KEY_MINUS_ONE)).isNull();
         assertThat(destMsg.getAsNullableDoubles(KEY_FOUR_HUNDRED)).isNull();
     }
-    
+
     /**
      * testSetGetAsStrings.
-     *
+     * 
      */
     @Test
     public void testSetGetAsStrings() {
         srcMsg.set(KEY_ONE, STRINGS_TEST);
         srcMsg.set(KEY_TWO, BYTES_TEST2);
         srcMsg.set(KEY_NINETY, STRINGS_TEST);
-        
+
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
-        
+
         assertThat(destMsg.getAsStrings(KEY_ONE)).isEqualTo(STRINGS_TEST);
         assertThat(destMsg.getAsStrings(KEY_NINETY)).isEqualTo(STRINGS_TEST);
         assertThat(destMsg.getAsStrings(KEY_NINETYNINE)).isNull();
@@ -939,7 +933,6 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsStrings(KEY_TWO)).isNull();
 
     }
-    
 
     /**
      * testSetGetAsObjectArrayWithIllegalArgument.
@@ -949,10 +942,10 @@ public abstract class AbstractMsgTest {
     public void testSetGetAsObjectArrayWithIllegalArgument() {
         srcMsg.set(KEY_MINUS_ONE, OBJECT_ARRAY_TEST);
     }
-    
+
     /**
      * testSetGet.
-     *
+     * 
      */
     @Test
     public void testSetGet() {
@@ -969,12 +962,12 @@ public abstract class AbstractMsgTest {
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
 
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
-        
+
         assertThat(destMsg.getAsObject(KEY_ONE)).isEqualTo(LONG_TEST);
         assertThat(destMsg.getAsObject(KEY_TWO)).isEqualTo(INT_TEST);
         assertThat(destMsg.getAsObject(KEY_THREE)).isEqualTo(SHORT_TEST);
         assertThat(destMsg.getAsObject(KEY_FOUR)).isEqualTo(BYTE_TEST);
-        
+
         assertThat(destMsg.getAsObject(KEY_FIVE)).isEqualTo(BYTE_TEST);
         assertThat(destMsg.getAsObject(KEY_SIX)).isEqualTo(SHORT_TEST);
         assertThat(destMsg.getAsObject(KEY_SEVEN)).isEqualTo(INT_TEST);
@@ -1016,10 +1009,10 @@ public abstract class AbstractMsgTest {
     public void testRemoveWithIllegalArgument() {
         srcMsg.remove(KEY_MINUS_ONE);
     }
-    
+
     /**
      * testIsEmpty.
-     *
+     * 
      */
     @Test
     public void testIsEmpty() {
@@ -1029,10 +1022,10 @@ public abstract class AbstractMsgTest {
         srcMsg.remove(KEY_ONE);
         assertThat(srcMsg.isEmpty()).isTrue();
     }
-    
+
     /**
      * testGetType.
-     *
+     * 
      */
     @Test
     public void testGetType() {
@@ -1042,11 +1035,10 @@ public abstract class AbstractMsgTest {
         assertThat(srcMsg.getType(KEY_ONE)).isEqualTo(EType.INTEGER);
         assertThat(srcMsg.getTypeAsByte(KEY_ONE)).isEqualTo(EType.INTEGER.getId());
     }
-    
-    
+
     /**
      * testIsArray.
-     *
+     * 
      */
     @Test
     public void testIsArray() {
@@ -1056,68 +1048,65 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_ONE, bytes);
         assertThat(srcMsg.isArray(KEY_ONE)).isEqualTo(true);
     }
-    
+
     /**
      * testGetArrayLength.
-     *
+     * 
      */
     @Test
     public void testGetArrayLength() {
         assertThat(srcMsg.getArrayLength(KEY_ZERO)).isEqualTo(0);
         assertThat(srcMsg.getArrayLength(KEY_NINETY)).isEqualTo(0);
         int size = 2;
-        
+
         final Byte[] bytes1 = new Byte[size];
         srcMsg.set(KEY_ZERO, bytes1);
         assertThat(srcMsg.isArray(KEY_ZERO)).isEqualTo(true);
         assertThat(srcMsg.getArrayLength(KEY_ZERO)).isEqualTo(size);
-        
+
         final boolean[] booleans = new boolean[size];
         srcMsg.set(KEY_ONE, booleans);
         assertThat(srcMsg.isArray(KEY_ONE)).isEqualTo(true);
         assertThat(srcMsg.getArrayLength(KEY_ONE)).isEqualTo(size);
-        
+
         final byte[] bytes = new byte[size];
         srcMsg.set(KEY_TWO, bytes);
         assertThat(srcMsg.isArray(KEY_TWO)).isEqualTo(true);
         assertThat(srcMsg.getArrayLength(KEY_TWO)).isEqualTo(size);
-        
+
         final short[] shorts = new short[size];
         srcMsg.set(KEY_THREE, shorts);
         assertThat(srcMsg.isArray(KEY_THREE)).isEqualTo(true);
         assertThat(srcMsg.getArrayLength(KEY_THREE)).isEqualTo(size);
-        
+
         final int[] ints = new int[size];
         srcMsg.set(KEY_FOUR, ints);
         assertThat(srcMsg.isArray(KEY_FOUR)).isEqualTo(true);
         assertThat(srcMsg.getArrayLength(KEY_FOUR)).isEqualTo(size);
-        
+
         final long[] longs = new long[size];
         srcMsg.set(KEY_FIVE, longs);
         assertThat(srcMsg.isArray(KEY_FIVE)).isEqualTo(true);
         assertThat(srcMsg.getArrayLength(KEY_FIVE)).isEqualTo(size);
-        
+
         final float[] floats = new float[size];
         srcMsg.set(KEY_SIX, floats);
         assertThat(srcMsg.isArray(KEY_SIX)).isEqualTo(true);
         assertThat(srcMsg.getArrayLength(KEY_SIX)).isEqualTo(size);
-        
+
         final double[] doubles = new double[size];
         srcMsg.set(KEY_SEVEN, doubles);
         assertThat(srcMsg.isArray(KEY_SEVEN)).isEqualTo(true);
         assertThat(srcMsg.getArrayLength(KEY_SEVEN)).isEqualTo(size);
-        
+
     }
 
-    
-    
-    
     /**
      * testReadFrom.
      * 
      */
     @Test
-    public void testDeserializeFrom() {
+    public void testSerializeToBytesDeserializeFromBytes() {
         srcMsg.set(KEY_ONE, BYTE_TEST);
         srcMsg.set(KEY_TWO, SHORT_TEST);
         srcMsg.set(KEY_FOUR, INT_TEST);
@@ -1126,10 +1115,54 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_ELEVEN, DOUBLE_TEST);
         srcMsg.set(KEY_TWELVE, DOUBLE_TEST, 2);
         srcMsg.set(KEY_THIRTEEN, STRING_TEST);
-        final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
+        final byte[] bytes = (srcMsg instanceof IBytesSerializable) ? ((IBytesSerializable) srcMsg).serializeToBytes() : this.serializer
+                .serializeToBytes(srcMsg);
 
-        this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
-        
+        if (destMsg instanceof IBytesSerializable) {
+            ((IBytesSerializable) destMsg).deserializeFrom(bytes, 0, bytes.length);
+        } else {
+            this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
+        }
+
+        assertThat(destMsg.getAsByte(KEY_ONE)).isEqualTo(BYTE_TEST);
+        assertThat(destMsg.getAsShort(KEY_TWO)).isEqualTo(SHORT_TEST);
+        assertThat(destMsg.getAsInt(KEY_FOUR)).isEqualTo(INT_TEST);
+        assertThat(destMsg.getAsLong(KEY_EIGHT)).isEqualTo(LONG_TEST);
+        assertThat(destMsg.getAsFloat(KEY_TEN)).isEqualTo(FLOAT_TEST);
+        assertThat(destMsg.getAsDouble(KEY_ELEVEN)).isEqualTo(DOUBLE_TEST);
+        assertThat(destMsg.getAsDouble(KEY_TWELVE)).isEqualTo(DOUBLE_TEST);
+        assertThat(destMsg.getAsString(KEY_THIRTEEN)).isEqualTo(STRING_TEST);
+    }
+
+    /**
+     * testSerializeToByteBufferDeserializeFromByteBuffer.
+     * 
+     */
+    @Test
+    public void testSerializeToByteBufferDeserializeFromByteBuffer() {
+        srcMsg.set(KEY_ONE, BYTE_TEST);
+        srcMsg.set(KEY_TWO, SHORT_TEST);
+        srcMsg.set(KEY_FOUR, INT_TEST);
+        srcMsg.set(KEY_EIGHT, LONG_TEST);
+        srcMsg.set(KEY_TEN, FLOAT_TEST);
+        srcMsg.set(KEY_ELEVEN, DOUBLE_TEST);
+        srcMsg.set(KEY_TWELVE, DOUBLE_TEST, 2);
+        srcMsg.set(KEY_THIRTEEN, STRING_TEST);
+
+        final ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+        if (srcMsg instanceof IByteBufferSerializable) {
+            ((IByteBufferSerializable) srcMsg).serializeToByteBuffer(byteBuffer);
+        } else {
+            this.byteBufferSerializer.serializeToByteBuffer(srcMsg, byteBuffer);
+        }
+        byteBuffer.flip();
+
+        if (destMsg instanceof IByteBufferSerializable) {
+            ((IByteBufferSerializable) destMsg).deserializeFrom(byteBuffer);
+        } else {
+            this.byteBufferSerializer.deserializeFrom(byteBuffer, destMsg);
+        }
+
         assertThat(destMsg.getAsByte(KEY_ONE)).isEqualTo(BYTE_TEST);
         assertThat(destMsg.getAsShort(KEY_TWO)).isEqualTo(SHORT_TEST);
         assertThat(destMsg.getAsInt(KEY_FOUR)).isEqualTo(INT_TEST);
@@ -1150,6 +1183,84 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_ONE, BYTE_TEST);
         final byte[] bytes = new byte[0];
         this.serializer.serializeToBytes(srcMsg, bytes, 0);
+    }
+
+    /**
+     * testToString.
+     * 
+     */
+    @Test
+    public void testToString() {
+        final IMsg srcMsg = newMsg();
+        srcMsg.set(KEY_ONE, BYTE_TEST);
+        srcMsg.set(KEY_TWO, DOUBLE_TEST);
+        srcMsg.set(KEY_THREE, (Integer) null);
+        srcMsg.set(KEY_FOUR, STRING_TEST);
+        srcMsg.set(KEY_FIVE, msgTest);
+        srcMsg.set(KEY_SIX, LONGS_TEST2);
+        srcMsg.set(KEY_SEVEN, DOUBLES_TEST);
+        srcMsg.set(KEY_EIGHT, (String) null);
+        srcMsg.set(KEY_NINE, (IMsg) null);
+        srcMsg.set(KEY_TEN, (Integer[]) null);
+        srcMsg.set(KEY_ELEVEN, (float[]) null);
+        srcMsg.set(KEY_TWELVE, STRING_TEST_UTF16);
+        srcMsg.set(KEY_THIRTEEN, LONGS_TEST_EMPTY);
+
+        final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
+        this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
+
+        final Map<Integer, Object> map = new HashMap<>();
+        map.put(KEY_ONE, BYTE_TEST);
+        map.put(KEY_TWO, DOUBLE_TEST);
+        map.put(KEY_THREE, null);
+        map.put(KEY_FOUR, STRING_TEST);
+        map.put(KEY_FIVE, ((KeyObjectMsg) msgTest).getAllAsMap());
+        map.put(KEY_SIX, LONGS_TEST2);
+        map.put(KEY_SEVEN, DOUBLES_TEST);
+        map.put(KEY_EIGHT, null);
+        map.put(KEY_NINE, null);
+        map.put(KEY_TEN, null);
+        map.put(KEY_ELEVEN, null);
+        map.put(KEY_TWELVE, STRING_TEST_UTF16);
+        map.put(KEY_THIRTEEN, LONGS_TEST_EMPTY);
+
+        final Gson gson = new GsonBuilder().serializeNulls().create();
+        final String jsonMap = gson.toJson(map);
+        assertThat(destMsg.toString()).isEqualTo(jsonMap);
+
+        final IMsg srcMsg2 = newMsg();
+        final String jsonMap2 = gson.toJson(new HashMap<>());
+        assertThat(srcMsg2.toString()).isEqualTo(jsonMap2);
+
+    }
+
+    /**
+     * testEqualsHashcode.
+     * 
+     */
+    @Test
+    public void testEqualsHashcode() {
+        final IMsg srcMsg = newMsg();
+        srcMsg.set(KEY_ONE, BYTE_TEST);
+        srcMsg.set(KEY_TWO, DOUBLE_TEST);
+
+        final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
+        this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
+
+        assertThat(srcMsg.hashCode()).isEqualTo(destMsg.hashCode());
+        assertThat(srcMsg.equals(destMsg)).isTrue();
+
+        srcMsg.set(KEY_TWO, BYTE_TEST);
+        assertThat(srcMsg.hashCode()).isNotEqualTo(destMsg.hashCode());
+        assertThat(srcMsg.equals(destMsg)).isFalse();
+
+        srcMsg.set(KEY_THREE, BYTE_TEST);
+        assertThat(srcMsg.hashCode()).isNotEqualTo(destMsg.hashCode());
+        assertThat(srcMsg.equals(destMsg)).isFalse();
+
+        assertThat(srcMsg.equals(new Integer(1))).isFalse();
+        assertThat(srcMsg.equals(null)).isFalse();
+
     }
 
 }

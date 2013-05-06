@@ -30,6 +30,9 @@ import static com.github.hermod.ser.impl.Msgs.TWENTY_FOUR;
 import static com.github.hermod.ser.impl.Msgs.TWO;
 import static com.github.hermod.ser.impl.Msgs.XFF;
 
+import java.nio.ByteBuffer;
+
+import com.github.hermod.ser.IByteBufferMsgSerializer;
 import com.github.hermod.ser.IBytesMsgSerializer;
 import com.github.hermod.ser.IBytesSerializable;
 import com.github.hermod.ser.IMsg;
@@ -40,7 +43,7 @@ import com.github.hermod.ser.IMsg;
  * @author anavarro - Mar 11, 2013
  *      
  */
-public final class DefaultMsgSerializer implements IBytesMsgSerializer {
+public final class DefaultMsgSerializer implements IBytesMsgSerializer, IByteBufferMsgSerializer {
 
     /**
      * (non-Javadoc)
@@ -413,7 +416,30 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer {
         } else {
             return 0;
         }
-
     }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.IByteBufferMsgSerializer#serializeToByteBuffer(com.github.hermod.ser.IMsg, java.nio.ByteBuffer)
+     */
+    @Override
+    public int serializeToByteBuffer(IMsg aSrcMsg, ByteBuffer aDestByteBuffer) {
+        aDestByteBuffer.put(serializeToBytes(aSrcMsg));
+        return aDestByteBuffer.position();
+    }
+
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.IByteBufferMsgSerializer#deserializeFrom(java.nio.ByteBuffer, com.github.hermod.ser.IMsg)
+     */
+    @Override
+    public void deserializeFrom(ByteBuffer aSrcByteBuffer, IMsg aDestMsg) {
+        final byte[] bytes = new byte[aSrcByteBuffer.remaining()];
+        aSrcByteBuffer.get(bytes);
+        deserializeFrom(bytes, 0, bytes.length, aDestMsg);
+    }
+    
 
 }
