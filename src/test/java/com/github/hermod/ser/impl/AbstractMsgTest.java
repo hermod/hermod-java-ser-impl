@@ -624,7 +624,9 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_THREE, STRING_TEST132);
         srcMsg.set(KEY_FOUR, (String) null);
         srcMsg.set(KEY_FIVE, STRING_TEST_UTF16);
-
+        srcMsg.set(KEY_SIX, STRING_TEST_UTF16, true);
+        srcMsg.set(KEY_SEVEN, STRING_TEST, false);
+        
         srcMsg.set(KEY_NINETY, STRING_TEST);
         srcMsg.set(KEY_THREE_HUNDRED, STRING_TEST);
         srcMsg.set(KEY_FOUR_HUNDRED, (String) null);
@@ -637,6 +639,8 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsString(KEY_THREE)).isEqualTo(STRING_TEST132);
         assertThat(destMsg.getAsString(KEY_FOUR)).isNull();
         assertThat(destMsg.getAsString(KEY_FIVE)).isEqualTo(STRING_TEST_UTF16);
+        assertThat(destMsg.getAsString(KEY_SIX)).isEqualTo(STRING_TEST_UTF16);
+        assertThat(destMsg.getAsString(KEY_SEVEN)).isEqualTo(STRING_TEST);
         assertThat(destMsg.getAsString(KEY_NINETY)).isEqualTo(STRING_TEST);
         assertThat(destMsg.getAsString(KEY_THREE_HUNDRED)).isEqualTo(STRING_TEST);
         assertThat(destMsg.getAsString(KEY_FOUR_HUNDRED)).isNull();
@@ -709,8 +713,11 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_TWO, (boolean[]) null);
         srcMsg.set(KEY_THREE, (Boolean[]) null);
         srcMsg.set(KEY_FOUR, SHORTS_TEST);
+        srcMsg.set(KEY_FIVE, BYTES_TEST);
+        srcMsg.set(KEY_SIX, BYTES_TEST2);
         srcMsg.set(KEY_NINETY, BOOLEANS_TEST2);
         srcMsg.set(KEY_THREE_HUNDRED, BOOLEANS_TEST);
+        
 
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
         this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
@@ -722,6 +729,9 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsNullableBooleans(KEY_TWO)).isNull();
         assertThat(destMsg.getAsNullableBooleans(KEY_THREE)).isNull();
         assertThat(destMsg.getAsBooleans(KEY_FOUR)).isNull();
+        assertThat(destMsg.getAsBooleans(KEY_FIVE)).isNull();
+        assertThat(destMsg.getAsNullableBooleans(KEY_FIVE)).isNull();
+        assertThat(destMsg.getAsNullableBooleans(KEY_SIX)).isNull();
         assertThat(destMsg.getAsBooleans(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsNullableBooleans(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsBooleans(KEY_THREE_HUNDRED)).isEqualTo(BOOLEANS_TEST);

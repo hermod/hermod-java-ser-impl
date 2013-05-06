@@ -535,18 +535,14 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
             case FLOAT_TYPE:
                 return aClazz.cast(getAsFloat(aKey));
 
-            case DOUBLE_TYPE:
-                return aClazz.cast(getAsDouble(aKey));
-
             case FIVE_BITS_DECIMAL_TYPE:
+            case DOUBLE_TYPE:
                 return aClazz.cast(getAsDouble(aKey));
 
             case DECIMAL_TYPE:
                 return aClazz.cast((Double) null);
 
             case STRING_ISO_8859_1_TYPE:
-                return aClazz.cast(getAsString(aKey));
-
             case STRING_UTF_16_TYPE:
                 return aClazz.cast(getAsString(aKey));
 
@@ -554,8 +550,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                 return aClazz.cast(getAsMsg(aKey));
 
             case ARRAY_FIXED_VALUE_TYPE:
-                return aClazz.cast(getAsObjects(aKey));
-
             case ARRAY_VARIABLE_VALUE_TYPE:
                 return aClazz.cast(getAsObjects(aKey));
 
@@ -1773,10 +1767,6 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                     set(aKey, (String) aObject, true);
                 } else if (aObject instanceof IMsg) {
                     set(aKey, (IMsg) aObject);
-                } else if (aObject instanceof Boolean) {
-                    set(aKey, (Boolean) aObject);
-                } else if (aObject instanceof Object[]) {
-                    set(aKey, (Object[]) aObject);
                 } else {
                     throw new IllegalArgumentException("Impossible to set this type of value=" + aObject.getClass());
                 }
