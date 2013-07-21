@@ -2,7 +2,7 @@ package com.github.hermod.ser.impl;
 
 import static com.github.hermod.ser.impl.Msgs.DEFAULT_MAX_KEY;
 
-import com.github.hermod.ser.IMsg;
+import com.github.hermod.ser.Msg;
 
 /**
  * KeyObjectMsgs.
@@ -26,7 +26,7 @@ public final class KeyObjectMsgs {
      *
      * @return
      */
-    public static IMsg newMsg() {
+    public static Msg newMsg() {
 	return new KeyObjectMsg(DEFAULT_MAX_KEY);
     }
     
@@ -37,7 +37,7 @@ public final class KeyObjectMsgs {
      * @param keyMax
      * @return
      */
-    public static IMsg newMsg(final int keyMax) {
+    public static Msg newMsg(final int keyMax) {
         return new KeyObjectMsg(keyMax);
     }
 

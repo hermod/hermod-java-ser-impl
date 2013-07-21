@@ -1,6 +1,6 @@
 package com.github.hermod.ser.impl;
 
-import com.github.hermod.ser.IMsg;
+import com.github.hermod.ser.Msg;
 
 
 
@@ -29,7 +29,7 @@ public final class KeyObjectMsgTest
      * @see com.github.hermod.ser.impl.AbstractMsgTest#newMsg()
      */
     @Override
-    public IMsg newMsg() {
+    public Msg newMsg() {
         return new KeyObjectMsg();
     }
 

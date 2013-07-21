@@ -32,10 +32,10 @@ import static com.github.hermod.ser.impl.Msgs.XFF;
 
 import java.nio.ByteBuffer;
 
-import com.github.hermod.ser.IByteBufferMsgSerializer;
-import com.github.hermod.ser.IBytesMsgSerializer;
-import com.github.hermod.ser.IBytesSerializable;
-import com.github.hermod.ser.IMsg;
+import com.github.hermod.ser.ByteBufferMsgSerializer;
+import com.github.hermod.ser.BytesMsgSerializer;
+import com.github.hermod.ser.BytesSerializable;
+import com.github.hermod.ser.Msg;
 
 /**
  * <p>DefaultSerializer. </p>
@@ -43,17 +43,17 @@ import com.github.hermod.ser.IMsg;
  * @author anavarro - Mar 11, 2013
  *      
  */
-public final class DefaultMsgSerializer implements IBytesMsgSerializer, IByteBufferMsgSerializer {
+public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBufferMsgSerializer {
 
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsgSerializer#readFrom(byte[], int, int, com.github.hermod.ser.IMsg)
+     * @see com.github.hermod.ser.MsgSerializer#readFrom(byte[], int, int, com.github.hermod.ser.Msg)
      */
     @Override
-    public void deserializeFrom(final byte[] bytes, final int offset, final int length, IMsg aDestMsg) {
-        if (aDestMsg instanceof IBytesSerializable) {
-            ((IBytesSerializable) aDestMsg).deserializeFrom(bytes, offset, length);
+    public void deserializeFrom(final byte[] bytes, final int offset, final int length, Msg aDestMsg) {
+        if (aDestMsg instanceof BytesSerializable) {
+            ((BytesSerializable) aDestMsg).deserializeFrom(bytes, offset, length);
         } else {
             int pos = offset;
             int key = 0;
@@ -161,8 +161,8 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer, IByteBuf
                         case MSG_TYPE:
                             // TODO manage null value
                             if (lengthMask != 0) {
-                                final IMsg msg = new KeyObjectMsg();
-                                ((IBytesSerializable) msg).deserializeFrom(bytes, pos, fieldLength);
+                                final Msg msg = new KeyObjectMsg();
+                                ((BytesSerializable) msg).deserializeFrom(bytes, pos, fieldLength);
                                 pos += fieldLength;
                                 aDestMsg.set(key, msg);
                             }
@@ -219,10 +219,10 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer, IByteBuf
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsgSerializer#writeTo(com.github.hermod.ser.IMsg)
+     * @see com.github.hermod.ser.MsgSerializer#writeTo(com.github.hermod.ser.Msg)
      */
     @Override
-    public byte[] serializeToBytes(final IMsg aSrcMsg) {
+    public byte[] serializeToBytes(final Msg aSrcMsg) {
         final byte[] bytes = new byte[getLength(aSrcMsg)];
         serializeToBytes(aSrcMsg, bytes, 0);
         return bytes;
@@ -231,12 +231,12 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer, IByteBuf
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsgSerializer#writeTo(com.github.hermod.ser.IMsg, byte[], int)
+     * @see com.github.hermod.ser.MsgSerializer#writeTo(com.github.hermod.ser.Msg, byte[], int)
      */
     @Override
-    public int serializeToBytes(final IMsg aSrcMsg, byte[] aDestBytes, int aDestOffset) {
-        if (aSrcMsg instanceof IBytesSerializable) {
-            return ((IBytesSerializable) aSrcMsg).serializeToBytes(aDestBytes, aDestOffset);
+    public int serializeToBytes(final Msg aSrcMsg, byte[] aDestBytes, int aDestOffset) {
+        if (aSrcMsg instanceof BytesSerializable) {
+            return ((BytesSerializable) aSrcMsg).serializeToBytes(aDestBytes, aDestOffset);
         } else {
             // Calculate length
             // TODO to optimize with a try catch
@@ -312,12 +312,12 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer, IByteBuf
                             aDestBytes[pos++] = (byte) aString.charAt(k);
                         }
                     }
-                } else if (object instanceof IMsg) {
-                    final IMsg aMsg = (IMsg) aSrcMsg.getAsMsg(key);
+                } else if (object instanceof Msg) {
+                    final Msg aMsg = (Msg) aSrcMsg.getAsMsg(key);
                     if (aMsg != null) {
-                        final int length = ((IBytesSerializable) aMsg).getLength();
+                        final int length = ((BytesSerializable) aMsg).getLength();
                         pos = writeVariableLength(aDestBytes, pos - 1, length, FORCE_ENCODING_ZERO_ON_2BITS);
-                        pos = ((IBytesSerializable) aMsg).serializeToBytes(aDestBytes, pos);
+                        pos = ((BytesSerializable) aMsg).serializeToBytes(aDestBytes, pos);
                     }
                     break;
 
@@ -357,12 +357,12 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer, IByteBuf
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsgSerializer#getLength(com.github.hermod.ser.IMsg)
+     * @see com.github.hermod.ser.MsgSerializer#getLength(com.github.hermod.ser.Msg)
      */
     @Override
-    public int getLength(final IMsg aMsg) {
-        if (aMsg instanceof IBytesSerializable) {
-            return ((IBytesSerializable) aMsg).getLength();
+    public int getLength(final Msg aMsg) {
+        if (aMsg instanceof BytesSerializable) {
+            return ((BytesSerializable) aMsg).getLength();
         } else {
             int length = 0;
             // Size of the different values
@@ -410,8 +410,8 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer, IByteBuf
         } else if (object instanceof String) {
             final int length = ((String) object).length();
             return getVariableLength(length, FORCE_ENCODING_ZERO_ON_2BITS) + length;
-        } else if (object instanceof IMsg) {
-            final int length = getLength((IMsg) object);
+        } else if (object instanceof Msg) {
+            final int length = getLength((Msg) object);
             return getVariableLength(length, FORCE_ENCODING_ZERO_ON_2BITS) + length;
         } else {
             return 0;
@@ -421,10 +421,10 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer, IByteBuf
     /**
      * (non-Javadoc)
      *
-     * @see com.github.hermod.ser.IByteBufferMsgSerializer#serializeToByteBuffer(com.github.hermod.ser.IMsg, java.nio.ByteBuffer)
+     * @see com.github.hermod.ser.ByteBufferMsgSerializer#serializeToByteBuffer(com.github.hermod.ser.Msg, java.nio.ByteBuffer)
      */
     @Override
-    public int serializeToByteBuffer(IMsg aSrcMsg, ByteBuffer aDestByteBuffer) {
+    public int serializeToByteBuffer(Msg aSrcMsg, ByteBuffer aDestByteBuffer) {
         aDestByteBuffer.put(serializeToBytes(aSrcMsg));
         return aDestByteBuffer.position();
     }
@@ -432,10 +432,10 @@ public final class DefaultMsgSerializer implements IBytesMsgSerializer, IByteBuf
     /**
      * (non-Javadoc)
      *
-     * @see com.github.hermod.ser.IByteBufferMsgSerializer#deserializeFrom(java.nio.ByteBuffer, com.github.hermod.ser.IMsg)
+     * @see com.github.hermod.ser.ByteBufferMsgSerializer#deserializeFrom(java.nio.ByteBuffer, com.github.hermod.ser.Msg)
      */
     @Override
-    public void deserializeFrom(ByteBuffer aSrcByteBuffer, IMsg aDestMsg) {
+    public void deserializeFrom(ByteBuffer aSrcByteBuffer, Msg aDestMsg) {
         final byte[] bytes = new byte[aSrcByteBuffer.remaining()];
         aSrcByteBuffer.get(bytes);
         deserializeFrom(bytes, 0, bytes.length, aDestMsg);

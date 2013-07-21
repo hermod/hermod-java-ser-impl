@@ -12,12 +12,12 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.hermod.ser.EType;
-import com.github.hermod.ser.IByteBufferMsgSerializer;
-import com.github.hermod.ser.IByteBufferSerializable;
-import com.github.hermod.ser.IBytesMsgSerializer;
-import com.github.hermod.ser.IBytesSerializable;
-import com.github.hermod.ser.IMsg;
+import com.github.hermod.ser.Type;
+import com.github.hermod.ser.ByteBufferMsgSerializer;
+import com.github.hermod.ser.ByteBufferSerializable;
+import com.github.hermod.ser.BytesMsgSerializer;
+import com.github.hermod.ser.BytesSerializable;
+import com.github.hermod.ser.Msg;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -85,20 +85,20 @@ public abstract class AbstractMsgTest {
 
     private static final double PRECISION = 0.00001;
 
-    private IBytesMsgSerializer serializer = new DefaultMsgSerializer();
-    private IByteBufferMsgSerializer byteBufferSerializer = new DefaultMsgSerializer();
+    private BytesMsgSerializer serializer = new DefaultMsgSerializer();
+    private ByteBufferMsgSerializer byteBufferSerializer = new DefaultMsgSerializer();
 
-    protected final IMsg msgTest;
+    protected final Msg msgTest;
 
-    private IMsg srcMsg;
-    private IMsg destMsg;
+    private Msg srcMsg;
+    private Msg destMsg;
 
     /**
      * newMsg.
      * 
      * @return
      */
-    public abstract IMsg newMsg();
+    public abstract Msg newMsg();
 
     /**
      * Constructor.
@@ -668,7 +668,7 @@ public abstract class AbstractMsgTest {
     public void testSetGetAsMsg() {
         srcMsg.set(KEY_ONE, this.msgTest);
         srcMsg.set(KEY_TWO, BYTE_TEST);
-        srcMsg.set(KEY_FOUR, (IMsg) null);
+        srcMsg.set(KEY_FOUR, (Msg) null);
         srcMsg.set(KEY_NINETY, this.msgTest);
         srcMsg.set(KEY_THREE_HUNDRED, this.msgTest);
         final byte[] bytes = this.serializer.serializeToBytes(srcMsg);
@@ -681,7 +681,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsMsg(KEY_FOUR)).isNull();
         assertThat(destMsg.contains(KEY_ZERO)).isFalse();
 
-        final IMsg msg = newMsg();
+        final Msg msg = newMsg();
         destMsg.getAsMsg(KEY_NINETY, msg);
 
         // assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(msg.getAsMsg(KEY_ONE).getAsByte(KEY_ONE));
@@ -1039,11 +1039,11 @@ public abstract class AbstractMsgTest {
      */
     @Test
     public void testGetType() {
-        assertThat(srcMsg.getType(KEY_NINETY)).isEqualTo(EType.NULL);
-        assertThat(srcMsg.getTypeAsByte(KEY_THREE_HUNDRED)).isEqualTo(EType.NULL.getId());
+        assertThat(srcMsg.getType(KEY_NINETY)).isEqualTo(Type.NULL);
+        assertThat(srcMsg.getTypeAsByte(KEY_THREE_HUNDRED)).isEqualTo(Type.NULL.getId());
         srcMsg.set(KEY_ONE, 1);
-        assertThat(srcMsg.getType(KEY_ONE)).isEqualTo(EType.INTEGER);
-        assertThat(srcMsg.getTypeAsByte(KEY_ONE)).isEqualTo(EType.INTEGER.getId());
+        assertThat(srcMsg.getType(KEY_ONE)).isEqualTo(Type.INTEGER);
+        assertThat(srcMsg.getTypeAsByte(KEY_ONE)).isEqualTo(Type.INTEGER.getId());
     }
 
     /**
@@ -1125,11 +1125,11 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_ELEVEN, DOUBLE_TEST);
         srcMsg.set(KEY_TWELVE, DOUBLE_TEST, 2);
         srcMsg.set(KEY_THIRTEEN, STRING_TEST);
-        final byte[] bytes = (srcMsg instanceof IBytesSerializable) ? ((IBytesSerializable) srcMsg).serializeToBytes() : this.serializer
+        final byte[] bytes = (srcMsg instanceof BytesSerializable) ? ((BytesSerializable) srcMsg).serializeToBytes() : this.serializer
                 .serializeToBytes(srcMsg);
 
-        if (destMsg instanceof IBytesSerializable) {
-            ((IBytesSerializable) destMsg).deserializeFrom(bytes, 0, bytes.length);
+        if (destMsg instanceof BytesSerializable) {
+            ((BytesSerializable) destMsg).deserializeFrom(bytes, 0, bytes.length);
         } else {
             this.serializer.deserializeFrom(bytes, 0, bytes.length, destMsg);
         }
@@ -1160,15 +1160,15 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_THIRTEEN, STRING_TEST);
 
         final ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-        if (srcMsg instanceof IByteBufferSerializable) {
-            ((IByteBufferSerializable) srcMsg).serializeToByteBuffer(byteBuffer);
+        if (srcMsg instanceof ByteBufferSerializable) {
+            ((ByteBufferSerializable) srcMsg).serializeToByteBuffer(byteBuffer);
         } else {
             this.byteBufferSerializer.serializeToByteBuffer(srcMsg, byteBuffer);
         }
         byteBuffer.flip();
 
-        if (destMsg instanceof IByteBufferSerializable) {
-            ((IByteBufferSerializable) destMsg).deserializeFrom(byteBuffer);
+        if (destMsg instanceof ByteBufferSerializable) {
+            ((ByteBufferSerializable) destMsg).deserializeFrom(byteBuffer);
         } else {
             this.byteBufferSerializer.deserializeFrom(byteBuffer, destMsg);
         }
@@ -1189,7 +1189,7 @@ public abstract class AbstractMsgTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testSerializeToBytesWithIllegalArgument() {
-        final IMsg srcMsg = newMsg();
+        final Msg srcMsg = newMsg();
         srcMsg.set(KEY_ONE, BYTE_TEST);
         final byte[] bytes = new byte[0];
         this.serializer.serializeToBytes(srcMsg, bytes, 0);
@@ -1201,7 +1201,7 @@ public abstract class AbstractMsgTest {
      */
     @Test
     public void testToString() {
-        final IMsg srcMsg = newMsg();
+        final Msg srcMsg = newMsg();
         srcMsg.set(KEY_ONE, BYTE_TEST);
         srcMsg.set(KEY_TWO, DOUBLE_TEST);
         srcMsg.set(KEY_THREE, (Integer) null);
@@ -1210,7 +1210,7 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_SIX, LONGS_TEST2);
         srcMsg.set(KEY_SEVEN, DOUBLES_TEST);
         srcMsg.set(KEY_EIGHT, (String) null);
-        srcMsg.set(KEY_NINE, (IMsg) null);
+        srcMsg.set(KEY_NINE, (Msg) null);
         srcMsg.set(KEY_TEN, (Integer[]) null);
         srcMsg.set(KEY_ELEVEN, (float[]) null);
         srcMsg.set(KEY_TWELVE, STRING_TEST_UTF16);
@@ -1238,7 +1238,7 @@ public abstract class AbstractMsgTest {
         final String jsonMap = gson.toJson(map);
         assertThat(destMsg.toString()).isEqualTo(jsonMap);
 
-        final IMsg srcMsg2 = newMsg();
+        final Msg srcMsg2 = newMsg();
         final String jsonMap2 = gson.toJson(new HashMap<>());
         assertThat(srcMsg2.toString()).isEqualTo(jsonMap2);
 
@@ -1250,7 +1250,7 @@ public abstract class AbstractMsgTest {
      */
     @Test
     public void testEqualsHashcode() {
-        final IMsg srcMsg = newMsg();
+        final Msg srcMsg = newMsg();
         srcMsg.set(KEY_ONE, BYTE_TEST);
         srcMsg.set(KEY_TWO, DOUBLE_TEST);
 

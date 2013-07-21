@@ -1,7 +1,7 @@
 package com.github.hermod.ser.impl;
 
-import com.github.hermod.ser.EPrecision;
-import com.github.hermod.ser.EType;
+import com.github.hermod.ser.Precision;
+import com.github.hermod.ser.Type;
 import com.github.hermod.ser.Types;
 
 /**
@@ -115,7 +115,7 @@ public final class Msgs
     
     
     // float / double or double encoded on 5 bits
-    static final byte TYPE_DECIMAL = EType.DECIMAL.getId();
+    static final byte TYPE_DECIMAL = Type.DECIMAL.getId();
     
     // float
     static final byte FLOAT_TYPE = (byte) (Types.DECIMAL_TYPE | FOUR);
@@ -188,7 +188,7 @@ public final class Msgs
     { 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0, 100000000.0 };
     
     
-    static final double[] DOZENS2 = {1.0 / EPrecision.UNITS.getPrecision(), 1.0 / EPrecision.TENS.getPrecision(), 1.0 / EPrecision.HUNDREDS.getPrecision(), 1.0 / EPrecision.THOUSANDS.getPrecision(), 1.0 / EPrecision.TEN_THOUSANDS.getPrecision(), 1.0 / EPrecision.HUNDRED_THOUSANDS.getPrecision(), 1.0 / EPrecision.MILLIONS.getPrecision(), 1.0 / EPrecision.TEN_MILLIONS.getPrecision(), 1.0 / EPrecision.HUNDRED_MILLIONS.getPrecision()};
+    static final double[] DOZENS2 = {1.0 / Precision.UNITS.getPrecision(), 1.0 / Precision.TENS.getPrecision(), 1.0 / Precision.HUNDREDS.getPrecision(), 1.0 / Precision.THOUSANDS.getPrecision(), 1.0 / Precision.TEN_THOUSANDS.getPrecision(), 1.0 / Precision.HUNDRED_THOUSANDS.getPrecision(), 1.0 / Precision.MILLIONS.getPrecision(), 1.0 / Precision.TEN_MILLIONS.getPrecision(), 1.0 / Precision.HUNDRED_MILLIONS.getPrecision()};
     
     /**
      * FORCE_ENCODING_ZERO_ON_2BITS

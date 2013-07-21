@@ -1,6 +1,6 @@
 package com.github.hermod.ser.impl;
 
-import static com.github.hermod.ser.EPrecision.HALF;
+import static com.github.hermod.ser.Precision.HALF;
 import static com.github.hermod.ser.Types.ARRAY_FIXED_VALUE_TYPE;
 import static com.github.hermod.ser.Types.ARRAY_VARIABLE_VALUE_TYPE;
 import static com.github.hermod.ser.Types.DECIMAL_TYPE;
@@ -48,11 +48,11 @@ import java.util.Map;
 import checkers.nullness.quals.NonNull;
 import checkers.nullness.quals.Nullable;
 
-import com.github.hermod.ser.EPrecision;
-import com.github.hermod.ser.EType;
-import com.github.hermod.ser.IByteBufferSerializable;
-import com.github.hermod.ser.IBytesSerializable;
-import com.github.hermod.ser.IMsg;
+import com.github.hermod.ser.Precision;
+import com.github.hermod.ser.Type;
+import com.github.hermod.ser.ByteBufferSerializable;
+import com.github.hermod.ser.BytesSerializable;
+import com.github.hermod.ser.Msg;
 import com.github.hermod.ser.Types;
 
 /**
@@ -61,7 +61,7 @@ import com.github.hermod.ser.Types;
  * @author anavarro - Jan 21, 2013
  * 
  */
-public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerializable {
+public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializable {
 
     private byte[] types;
     private long[] primitiveValues;
@@ -96,7 +96,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * 
      * @param aMsg
      */
-    public KeyObjectMsg(final IMsg aMsg) {
+    public KeyObjectMsg(final Msg aMsg) {
         if (aMsg instanceof KeyObjectMsg) {
             final KeyObjectMsg keyObjectMsg = (KeyObjectMsg) aMsg;
             final int length = keyObjectMsg.types.length;
@@ -150,7 +150,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#contains(int)
+     * @see com.github.hermod.ser.Msg#contains(int)
      */
     @Override
     public final boolean contains(final int aKey) {
@@ -164,7 +164,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsByte(int)
+     * @see com.github.hermod.ser.Msg#getAsByte(int)
      */
     @Override
     public final boolean getAsBoolean(final int aKey) {
@@ -180,7 +180,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsNullableBoolean(int)
+     * @see com.github.hermod.ser.Msg#getAsNullableBoolean(int)
      */
     @Override
     public final @Nullable
@@ -195,7 +195,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsByte(int)
+     * @see com.github.hermod.ser.Msg#getAsByte(int)
      */
     @Override
     public final byte getAsByte(final int aKey) {
@@ -211,7 +211,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsNullableByte(int)
+     * @see com.github.hermod.ser.Msg#getAsNullableByte(int)
      */
     @Override
     public final @Nullable
@@ -226,7 +226,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsShort(int)
+     * @see com.github.hermod.ser.Msg#getAsShort(int)
      */
     @Override
     public final short getAsShort(final int aKey) {
@@ -242,7 +242,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsNullableShort(int)
+     * @see com.github.hermod.ser.Msg#getAsNullableShort(int)
      */
     @Override
     public final @Nullable
@@ -257,7 +257,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsInt(int)
+     * @see com.github.hermod.ser.Msg#getAsInt(int)
      */
     @Override
     public final int getAsInt(final int aKey) {
@@ -289,7 +289,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsLong(int)
+     * @see com.github.hermod.ser.Msg#getAsLong(int)
      */
     @Override
     public final long getAsLong(final int aKey) {
@@ -321,7 +321,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsFloat(int)
+     * @see com.github.hermod.ser.Msg#getAsFloat(int)
      */
     @Override
     public final float getAsFloat(final int aKey) {
@@ -338,7 +338,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsNullableFloat(int)
+     * @see com.github.hermod.ser.Msg#getAsNullableFloat(int)
      */
     @Override
     public final @Nullable
@@ -408,30 +408,30 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
         case ZERO:
             return integerMantissa;
         case ONE:
-            return integerMantissa * EPrecision.TENTHS.getPrecision();
+            return integerMantissa * Precision.TENTHS.getPrecision();
         case TWO:
-            return integerMantissa * EPrecision.HUNDREDTHS.getPrecision();
+            return integerMantissa * Precision.HUNDREDTHS.getPrecision();
         case THREE:
-            return integerMantissa * EPrecision.THOUSANDTHS.getPrecision();
+            return integerMantissa * Precision.THOUSANDTHS.getPrecision();
         case FOUR:
-            return integerMantissa * EPrecision.TEN_THOUSANDTHS.getPrecision();
+            return integerMantissa * Precision.TEN_THOUSANDTHS.getPrecision();
         case FIVE:
-            return integerMantissa * EPrecision.HUNDRED_THOUSANDTHS.getPrecision();
+            return integerMantissa * Precision.HUNDRED_THOUSANDTHS.getPrecision();
         case SIX:
-            return integerMantissa * EPrecision.MILLIONTHS.getPrecision();
+            return integerMantissa * Precision.MILLIONTHS.getPrecision();
         case SEVEN:
-            return integerMantissa * EPrecision.TEN_MILLIONTHS.getPrecision();
+            return integerMantissa * Precision.TEN_MILLIONTHS.getPrecision();
         case EIGHT:
-            return integerMantissa * EPrecision.HUNDRED_MILLIONTHS.getPrecision();
+            return integerMantissa * Precision.HUNDRED_MILLIONTHS.getPrecision();
         default:
-            return EPrecision.valueOf(nbDigit).calculateIntegerMantissa(integerMantissa);
+            return Precision.valueOf(nbDigit).calculateIntegerMantissa(integerMantissa);
         }
     }
 
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsString(int)
+     * @see com.github.hermod.ser.Msg#getAsString(int)
      */
     @Override
     public final @Nullable
@@ -447,13 +447,13 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsMsg(int)
+     * @see com.github.hermod.ser.Msg#getAsMsg(int)
      */
     @Override
     public final @Nullable
-    IMsg getAsMsg(final int aKey) {
+    Msg getAsMsg(final int aKey) {
         try {
-            return ((this.types[aKey] & TYPE_MASK) == MSG_TYPE && this.objectValues[aKey] != null) ? new KeyObjectMsg((IMsg) this.objectValues[aKey])
+            return ((this.types[aKey] & TYPE_MASK) == MSG_TYPE && this.objectValues[aKey] != null) ? new KeyObjectMsg((Msg) this.objectValues[aKey])
                     : null;
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
@@ -483,13 +483,13 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsMsgInto(int, com.github.hermod.ser.IMsg)
+     * @see com.github.hermod.ser.Msg#getAsMsgInto(int, com.github.hermod.ser.Msg)
      */
     @Override
-    public final void getAsMsg(final int aKey, final IMsg destValue) {
+    public final void getAsMsg(final int aKey, final Msg destValue) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == MSG_TYPE) {
-                destValue.setAll((IMsg) this.objectValues[aKey]);
+                destValue.setAll((Msg) this.objectValues[aKey]);
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
         }
@@ -498,7 +498,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsObject(int)
+     * @see com.github.hermod.ser.Msg#getAsObject(int)
      */
     @Override
     public final @Nullable
@@ -509,7 +509,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsObject(int, java.lang.Class)
+     * @see com.github.hermod.ser.Msg#getAsObject(int, java.lang.Class)
      */
     @Override
     public final @Nullable
@@ -566,7 +566,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsBooleans(int)
+     * @see com.github.hermod.ser.Msg#getAsBooleans(int)
      */
     @Override
     public final @Nullable
@@ -593,7 +593,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsNullableBooleans(int)
+     * @see com.github.hermod.ser.Msg#getAsNullableBooleans(int)
      */
     @Override
     public final @Nullable
@@ -630,7 +630,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsBytes(int)
+     * @see com.github.hermod.ser.Msg#getAsBytes(int)
      */
     @Override
     public final @Nullable
@@ -652,7 +652,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsNullableBytes(int)
+     * @see com.github.hermod.ser.Msg#getAsNullableBytes(int)
      */
     @Override
     public final @Nullable
@@ -683,7 +683,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsShorts(int)
+     * @see com.github.hermod.ser.Msg#getAsShorts(int)
      */
     @Override
     public final @Nullable
@@ -705,7 +705,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsNullableBytes(int)
+     * @see com.github.hermod.ser.Msg#getAsNullableBytes(int)
      */
     @Override
     public final @Nullable
@@ -735,7 +735,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsInts(int)
+     * @see com.github.hermod.ser.Msg#getAsInts(int)
      */
     @Override
     public final @Nullable
@@ -757,7 +757,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsNullableIntegers(int)
+     * @see com.github.hermod.ser.Msg#getAsNullableIntegers(int)
      */
     @Override
     public final @Nullable
@@ -787,7 +787,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsLongs(int)
+     * @see com.github.hermod.ser.Msg#getAsLongs(int)
      */
     @Override
     public final @Nullable
@@ -809,7 +809,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsNullableLongs(int)
+     * @see com.github.hermod.ser.Msg#getAsNullableLongs(int)
      */
     @Override
     public final @Nullable
@@ -839,7 +839,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsFloats(int)
+     * @see com.github.hermod.ser.Msg#getAsFloats(int)
      */
     @Override
     public final @Nullable
@@ -861,7 +861,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsNullableFloats(int)
+     * @see com.github.hermod.ser.Msg#getAsNullableFloats(int)
      */
     @Override
     public final @Nullable
@@ -891,7 +891,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsDoubles(int)
+     * @see com.github.hermod.ser.Msg#getAsDoubles(int)
      */
     @Override
     public final @Nullable
@@ -913,7 +913,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsNullableDoubles(int)
+     * @see com.github.hermod.ser.Msg#getAsNullableDoubles(int)
      */
     @Override
     public final @Nullable
@@ -943,7 +943,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsStrings(int)
+     * @see com.github.hermod.ser.Msg#getAsStrings(int)
      */
     @Override
     public final @Nullable
@@ -965,21 +965,21 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsMsgs(int)
+     * @see com.github.hermod.ser.Msg#getAsMsgs(int)
      */
     @Override
     public final @Nullable
-    IMsg[] getAsMsgs(final int aKey) {
+    Msg[] getAsMsgs(final int aKey) {
         try {
-            if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof IMsg[])) {
-                final IMsg[] msgs = (IMsg[]) this.objectValues[aKey];
-                final IMsg[] results = new KeyObjectMsg[msgs.length];
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof Msg[])) {
+                final Msg[] msgs = (Msg[]) this.objectValues[aKey];
+                final Msg[] results = new KeyObjectMsg[msgs.length];
                 for (int i = 0; i < msgs.length; i++) {
                     results[i] = new KeyObjectMsg(msgs[i]);
                 }
                 return results;
             }
-            return ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof IMsg[])) ? (IMsg[]) this.objectValues[aKey]
+            return ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof Msg[])) ? (Msg[]) this.objectValues[aKey]
                     : null;
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
@@ -989,13 +989,13 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAsMsgs(int, com.github.hermod.ser.IMsg[])
+     * @see com.github.hermod.ser.Msg#getAsMsgs(int, com.github.hermod.ser.Msg[])
      */
     @Override
-    public final void getAsMsgs(final int aKey, IMsg... aDestMsgs) {
+    public final void getAsMsgs(final int aKey, Msg... aDestMsgs) {
         try {
-            if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof IMsg[])) {
-                final IMsg[] msgs = (IMsg[]) this.objectValues[aKey];
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof Msg[])) {
+                final Msg[] msgs = (Msg[]) this.objectValues[aKey];
                 if (msgs.length == aDestMsgs.length) {
                     for (int i = 0; i < msgs.length; i++) {
                         aDestMsgs[i].setAll(msgs[i]);
@@ -1052,14 +1052,14 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getAll()
+     * @see com.github.hermod.ser.Msg#getAll()
      */
     @Override
     public final @NonNull
-    IMsg getAll() {
+    Msg getAll() {
         // TODO to optimize
         final int[] keys = this.getKeys();
-        final IMsg msg = new KeyObjectMsg(keys[keys.length - 1]);
+        final Msg msg = new KeyObjectMsg(keys[keys.length - 1]);
         for (final int key : keys) {
             msg.set(key, this.getAsObject(key));
         }
@@ -1085,22 +1085,22 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getType(int)
+     * @see com.github.hermod.ser.Msg#getType(int)
      */
     @Override
     public final @NonNull
-    EType getType(final int aKey) {
+    Type getType(final int aKey) {
         try {
-            return EType.valueOf((byte) (this.types[aKey] & TYPE_MASK));
+            return Type.valueOf((byte) (this.types[aKey] & TYPE_MASK));
         } catch (ArrayIndexOutOfBoundsException e) {
-            return EType.NULL;
+            return Type.NULL;
         }
     }
 
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getTypeAsByte(int)
+     * @see com.github.hermod.ser.Msg#getTypeAsByte(int)
      */
     @Override
     public final byte getTypeAsByte(final int aKey) {
@@ -1123,7 +1123,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#isArray(int)
+     * @see com.github.hermod.ser.Msg#isArray(int)
      */
     @Override
     public final boolean isArray(final int aKey) {
@@ -1138,7 +1138,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#getArrayLength(int)
+     * @see com.github.hermod.ser.Msg#getArrayLength(int)
      */
     @Override
     public int getArrayLength(final int aKey) {
@@ -1191,7 +1191,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#countKeys()
+     * @see com.github.hermod.ser.Msg#countKeys()
      */
     @Override
     public int countKeys() {
@@ -1207,7 +1207,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#isEmpty()
+     * @see com.github.hermod.ser.Msg#isEmpty()
      */
     @Override
     public boolean isEmpty() {
@@ -1222,7 +1222,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, boolean)
+     * @see com.github.hermod.ser.Msg#set(int, boolean)
      */
     @Override
     public final void set(final int aKey, final boolean aBoolean) {
@@ -1238,7 +1238,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Boolean)
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Boolean)
      */
     @Override
     public final void set(final int aKey, final Boolean aBoolean) {
@@ -1257,7 +1257,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, byte)
+     * @see com.github.hermod.ser.Msg#set(int, byte)
      */
     @Override
     public final void set(final int aKey, final byte aByte) {
@@ -1273,7 +1273,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte)
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Byte)
      */
     @Override
     public final void set(final int aKey, final Byte aByte) {
@@ -1308,7 +1308,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte)
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Byte)
      */
     @Override
     public final void set(final int aKey, final Short aShort) {
@@ -1343,7 +1343,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte)
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Byte)
      */
     @Override
     public final void set(final int aKey, final Integer aInteger) {
@@ -1396,7 +1396,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte)
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Byte)
      */
     @Override
     public final void set(final int aKey, final Long aLong) {
@@ -1431,7 +1431,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte)
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Byte)
      */
     @Override
     public final void set(final int aKey, final Float aFloat) {
@@ -1467,7 +1467,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte)
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Byte)
      */
     @Override
     public final void set(final int aKey, final Double aDouble) {
@@ -1542,7 +1542,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte)
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Byte)
      */
     @Override
     public final void set(final int aKey, final Double aDouble, final int nbDigit) {
@@ -1561,10 +1561,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, double, com.github.hermod.ser.EPrecision)
+     * @see com.github.hermod.ser.Msg#set(int, double, com.github.hermod.ser.Precision)
      */
     @Override
-    public final void set(final int aKey, final double aDouble, final EPrecision aPrecision) {
+    public final void set(final int aKey, final double aDouble, final Precision aPrecision) {
         final double mantissa = aPrecision.calculateIntegerMantissa(aDouble);
         if (!Double.isNaN(mantissa)) {
             try {
@@ -1582,10 +1582,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte)
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Byte)
      */
     @Override
-    public final void set(final int aKey, final Double aDouble, final EPrecision aPrecision) {
+    public final void set(final int aKey, final Double aDouble, final Precision aPrecision) {
         if (aDouble != null) {
             this.set(aKey, aDouble.doubleValue(), aPrecision);
         } else {
@@ -1653,7 +1653,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.String, boolean)
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.String, boolean)
      */
     @Override
     public final void set(final int aKey, final String aString, final boolean forceNoLengthOptimization) {
@@ -1667,10 +1667,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, com.github.hermod.ser.IMsg)
+     * @see com.github.hermod.ser.Msg#set(int, com.github.hermod.ser.Msg)
      */
     @Override
-    public final void set(final int aKey, final IMsg aMsg) {
+    public final void set(final int aKey, final Msg aMsg) {
         try {
             this.objectValues[aKey] = aMsg;
             this.types[aKey] = MSG_TYPE;
@@ -1683,7 +1683,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Object[])
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Object[])
      */
     public final void set(final int aKey, final Object[] aObjectArray) {
         // TODO manage the
@@ -1699,7 +1699,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Object)
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Object)
      */
     @Override
     public final void set(final int aKey, final Object aObject) {
@@ -1721,8 +1721,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                 }
             } else if (aObject instanceof String) {
                 set(aKey, (String) aObject);
-            } else if (aObject instanceof IMsg) {
-                set(aKey, (IMsg) aObject);
+            } else if (aObject instanceof Msg) {
+                set(aKey, (Msg) aObject);
             } else if (aObject instanceof Boolean) {
                 set(aKey, (Boolean) aObject);
             } else if (aObject instanceof Object[]) {
@@ -1765,8 +1765,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                     }
                 } else if (aObject instanceof String) {
                     set(aKey, (String) aObject, true);
-                } else if (aObject instanceof IMsg) {
-                    set(aKey, (IMsg) aObject);
+                } else if (aObject instanceof Msg) {
+                    set(aKey, (Msg) aObject);
                 } else {
                     throw new IllegalArgumentException("Impossible to set this type of value=" + aObject.getClass());
                 }
@@ -1783,10 +1783,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#setAll(com.github.hermod.ser.IMsg)
+     * @see com.github.hermod.ser.Msg#setAll(com.github.hermod.ser.Msg)
      */
     @Override
-    public final void setAll(final IMsg aMsg) {
+    public final void setAll(final Msg aMsg) {
         // TODO to optimize with getType
         if (aMsg != null) {
             final int[] keys = aMsg.getKeys();
@@ -1799,7 +1799,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, boolean[])
+     * @see com.github.hermod.ser.Msg#set(int, boolean[])
      */
     @Override
     public final void set(final int aKey, final boolean... aBooleans) {
@@ -1823,7 +1823,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Boolean[])
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Boolean[])
      */
     @Override
     public final void set(final int aKey, final Boolean... aBooleans) {
@@ -1847,7 +1847,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, byte[])
+     * @see com.github.hermod.ser.Msg#set(int, byte[])
      */
     @Override
     public final void set(final int aKey, final byte... aBytes) {
@@ -1863,7 +1863,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Byte[])
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Byte[])
      */
     @Override
     public final void set(final int aKey, final Byte... aBytes) {
@@ -1879,7 +1879,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, short[])
+     * @see com.github.hermod.ser.Msg#set(int, short[])
      */
     @Override
     public final void set(final int aKey, final short... aShorts) {
@@ -1895,7 +1895,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Short[])
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Short[])
      */
     @Override
     public final void set(final int aKey, final Short... aShorts) {
@@ -1911,7 +1911,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, int[])
+     * @see com.github.hermod.ser.Msg#set(int, int[])
      */
     @Override
     public final void set(final int aKey, final int... aInts) {
@@ -1927,7 +1927,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Integer[])
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Integer[])
      */
     @Override
     public final void set(final int aKey, final Integer... aInts) {
@@ -1943,7 +1943,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, long[])
+     * @see com.github.hermod.ser.Msg#set(int, long[])
      */
     @Override
     public final void set(final int aKey, final long... aLongs) {
@@ -1959,7 +1959,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Long[])
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Long[])
      */
     @Override
     public final void set(final int aKey, final Long... aLongs) {
@@ -1975,7 +1975,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, float[])
+     * @see com.github.hermod.ser.Msg#set(int, float[])
      */
     @Override
     public final void set(final int aKey, final float... aFloats) {
@@ -1991,7 +1991,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Float[])
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Float[])
      */
     @Override
     public final void set(final int aKey, final Float... aFloats) {
@@ -2007,7 +2007,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, double[])
+     * @see com.github.hermod.ser.Msg#set(int, double[])
      */
     @Override
     public final void set(final int aKey, final double... aDoubles) {
@@ -2023,7 +2023,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.Double[])
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Double[])
      */
     @Override
     public final void set(final int aKey, final Double... aDoubles) {
@@ -2039,7 +2039,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.String[])
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.String[])
      */
     @Override
     public final void set(final int aKey, final String... aStrings) {
@@ -2056,7 +2056,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, java.lang.String[], boolean)
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.String[], boolean)
      */
     @Override
     public final void set(final int aKey, final String[] aStrings, final boolean forceNoLengthOptimization) {
@@ -2073,10 +2073,10 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#set(int, com.github.hermod.ser.IMsg[])
+     * @see com.github.hermod.ser.Msg#set(int, com.github.hermod.ser.Msg[])
      */
     @Override
-    public void set(final int aKey, final IMsg... aMsgs) {
+    public void set(final int aKey, final Msg... aMsgs) {
         try {
             this.objectValues[aKey] = aMsgs;
             this.types[aKey] = ARRAY_VARIABLE_VALUE_TYPE;
@@ -2089,7 +2089,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#remove(int)
+     * @see com.github.hermod.ser.Msg#remove(int)
      */
     @Override
     public final void remove(final int... aKeys) {
@@ -2129,7 +2129,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IMsg#clear()
+     * @see com.github.hermod.ser.Msg#clear()
      */
     @Override
     public final void removeAll() {
@@ -2271,11 +2271,11 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                     break;
 
                 case MSG_TYPE:
-                    final IMsg aMsg = (IMsg) this.objectValues[key];
+                    final Msg aMsg = (Msg) this.objectValues[key];
                     if (aMsg != null) {
-                        final int msgLength = ((IBytesSerializable) aMsg).getLength();
+                        final int msgLength = ((BytesSerializable) aMsg).getLength();
                         pos = writeVariableLength(bytes, pos - 1, msgLength, (msgLength == 0) ? TWO : ONE);
-                        pos = ((IBytesSerializable) aMsg).serializeToBytes(bytes, pos);
+                        pos = ((BytesSerializable) aMsg).serializeToBytes(bytes, pos);
                     }
                     break;
 
@@ -2362,7 +2362,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                     if (this.objectValues[key] != null && this.objectValues[key] instanceof Object[]) {
                         final Object[] objects = ((Object[]) this.objectValues[key]);
                         // TODO fix, check if the the first key not null (here we consider the first one is always not null)
-                        final IBytesSerializable msg = serializeArrayVariableValueAsMsg(objects);
+                        final BytesSerializable msg = serializeArrayVariableValueAsMsg(objects);
                         arrayVariableValueLength = msg.getLength();
                         pos = writeVariableLength(bytes, pos - 1, arrayVariableValueLength, (arrayVariableValueLength == 0) ? TWO : ONE);
                         pos = msg.serializeToBytes(bytes, pos);
@@ -2385,7 +2385,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
      * @param objects
      * @return
      */
-    private IBytesSerializable serializeArrayVariableValueAsMsg(final Object[] objects) {
+    private BytesSerializable serializeArrayVariableValueAsMsg(final Object[] objects) {
         final KeyObjectMsg msg = new KeyObjectMsg();
         if (objects != null) {
             int i = 0;
@@ -2408,7 +2408,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IBytesSerializable#deserializeFrom(byte[], int, int)
+     * @see com.github.hermod.ser.BytesSerializable#deserializeFrom(byte[], int, int)
      */
     public final void deserializeFrom(final byte[] bytes, final int offset, final int length) {
         int pos = offset;
@@ -2599,7 +2599,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                                 pos += fieldLength;
                                 final int variableArrayLength = arrayAsMsg.countKeys();
                                 // TODO fix, check if the the first key not null (here we consider the first one is always not null)
-                                final EType arraytype = arrayAsMsg.getType(0);
+                                final Type arraytype = arrayAsMsg.getType(0);
                                 final byte typeWithLength = arrayAsMsg.getTypeWithLengthAsByte(0);
                                 switch (arraytype) {
                                 case INTEGER:
@@ -2672,7 +2672,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                                     break;
 
                                 case MSG:
-                                    final IMsg[] msgs = new KeyObjectMsg[variableArrayLength];
+                                    final Msg[] msgs = new KeyObjectMsg[variableArrayLength];
                                     for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
                                         msgs[arrayKey] = arrayAsMsg.getAsMsg(arrayKey);
                                     }
@@ -2700,7 +2700,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IByteBufferSerializable#serializeToByteBuffer(java.nio.ByteBuffer)
+     * @see com.github.hermod.ser.ByteBufferSerializable#serializeToByteBuffer(java.nio.ByteBuffer)
      */
     @Override
     public void serializeToByteBuffer(final ByteBuffer aDestByteBuffer) {
@@ -2710,7 +2710,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.IByteBufferSerializable#deserializeFrom(java.nio.ByteBuffer, int)
+     * @see com.github.hermod.ser.ByteBufferSerializable#deserializeFrom(java.nio.ByteBuffer, int)
      */
     @Override
     public void deserializeFrom(final ByteBuffer aSrcByteBuffer) {
@@ -2806,7 +2806,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
 
             case MSG_TYPE:
                 // TODO change to Serializer.getLength();
-                final int msgLength = (this.objectValues[key] != null) ? ((IBytesSerializable) this.objectValues[key]).getLength() : 0;
+                final int msgLength = (this.objectValues[key] != null) ? ((BytesSerializable) this.objectValues[key]).getLength() : 0;
                 return getVariableLength(msgLength, (msgLength == 0) ? TWO : ONE) + msgLength;
 
             case ARRAY_FIXED_VALUE_TYPE:
@@ -2838,7 +2838,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                 int arrayVariableValueLength = ONE;
                 if (this.objectValues[key] != null && this.objectValues[key] instanceof Object[]) {
                     final Object[] objects = ((Object[]) this.objectValues[key]);
-                    final IBytesSerializable arrayVariableValueAsMsg = serializeArrayVariableValueAsMsg(objects);
+                    final BytesSerializable arrayVariableValueAsMsg = serializeArrayVariableValueAsMsg(objects);
                     final int arrayVariableValueAsMsgLength = arrayVariableValueAsMsg.getLength();
                     arrayVariableValueLength = getVariableLength(arrayVariableValueAsMsgLength, (arrayVariableValueAsMsgLength == 0) ? TWO : ONE)
                             + arrayVariableValueAsMsgLength;
@@ -2897,7 +2897,7 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
                         sb.append("null");
                     }
                 } else if (typeAsByte == MSG_TYPE) {
-                    IMsg msg = this.getAsMsg(key);
+                    Msg msg = this.getAsMsg(key);
                     if (msg != null) {
                         sb.append(msg);
                     } else {
@@ -2940,8 +2940,8 @@ public class KeyObjectMsg implements IMsg, IBytesSerializable, IByteBufferSerial
     @Override
     public boolean equals(Object aObj) {
         // TODO to optimize
-        if (aObj != null && aObj instanceof IMsg) {
-            IMsg msg = (IMsg) aObj;
+        if (aObj != null && aObj instanceof Msg) {
+            Msg msg = (Msg) aObj;
             final int[] keys = this.getKeys();
             if (keys.length != msg.countKeys()) {
                 return false;
