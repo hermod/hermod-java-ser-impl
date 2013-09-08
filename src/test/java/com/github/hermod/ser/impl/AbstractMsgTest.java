@@ -85,8 +85,14 @@ public abstract class AbstractMsgTest {
 
     private static final double PRECISION = 0.00001;
 
-    private BytesMsgSerializer serializer = new DefaultMsgSerializer();
-    private ByteBufferMsgSerializer byteBufferSerializer = new DefaultMsgSerializer();
+    
+    public static void main(String[] args) {
+        
+    }
+    
+    
+    private BytesMsgSerializer serializer = DefaultMsgSerializer.create();
+    private ByteBufferMsgSerializer byteBufferSerializer = DefaultMsgSerializer.create();
 
     protected final Msg msgTest;
 
@@ -624,8 +630,8 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_THREE, STRING_TEST132);
         srcMsg.set(KEY_FOUR, (String) null);
         srcMsg.set(KEY_FIVE, STRING_TEST_UTF16);
-        srcMsg.set(KEY_SIX, STRING_TEST_UTF16, true);
-        srcMsg.set(KEY_SEVEN, STRING_TEST, false);
+        srcMsg.set(KEY_SIX, STRING_TEST_UTF16, false);
+        srcMsg.set(KEY_SEVEN, STRING_TEST, true);
         
         srcMsg.set(KEY_NINETY, STRING_TEST);
         srcMsg.set(KEY_THREE_HUNDRED, STRING_TEST);

@@ -45,6 +45,28 @@ import com.github.hermod.ser.Msg;
  */
 public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBufferMsgSerializer {
 
+    
+    private static final DefaultMsgSerializer DEFAULT_MSG_SERIALIZER = new DefaultMsgSerializer();
+    
+    
+    /**
+     * create.
+     *
+     * @return
+     */
+    public static DefaultMsgSerializer create() {
+        return new DefaultMsgSerializer();
+    }
+    
+    /**
+     * get.
+     *
+     * @return
+     */
+    public static DefaultMsgSerializer get() {
+        return DEFAULT_MSG_SERIALIZER;
+    }
+    
     /**
      * (non-Javadoc)
      * 
@@ -421,7 +443,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
     /**
      * (non-Javadoc)
      *
-     * @see com.github.hermod.ser.ByteBufferMsgSerializer#serializeToByteBuffer(com.github.hermod.ser.Msg, java.nio.ByteBuffer)
+     * @see com.github.hermod.ser.ByteBufferMsgSerializer#serializeTo(com.github.hermod.ser.Msg, java.nio.ByteBuffer)
      */
     @Override
     public int serializeToByteBuffer(Msg aSrcMsg, ByteBuffer aDestByteBuffer) {
@@ -440,6 +462,8 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
         aSrcByteBuffer.get(bytes);
         deserializeFrom(bytes, 0, bytes.length, aDestMsg);
     }
+
+
     
 
 }

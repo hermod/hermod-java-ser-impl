@@ -76,6 +76,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * Constructor.
      * 
      */
+    //TODO set as private
     public KeyObjectMsg() {
         this(DEFAULT_MAX_KEY);
     }
@@ -85,6 +86,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * 
      * @param aDescriptor
      */
+    //TODO set as private
     public KeyObjectMsg(final int aKeyMax) {
         this.types = new byte[aKeyMax + 1];
         this.primitiveValues = new long[aKeyMax + 1];
@@ -96,6 +98,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * 
      * @param aMsg
      */
+    //TODO set as private
     public KeyObjectMsg(final Msg aMsg) {
         if (aMsg instanceof KeyObjectMsg) {
             final KeyObjectMsg keyObjectMsg = (KeyObjectMsg) aMsg;
@@ -146,6 +149,79 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
             this.objectValues = destObjectValues;
         }
     }
+    
+    /**
+     * newMsg.
+     *
+     * @return
+     */
+    public static KeyObjectMsg create() {
+        return new KeyObjectMsg(DEFAULT_MAX_KEY);
+    }
+    
+
+    /**
+     * newMsg.
+     *
+     * @param keyMax
+     * @return
+     */
+    public static KeyObjectMsg createWithKeyMax(final int keyMax) {
+        return new KeyObjectMsg(keyMax);
+    }
+    
+    /**
+     * createFromBytes.
+     *
+     * @param bytes
+     * @param offset
+     * @param length
+     * @return
+     */
+    //TODO createFromBytes?
+    public static KeyObjectMsg createFrom(final byte[] aSrcBytes, final int offset, final int length) {
+         final KeyObjectMsg msg = new KeyObjectMsg();
+         msg.deserializeFrom(aSrcBytes, offset, length);
+         return msg;
+    }
+    
+    /**
+     * createFromByteBuffer.
+     *
+     * @param byteBuffer
+     * @return
+     */
+    public static KeyObjectMsg createFrom(final ByteBuffer aSrcByteBuffer) {
+        final KeyObjectMsg msg = new KeyObjectMsg();
+        msg.deserializeFrom(aSrcByteBuffer);
+        return msg;
+   }
+    
+    /**
+     * createFromMsg.
+     *
+     * @param aMsg
+     * @return
+     */
+    public static KeyObjectMsg createFrom(final Msg aMsg) {
+        return new KeyObjectMsg(aMsg);
+   }
+    
+    /**
+     * createFromValues.
+     *
+     * @param values
+     * @return
+     */
+    public static KeyObjectMsg createFrom(final Object... values) {
+        final KeyObjectMsg msg = new KeyObjectMsg(values.length);
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] != null) {
+                msg.set(i, values[i]);
+            }
+        }
+        return msg;
+   }
 
     /**
      * (non-Javadoc)
@@ -1656,11 +1732,11 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * @see com.github.hermod.ser.Msg#set(int, java.lang.String, boolean)
      */
     @Override
-    public final void set(final int aKey, final String aString, final boolean forceNoLengthOptimization) {
-        if (forceNoLengthOptimization) {
-            set(aKey, aString, STRING_UTF_16_TYPE);
-        } else {
+    public final void set(final int aKey, final String aString, final boolean forceIso88591Charset) {
+        if (forceIso88591Charset) {
             set(aKey, aString, STRING_ISO_8859_1_TYPE);
+        } else {
+            set(aKey, aString, STRING_UTF_16_TYPE);
         }
     }
 
