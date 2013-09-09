@@ -54,12 +54,12 @@ public final class DelegateMsgSerializer implements BytesMsgSerializer {
     /**
      * (non-Javadoc)
      *
-     * @see com.github.hermod.ser.BytesMsgSerializer#deserializeFrom(byte[], int, int, com.github.hermod.ser.Msg)
+     * @see com.github.hermod.ser.BytesMsgSerializer#deserializeFromBytes(byte[], int, int, com.github.hermod.ser.Msg)
      */
     @Override
-    public void deserializeFrom(final byte[] aSrcBytes, final int aSrcOffset, final int aSrcLength, Msg aDestMsg) {
+    public void deserializeFromBytes(final byte[] aSrcBytes, final int aSrcOffset, final int aSrcLength, Msg aDestMsg) {
         if (aDestMsg instanceof BytesSerializable) {
-           ((BytesSerializable) aDestMsg).deserializeFrom(aSrcBytes, aSrcOffset, aSrcLength);
+           ((BytesSerializable) aDestMsg).deserializeFromBytes(aSrcBytes, aSrcOffset, aSrcLength);
         }
         throw new IllegalArgumentException("This serializer can deserializeFrom only if msg instanceof IBytesSerializable.");
     }

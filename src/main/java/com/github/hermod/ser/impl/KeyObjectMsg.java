@@ -181,7 +181,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
     //TODO createFromBytes?
     public static KeyObjectMsg createFromBytes(final byte[] aSrcBytes, final int offset, final int length) {
          final KeyObjectMsg msg = new KeyObjectMsg();
-         msg.deserializeFrom(aSrcBytes, offset, length);
+         msg.deserializeFromBytes(aSrcBytes, offset, length);
          return msg;
     }
     
@@ -193,7 +193,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      */
     public static KeyObjectMsg createFromByteBuffer(final ByteBuffer aSrcByteBuffer) {
         final KeyObjectMsg msg = new KeyObjectMsg();
-        msg.deserializeFrom(aSrcByteBuffer);
+        msg.deserializeFromByteBuffer(aSrcByteBuffer);
         return msg;
    }
     
@@ -2484,9 +2484,9 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.BytesSerializable#deserializeFrom(byte[], int, int)
+     * @see com.github.hermod.ser.BytesSerializable#deserializeFromBytes(byte[], int, int)
      */
-    public final void deserializeFrom(final byte[] bytes, final int offset, final int length) {
+    public final void deserializeFromBytes(final byte[] bytes, final int offset, final int length) {
         int pos = offset;
         int key = 0;
 
@@ -2601,7 +2601,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
 
                         case MSG_TYPE:
                             final KeyObjectMsg msg = new KeyObjectMsg();
-                            msg.deserializeFrom(bytes, pos, fieldLength);
+                            msg.deserializeFromBytes(bytes, pos, fieldLength);
                             pos += fieldLength;
                             this.objectValues[key] = msg;
                             break;
@@ -2671,7 +2671,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
                             // TODO
                             if (lengthMask != 0) {
                                 final KeyObjectMsg arrayAsMsg = new KeyObjectMsg();
-                                arrayAsMsg.deserializeFrom(bytes, pos, fieldLength);
+                                arrayAsMsg.deserializeFromBytes(bytes, pos, fieldLength);
                                 pos += fieldLength;
                                 final int variableArrayLength = arrayAsMsg.countKeys();
                                 // TODO fix, check if the the first key not null (here we consider the first one is always not null)
@@ -2786,13 +2786,13 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.ByteBufferSerializable#deserializeFrom(java.nio.ByteBuffer, int)
+     * @see com.github.hermod.ser.ByteBufferSerializable#deserializeFromBuffer(java.nio.ByteBuffer, int)
      */
     @Override
-    public void deserializeFrom(final ByteBuffer aSrcByteBuffer) {
+    public void deserializeFromByteBuffer(final ByteBuffer aSrcByteBuffer) {
         final byte[] bytes = new byte[aSrcByteBuffer.remaining()];
         aSrcByteBuffer.get(bytes);
-        this.deserializeFrom(bytes, 0, bytes.length);
+        this.deserializeFromBytes(bytes, 0, bytes.length);
     }
 
     /**

@@ -73,9 +73,9 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
      * @see com.github.hermod.ser.MsgSerializer#readFrom(byte[], int, int, com.github.hermod.ser.Msg)
      */
     @Override
-    public void deserializeFrom(final byte[] bytes, final int offset, final int length, Msg aDestMsg) {
+    public void deserializeFromBytes(final byte[] bytes, final int offset, final int length, Msg aDestMsg) {
         if (aDestMsg instanceof BytesSerializable) {
-            ((BytesSerializable) aDestMsg).deserializeFrom(bytes, offset, length);
+            ((BytesSerializable) aDestMsg).deserializeFromBytes(bytes, offset, length);
         } else {
             int pos = offset;
             int key = 0;
@@ -184,7 +184,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
                             // TODO manage null value
                             if (lengthMask != 0) {
                                 final Msg msg = new KeyObjectMsg();
-                                ((BytesSerializable) msg).deserializeFrom(bytes, pos, fieldLength);
+                                ((BytesSerializable) msg).deserializeFromBytes(bytes, pos, fieldLength);
                                 pos += fieldLength;
                                 aDestMsg.set(key, msg);
                             }
@@ -454,13 +454,13 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
     /**
      * (non-Javadoc)
      *
-     * @see com.github.hermod.ser.ByteBufferMsgSerializer#deserializeFrom(java.nio.ByteBuffer, com.github.hermod.ser.Msg)
+     * @see com.github.hermod.ser.ByteBufferMsgSerializer#deserializeFromBuffer(java.nio.ByteBuffer, com.github.hermod.ser.Msg)
      */
     @Override
-    public void deserializeFrom(ByteBuffer aSrcByteBuffer, Msg aDestMsg) {
+    public void deserializeFromBuffer(ByteBuffer aSrcByteBuffer, Msg aDestMsg) {
         final byte[] bytes = new byte[aSrcByteBuffer.remaining()];
         aSrcByteBuffer.get(bytes);
-        deserializeFrom(bytes, 0, bytes.length, aDestMsg);
+        deserializeFromBytes(bytes, 0, bytes.length, aDestMsg);
     }
 
 

@@ -51,7 +51,7 @@ public final class Demo
 	double d17 = intMap.getAsDouble(7);
 	
 	KeyObjectMsg intMap2 = new KeyObjectMsg(44);
-	intMap2.deserializeFrom(bytes, 0, size);
+	intMap2.deserializeFromBytes(bytes, 0, size);
 	
 	double d0a = intMap2.getAsDouble(0);
 	double d1a = intMap2.getAsDouble(1);
@@ -93,7 +93,7 @@ public final class Demo
 	start = System.currentTimeMillis();
 	for (int i = nbTestEncode; i-- != 0;)
 	{
-	    intMap2.deserializeFrom(bytes, 0, size);
+	    intMap2.deserializeFromBytes(bytes, 0, size);
 	    count += intMap2.getAsDouble(0) + intMap2.getAsDouble(1) + intMap2.getAsDouble(2) + intMap2.getAsDouble(3)
 		    + intMap2.getAsDouble(4) + intMap2.getAsDouble(5) + intMap2.getAsDouble(6)
 		    + +intMap2.getAsDouble(7);
@@ -130,7 +130,7 @@ public final class Demo
 	start = System.currentTimeMillis();
 	for (int i = nbTestEncode; i-- != 0;)
 	{
-	    intMap2.deserializeFrom(bytes, 0, size);
+	    intMap2.deserializeFromBytes(bytes, 0, size);
 	    count += intMap2.getAsDouble(0) + intMap2.getAsDouble(1) + intMap2.getAsDouble(2)
 		    + intMap2.getAsDouble(3) + intMap2.getAsDouble(4) + intMap2.getAsDouble(5)
 		    + intMap2.getAsDouble(6) + intMap2.getAsDouble(7);
