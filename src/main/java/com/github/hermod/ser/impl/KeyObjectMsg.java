@@ -179,7 +179,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * @return
      */
     //TODO createFromBytes?
-    public static KeyObjectMsg createFrom(final byte[] aSrcBytes, final int offset, final int length) {
+    public static KeyObjectMsg createFromBytes(final byte[] aSrcBytes, final int offset, final int length) {
          final KeyObjectMsg msg = new KeyObjectMsg();
          msg.deserializeFrom(aSrcBytes, offset, length);
          return msg;
@@ -191,7 +191,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * @param byteBuffer
      * @return
      */
-    public static KeyObjectMsg createFrom(final ByteBuffer aSrcByteBuffer) {
+    public static KeyObjectMsg createFromByteBuffer(final ByteBuffer aSrcByteBuffer) {
         final KeyObjectMsg msg = new KeyObjectMsg();
         msg.deserializeFrom(aSrcByteBuffer);
         return msg;
@@ -203,7 +203,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * @param aMsg
      * @return
      */
-    public static KeyObjectMsg createFrom(final Msg aMsg) {
+    public static KeyObjectMsg createFromMsg(final Msg aMsg) {
         return new KeyObjectMsg(aMsg);
    }
     
@@ -213,7 +213,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * @param values
      * @return
      */
-    public static KeyObjectMsg createFrom(final Object... values) {
+    public static KeyObjectMsg createFromValues(final Object... values) {
         final KeyObjectMsg msg = new KeyObjectMsg(values.length);
         for (int i = 0; i < values.length; i++) {
             if (values[i] != null) {
