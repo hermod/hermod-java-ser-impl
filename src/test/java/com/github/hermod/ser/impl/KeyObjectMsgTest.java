@@ -30,7 +30,7 @@ public final class KeyObjectMsgTest
      */
     @Override
     public Msg newMsg() {
-        return new KeyObjectMsg();
+        return KeyObjectMsg.create();
     }
 
 

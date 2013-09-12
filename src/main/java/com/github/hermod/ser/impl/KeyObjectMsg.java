@@ -77,7 +77,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * 
      */
     //TODO set as private
-    public KeyObjectMsg() {
+    private KeyObjectMsg() {
         this(DEFAULT_MAX_KEY);
     }
 
@@ -87,7 +87,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * @param aDescriptor
      */
     //TODO set as private
-    public KeyObjectMsg(final int aKeyMax) {
+    private KeyObjectMsg(final int aKeyMax) {
         this.types = new byte[aKeyMax + 1];
         this.primitiveValues = new long[aKeyMax + 1];
         this.objectValues = new Object[aKeyMax + 1];
@@ -99,7 +99,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * @param aMsg
      */
     //TODO set as private
-    public KeyObjectMsg(final Msg aMsg) {
+    private KeyObjectMsg(final Msg aMsg) {
         if (aMsg instanceof KeyObjectMsg) {
             final KeyObjectMsg keyObjectMsg = (KeyObjectMsg) aMsg;
             final int length = keyObjectMsg.types.length;
