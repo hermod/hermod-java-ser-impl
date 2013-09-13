@@ -183,7 +183,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
                         case MSG_TYPE:
                             // TODO manage null value
                             if (lengthMask != 0) {
-                                final Msg msg = new KeyObjectMsg();
+                                final Msg msg = KeyObjectMsg.create();
                                 ((BytesSerializable) msg).deserializeFromBytes(bytes, pos, fieldLength);
                                 pos += fieldLength;
                                 aDestMsg.set(key, msg);
