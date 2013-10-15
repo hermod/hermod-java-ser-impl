@@ -269,7 +269,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
             int pos = aDestOffset;
 
             // Write Type / Values
-            final int[] keys = aSrcMsg.getKeys();
+            final int[] keys = aSrcMsg.retrieveKeys();
             int previousKey = 0;
             for (int j = 0; j < keys.length; j++) {
                 final int key = keys[j];
@@ -388,7 +388,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
         } else {
             int length = 0;
             // Size of the different values
-            final int[] keys = aMsg.getKeys();
+            final int[] keys = aMsg.retrieveKeys();
             for (int i = 0; i < keys.length; i++) {
                 length += getValueLength(aMsg.getAsObject(i));
             }
@@ -461,6 +461,13 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
         final byte[] bytes = new byte[aSrcByteBuffer.remaining()];
         aSrcByteBuffer.get(bytes);
         deserializeFromBytes(bytes, 0, bytes.length, aDestMsg);
+    }
+
+    @Override
+    public ByteBuffer serializeToByteBuffer(Msg aSrcMsg)
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 
