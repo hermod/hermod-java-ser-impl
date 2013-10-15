@@ -112,7 +112,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
         } else {
             // TODO to optimize with getType
             if (aMsg != null) {
-                final int[] keys = aMsg.getKeys();
+                final int[] keys = aMsg.retrieveKeys();
                 final int aKeyMax = keys[keys.length - 1];
                 this.types = new byte[aKeyMax + 1];
                 this.primitiveValues = new long[aKeyMax + 1];
@@ -545,7 +545,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
     // private final Map<Integer, Object> getAsMap(final int aKey) {
     // final IMsg msg = this.getAsMsg(aKey);
     // if (msg != null) {
-    // final int[] keys = msg.getKeys();
+    // final int[] keys = msg.retrieveKeys();
     // final Map<Integer, Object> map = new HashMap<>(keys.length);
     // for (final int key : keys) {
     // map.put(key, msg.getAsObject(key));
@@ -1134,7 +1134,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
     public final @NonNull
     Msg getAll() {
         // TODO to optimize
-        final int[] keys = this.getKeys();
+        final int[] keys = this.retrieveKeys();
         final Msg msg = new KeyObjectMsg(keys[keys.length - 1]);
         for (final int key : keys) {
             msg.set(key, this.getAsObject(key));
@@ -1150,7 +1150,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
     final @NonNull
     Map<Integer, Object> getAllAsMap() {
         // TODO to optimize
-        final int[] keys = this.getKeys();
+        final int[] keys = this.retrieveKeys();
         final Map<Integer, Object> map = new HashMap<>(keys.length);
         for (final int key : keys) {
             map.put(key, this.getAsObject(key));
@@ -1249,11 +1249,11 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser3.intmap.ReadIntMap#getKeys()
+     * @see com.github.hermod.ser3.intmap.ReadIntMap#retrieveKeys()
      */
     @Override
     public final @NonNull
-    int[] getKeys() {
+    int[] retrieveKeys() {
         final int[] keys = new int[countKeys()];
         int index = 0;
         for (int i = 0; i < this.types.length; i++) {
@@ -1865,7 +1865,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
     public final void setAll(final Msg aMsg) {
         // TODO to optimize with getType
         if (aMsg != null) {
-            final int[] keys = aMsg.getKeys();
+            final int[] keys = aMsg.retrieveKeys();
             for (int i = 0; i < keys.length; i++) {
                 set(keys[i], aMsg.getAsObject(keys[i]));
             }
@@ -2772,6 +2772,20 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
             }
         }
     }
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.ByteBufferSerializable#serializeToByteBuffer()
+     */
+    @Override
+    public ByteBuffer serializeToByteBuffer()
+    {
+        final byte[] bytes = serializeToBytes();
+        final ByteBuffer aDestByteBuffer = ByteBuffer.allocate(bytes.length);
+        aDestByteBuffer.put(bytes);
+        return aDestByteBuffer;
+    }
 
     /**
      * (non-Javadoc)
@@ -2936,7 +2950,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("{");
-        final int[] keys = this.getKeys();
+        final int[] keys = this.retrieveKeys();
         for (final int key : keys) {
             final byte typeAsByte = this.getTypeAsByte(key);
             if (typeAsByte != NULL_TYPE) {
@@ -3001,7 +3015,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
     public int hashCode() {
         int hashcode = 0;
         // TODO to optimize
-        final int[] keys = this.getKeys();
+        final int[] keys = this.retrieveKeys();
         for (final int key : keys) {
             hashcode += key ^ this.getAsObject(key).hashCode();
         }
@@ -3018,7 +3032,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
         // TODO to optimize
         if (aObj != null && aObj instanceof Msg) {
             Msg msg = (Msg) aObj;
-            final int[] keys = this.getKeys();
+            final int[] keys = this.retrieveKeys();
             if (keys.length != msg.countKeys()) {
                 return false;
             }
@@ -3032,5 +3046,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
             return false;
         }
     }
+    
+    
 
 }
