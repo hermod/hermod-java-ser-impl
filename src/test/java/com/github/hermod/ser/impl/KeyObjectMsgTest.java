@@ -20,6 +20,8 @@ public final class KeyObjectMsgTest
      */
     public KeyObjectMsgTest() {
         super();
+        this.bytesMsgSerializer = DefaultMsgSerializer.create();
+        this.byteBufferSerializer = DefaultMsgSerializer.create();
     }
     
     
