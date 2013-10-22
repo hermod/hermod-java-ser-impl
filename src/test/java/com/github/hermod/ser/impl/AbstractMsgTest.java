@@ -1204,7 +1204,7 @@ public abstract class AbstractMsgTest {
         if (destMsg instanceof ByteBufferSerializable) {
             ((ByteBufferSerializable) destMsg).deserializeFromByteBuffer(byteBuffer);
         } else {
-            this.byteBufferSerializer.deserializeFromBuffer(byteBuffer, destMsg);
+            this.byteBufferSerializer.deserializeFromByteBuffer(byteBuffer, destMsg);
         }
 
         assertThat(destMsg.getAsByte(KEY_ONE)).isEqualTo(BYTE_TEST);
@@ -1258,7 +1258,7 @@ public abstract class AbstractMsgTest {
         map.put(KEY_TWO, DOUBLE_TEST);
         map.put(KEY_THREE, null);
         map.put(KEY_FOUR, STRING_TEST);
-        map.put(KEY_FIVE, ((KeyObjectMsg) msgTest).getAllAsMap());
+        map.put(KEY_FIVE, ((IndexedPrimitivesObjectsMsg) msgTest).getAllAsMap());
         map.put(KEY_SIX, LONGS_TEST2);
         map.put(KEY_SEVEN, DOUBLES_TEST);
         map.put(KEY_EIGHT, null);

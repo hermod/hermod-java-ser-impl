@@ -1,5 +1,6 @@
 package com.github.hermod.ser.impl;
 
+
 import static com.github.hermod.ser.Precision.HALF;
 import static com.github.hermod.ser.Types.ARRAY_FIXED_VALUE_TYPE;
 import static com.github.hermod.ser.Types.ARRAY_VARIABLE_VALUE_TYPE;
@@ -40,6 +41,7 @@ import static com.github.hermod.ser.impl.Msgs.TWENTY_FOUR;
 import static com.github.hermod.ser.impl.Msgs.TWO;
 import static com.github.hermod.ser.impl.Msgs.XFF;
 import static com.github.hermod.ser.impl.Msgs.ZERO;
+import static com.github.hermod.ser.impl.Msgs.ERROR_WHEN_KEY_NOT_PRESENT;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -56,28 +58,24 @@ import com.github.hermod.ser.Msg;
 import com.github.hermod.ser.Types;
 
 /**
- * <p>KeyObjectMsg. </p>
+ * <p>IndexedPrimitiveObjectsMsg. </p>
  * 
  * @author anavarro - Jan 21, 2013
  * 
  */
-public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializable {
+public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, ByteBufferSerializable {
 
     private byte[] types;
     private long[] primitiveValues;
     private Object[] objectValues;
 
-    /**
-     * ERROR_WHEN_KEY_NOT_PRESENT
-     */
-    private static final String ERROR_WHEN_KEY_NOT_PRESENT = "The key=%s is not present for type asked.";
 
     /**
      * Constructor.
      * 
      */
     //TODO set as private
-    private KeyObjectMsg() {
+    private IndexedPrimitivesObjectsMsg() {
         this(DEFAULT_MAX_KEY);
     }
 
@@ -87,7 +85,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * @param aDescriptor
      */
     //TODO set as private
-    private KeyObjectMsg(final int aKeyMax) {
+    private IndexedPrimitivesObjectsMsg(final int aKeyMax) {
         this.types = new byte[aKeyMax + 1];
         this.primitiveValues = new long[aKeyMax + 1];
         this.objectValues = new Object[aKeyMax + 1];
@@ -99,9 +97,9 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * @param aMsg
      */
     //TODO set as private
-    private KeyObjectMsg(final Msg aMsg) {
-        if (aMsg instanceof KeyObjectMsg) {
-            final KeyObjectMsg keyObjectMsg = (KeyObjectMsg) aMsg;
+    private IndexedPrimitivesObjectsMsg(final Msg aMsg) {
+        if (aMsg instanceof IndexedPrimitivesObjectsMsg) {
+            final IndexedPrimitivesObjectsMsg keyObjectMsg = (IndexedPrimitivesObjectsMsg) aMsg;
             final int length = keyObjectMsg.types.length;
             this.types = new byte[length];
             this.primitiveValues = new long[length];
@@ -138,9 +136,10 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
         if (keyMax < 0) {
             throw new IllegalArgumentException("The maxKey=" + keyMax + " must be positive.");
         } else {
-            final byte[] destTypes = new byte[keyMax + 1];
-            final long[] destPrimitiveValues = new long[keyMax + 1];
-            final Object[] destObjectValues = new Object[keyMax + 1];
+            final int nextPow2 = Msgs.calculateNextPowerOf2(keyMax + 1);
+            final byte[] destTypes = new byte[nextPow2];
+            final long[] destPrimitiveValues = new long[nextPow2];
+            final Object[] destObjectValues = new Object[nextPow2];
             System.arraycopy(this.types, 0, destTypes, 0, this.types.length);
             System.arraycopy(this.primitiveValues, 0, destPrimitiveValues, 0, this.primitiveValues.length);
             System.arraycopy(this.objectValues, 0, destObjectValues, 0, this.objectValues.length);
@@ -155,8 +154,8 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      *
      * @return
      */
-    public static KeyObjectMsg create() {
-        return new KeyObjectMsg(DEFAULT_MAX_KEY);
+    public static IndexedPrimitivesObjectsMsg create() {
+        return new IndexedPrimitivesObjectsMsg(DEFAULT_MAX_KEY);
     }
     
 
@@ -166,8 +165,8 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * @param keyMax
      * @return
      */
-    public static KeyObjectMsg createWithKeyMax(final int keyMax) {
-        return new KeyObjectMsg(keyMax);
+    public static IndexedPrimitivesObjectsMsg createWithKeyMax(final int keyMax) {
+        return new IndexedPrimitivesObjectsMsg(keyMax);
     }
     
     /**
@@ -179,8 +178,8 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * @return
      */
     //TODO createFromBytes?
-    public static KeyObjectMsg createFromBytes(final byte[] aSrcBytes, final int offset, final int length) {
-         final KeyObjectMsg msg = new KeyObjectMsg();
+    public static IndexedPrimitivesObjectsMsg createFromBytes(final byte[] aSrcBytes, final int offset, final int length) {
+         final IndexedPrimitivesObjectsMsg msg = new IndexedPrimitivesObjectsMsg();
          msg.deserializeFromBytes(aSrcBytes, offset, length);
          return msg;
     }
@@ -191,8 +190,8 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * @param byteBuffer
      * @return
      */
-    public static KeyObjectMsg createFromByteBuffer(final ByteBuffer aSrcByteBuffer) {
-        final KeyObjectMsg msg = new KeyObjectMsg();
+    public static IndexedPrimitivesObjectsMsg createFromByteBuffer(final ByteBuffer aSrcByteBuffer) {
+        final IndexedPrimitivesObjectsMsg msg = new IndexedPrimitivesObjectsMsg();
         msg.deserializeFromByteBuffer(aSrcByteBuffer);
         return msg;
    }
@@ -203,8 +202,8 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * @param aMsg
      * @return
      */
-    public static KeyObjectMsg createFromMsg(final Msg aMsg) {
-        return new KeyObjectMsg(aMsg);
+    public static IndexedPrimitivesObjectsMsg createFromMsg(final Msg aMsg) {
+        return new IndexedPrimitivesObjectsMsg(aMsg);
    }
     
     /**
@@ -213,13 +212,9 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * @param values
      * @return
      */
-    public static KeyObjectMsg createFromValues(final Object... values) {
-        final KeyObjectMsg msg = new KeyObjectMsg(values.length);
-        for (int i = 0; i < values.length; i++) {
-            if (values[i] != null) {
-                msg.set(i, values[i]);
-            }
-        }
+    public static IndexedPrimitivesObjectsMsg createFromValues(final Object... values) {
+        final IndexedPrimitivesObjectsMsg msg = new IndexedPrimitivesObjectsMsg(values.length);
+        msg.setAll(values);
         return msg;
    }
 
@@ -529,7 +524,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
     public final @Nullable
     Msg getAsMsg(final int aKey) {
         try {
-            return ((this.types[aKey] & TYPE_MASK) == MSG_TYPE && this.objectValues[aKey] != null) ? new KeyObjectMsg((Msg) this.objectValues[aKey])
+            return ((this.types[aKey] & TYPE_MASK) == MSG_TYPE && this.objectValues[aKey] != null) ? new IndexedPrimitivesObjectsMsg((Msg) this.objectValues[aKey])
                     : null;
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
@@ -1049,9 +1044,9 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof Msg[])) {
                 final Msg[] msgs = (Msg[]) this.objectValues[aKey];
-                final Msg[] results = new KeyObjectMsg[msgs.length];
+                final Msg[] results = new IndexedPrimitivesObjectsMsg[msgs.length];
                 for (int i = 0; i < msgs.length; i++) {
-                    results[i] = new KeyObjectMsg(msgs[i]);
+                    results[i] = new IndexedPrimitivesObjectsMsg(msgs[i]);
                 }
                 return results;
             }
@@ -1132,14 +1127,44 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      */
     @Override
     public final @NonNull
-    Msg getAll() {
+    Msg getAllAsMsg() {
         // TODO to optimize
         final int[] keys = this.retrieveKeys();
-        final Msg msg = new KeyObjectMsg(keys[keys.length - 1]);
+        final Msg msg = new IndexedPrimitivesObjectsMsg(keys[keys.length - 1]);
         for (final int key : keys) {
             msg.set(key, this.getAsObject(key));
         }
         return msg;
+    }
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#getAllAsObjects()
+     */
+    @Override
+    public final Object[] getAllAsObjects() {
+        final Object[] anObjects = new Object[this.retrieveKeyMax() + 1];
+        this.getAllAsObjects(anObjects);
+        return anObjects;
+    }
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#getAllAsObjects(java.lang.Object[])
+     */
+    @Override 
+    public final void getAllAsObjects(final Object[] anObjects) {
+        // TODO to optimize
+        final int keyMax = this.retrieveKeyMax();
+        if (keyMax > anObjects.length) {
+            throw new IllegalArgumentException("You must pass anObjects with a length=" + anObjects.length + " equals or superior than keyMax=" + keyMax);
+        }
+        final int[] keys = this.retrieveKeys();
+        for (int i = 0; i < keys.length; i++) {
+            anObjects[i] = this.getAsObject(i);
+        }
     }
 
     /**
@@ -1262,6 +1287,20 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
             }
         }
         return keys;
+    }
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#retrieveKeyMax()
+     */
+    public final int retrieveKeyMax() {
+        for (int i = this.types.length; i-- != 0; ) {
+            if (this.types[i] != NULL_TYPE) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**
@@ -1856,21 +1895,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
         }
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#setAll(com.github.hermod.ser.Msg)
-     */
-    @Override
-    public final void setAll(final Msg aMsg) {
-        // TODO to optimize with getType
-        if (aMsg != null) {
-            final int[] keys = aMsg.retrieveKeys();
-            for (int i = 0; i < keys.length; i++) {
-                set(keys[i], aMsg.getAsObject(keys[i]));
-            }
-        }
-    }
+
 
     /**
      * (non-Javadoc)
@@ -2159,6 +2184,34 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aMsgs);
+        }
+    }
+    
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#setAll(com.github.hermod.ser.Msg)
+     */
+    @Override
+    public final void setAll(final Msg aMsg) {
+        // TODO to optimize with getType
+        if (aMsg != null) {
+            final int[] keys = aMsg.retrieveKeys();
+            for (int i = 0; i < keys.length; i++) {
+                set(keys[i], aMsg.getAsObject(keys[i]));
+            }
+        }
+    }
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#setAll(java.lang.Object[])
+     */
+    public final void setAll(final Object... anObjects) {
+        //TODO to optimize
+        for (int key = 0; key < anObjects.length; key++) {
+            set(key, anObjects[key]);
         }
     }
 
@@ -2462,7 +2515,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
      * @return
      */
     private BytesSerializable serializeArrayVariableValueAsMsg(final Object[] objects) {
-        final KeyObjectMsg msg = new KeyObjectMsg();
+        final IndexedPrimitivesObjectsMsg msg = new IndexedPrimitivesObjectsMsg();
         if (objects != null) {
             int i = 0;
             boolean firstElementSet = false;
@@ -2600,7 +2653,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
                             break;
 
                         case MSG_TYPE:
-                            final KeyObjectMsg msg = new KeyObjectMsg();
+                            final IndexedPrimitivesObjectsMsg msg = new IndexedPrimitivesObjectsMsg();
                             msg.deserializeFromBytes(bytes, pos, fieldLength);
                             pos += fieldLength;
                             this.objectValues[key] = msg;
@@ -2670,7 +2723,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
                             // For variable type
                             // TODO
                             if (lengthMask != 0) {
-                                final KeyObjectMsg arrayAsMsg = new KeyObjectMsg();
+                                final IndexedPrimitivesObjectsMsg arrayAsMsg = new IndexedPrimitivesObjectsMsg();
                                 arrayAsMsg.deserializeFromBytes(bytes, pos, fieldLength);
                                 pos += fieldLength;
                                 final int variableArrayLength = arrayAsMsg.countKeys();
@@ -2748,7 +2801,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
                                     break;
 
                                 case MSG:
-                                    final Msg[] msgs = new KeyObjectMsg[variableArrayLength];
+                                    final Msg[] msgs = new IndexedPrimitivesObjectsMsg[variableArrayLength];
                                     for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
                                         msgs[arrayKey] = arrayAsMsg.getAsMsg(arrayKey);
                                     }
@@ -2800,7 +2853,7 @@ public class KeyObjectMsg implements Msg, BytesSerializable, ByteBufferSerializa
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.ByteBufferSerializable#deserializeFromBuffer(java.nio.ByteBuffer, int)
+     * @see com.github.hermod.ser.ByteBufferSerializable#deserializeFromByteBuffer(java.nio.ByteBuffer, int)
      */
     @Override
     public void deserializeFromByteBuffer(final ByteBuffer aSrcByteBuffer) {

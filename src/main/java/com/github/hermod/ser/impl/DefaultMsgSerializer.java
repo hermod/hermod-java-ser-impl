@@ -183,7 +183,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
                         case MSG_TYPE:
                             // TODO manage null value
                             if (lengthMask != 0) {
-                                final Msg msg = KeyObjectMsg.create();
+                                final Msg msg = IndexedPrimitivesObjectsMsg.create();
                                 ((BytesSerializable) msg).deserializeFromBytes(bytes, pos, fieldLength);
                                 pos += fieldLength;
                                 aDestMsg.set(key, msg);
@@ -454,10 +454,10 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
     /**
      * (non-Javadoc)
      *
-     * @see com.github.hermod.ser.ByteBufferMsgSerializer#deserializeFromBuffer(java.nio.ByteBuffer, com.github.hermod.ser.Msg)
+     * @see com.github.hermod.ser.ByteBufferMsgSerializer#deserializeFromByteBuffer(java.nio.ByteBuffer, com.github.hermod.ser.Msg)
      */
     @Override
-    public void deserializeFromBuffer(ByteBuffer aSrcByteBuffer, Msg aDestMsg) {
+    public void deserializeFromByteBuffer(ByteBuffer aSrcByteBuffer, Msg aDestMsg) {
         final byte[] bytes = new byte[aSrcByteBuffer.remaining()];
         aSrcByteBuffer.get(bytes);
         deserializeFromBytes(bytes, 0, bytes.length, aDestMsg);

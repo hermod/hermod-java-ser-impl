@@ -3,7 +3,7 @@
  */
 package com.github.hermod.ser.impl;
 
-import com.github.hermod.ser.impl.KeyObjectMsg;
+import com.github.hermod.ser.impl.IndexedPrimitivesObjectsMsg;
 
 
 /**
@@ -29,7 +29,7 @@ public final class Demo
 	byte[] bytes = new byte[100];
 	
 	//
-	KeyObjectMsg intMap = KeyObjectMsg.createWithKeyMax(44);
+	IndexedPrimitivesObjectsMsg intMap = IndexedPrimitivesObjectsMsg.createWithKeyMax(44);
 	intMap.removeAll();
 	intMap.set(0, 1.1, 1);
 	intMap.set(1, 1.1, 1);
@@ -50,7 +50,7 @@ public final class Demo
 	double d16 = intMap.getAsDouble(6);
 	double d17 = intMap.getAsDouble(7);
 	
-	KeyObjectMsg intMap2 = KeyObjectMsg.createWithKeyMax(44);
+	IndexedPrimitivesObjectsMsg intMap2 = IndexedPrimitivesObjectsMsg.createWithKeyMax(44);
 	intMap2.deserializeFromBytes(bytes, 0, size);
 	
 	double d0a = intMap2.getAsDouble(0);
@@ -88,7 +88,7 @@ public final class Demo
 		+ " count=" + count + " time=" + (stop - start) + " msg/s="
 		+ (((nbTestEncode / (stop - start)) * 1000)));
 	
-	intMap2 = KeyObjectMsg.createWithKeyMax(44);
+	intMap2 = IndexedPrimitivesObjectsMsg.createWithKeyMax(44);
 	
 	start = System.currentTimeMillis();
 	for (int i = nbTestEncode; i-- != 0;)
@@ -125,7 +125,7 @@ public final class Demo
 		+ " count=" + count + " time=" + (stop - start) + " msg/s="
 		+ (((nbTestEncode / (stop - start)) * 1000)));
 	
-	intMap2 = KeyObjectMsg.createWithKeyMax(44);
+	intMap2 = IndexedPrimitivesObjectsMsg.createWithKeyMax(44);
 	
 	start = System.currentTimeMillis();
 	for (int i = nbTestEncode; i-- != 0;)
