@@ -1,5 +1,10 @@
 package com.github.hermod.ser.impl;
 
+import static com.github.hermod.ser.Types.ARRAY_FIXED_VALUE_TYPE;
+import static com.github.hermod.ser.Types.ARRAY_VARIABLE_VALUE_TYPE;
+import static com.github.hermod.ser.Types.NULL_TYPE;
+
+import com.github.hermod.ser.Msg;
 import com.github.hermod.ser.Precision;
 import com.github.hermod.ser.Type;
 import com.github.hermod.ser.Types;
@@ -220,5 +225,112 @@ public final class Msgs {
             // Do nothing
         }
         return POW_2[i];
+    }
+    
+    /**
+     * serializeToJsonString.
+     *
+     * @param aSrcMsg
+     * @return
+     */
+    public static final String serializeToJson(final Msg aMsg) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        final int[] keys = aMsg.retrieveKeys();
+        for (final int key : keys) {
+            final byte typeAsByte = aMsg.getTypeAsByte(key);
+            if (typeAsByte != NULL_TYPE) {
+                sb.append("\"");
+                sb.append(key);
+                sb.append("\"");
+                sb.append(":");
+                if (typeAsByte == ARRAY_FIXED_VALUE_TYPE || typeAsByte == ARRAY_VARIABLE_VALUE_TYPE) {
+                    final Object[] objects = aMsg.getAsObjects(key);
+                    if (objects != null) {
+                        sb.append("[");
+                        for (Object object : objects) {
+                            sb.append(object);
+                            sb.append(",");
+                        }
+                        if (objects.length != 0) {
+                            sb.deleteCharAt(sb.length() - 1);
+                        }
+                        sb.append("]");
+                    } else {
+                        sb.append("null");
+                    }
+                } else if (typeAsByte == Types.INTEGER_TYPE) {
+                    sb.append(aMsg.getAsNullableLong(key));
+                } else if (typeAsByte == Types.DECIMAL_TYPE) {
+                    sb.append(aMsg.getAsNullableDouble(key));
+                } else if (typeAsByte == Types.STRING_ISO_8859_1_TYPE || typeAsByte == Types.STRING_UTF_16_TYPE) {
+                    final String s = aMsg.getAsString(key);
+                    if (s != null) {
+                        sb.append("\"");
+                        sb.append(s);
+                        sb.append("\"");
+                    } else {
+                        sb.append("null");
+                    }
+                } else if (typeAsByte == Types.MSG_TYPE) {
+                    Msg msg = aMsg.getAsMsg(key);
+                    if (msg != null) {
+                        sb.append(msg);
+                    } else {
+                        sb.append("null");
+                    }
+                } else {
+                    // should not occur
+                }
+                sb.append(",");
+            }
+        }
+        if (keys.length > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        sb.append("}");
+        return sb.toString();
+    
+    }
+    
+    
+    /**
+     * hashCode.
+     *
+     * @param aMsg
+     * @return
+     */
+    public static final int hashCode(final Msg aMsg) {
+        int hashcode = 0;
+        // TODO to optimize
+        final int[] keys = aMsg.retrieveKeys();
+        for (final int key : keys) {
+            hashcode += key ^ aMsg.get(key).hashCode();
+        }
+        return hashcode;
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public static final boolean equals(final Object aObj, final Msg aMsg) {
+        // TODO to optimize
+        if (aObj != null && aObj instanceof Msg) {
+            final Msg msg = (Msg) aObj;
+            final int[] keys = aMsg.retrieveKeys();
+            if (keys.length != msg.countKeys()) {
+                return false;
+            }
+            for (final int key : keys) {
+                if (!aMsg.get(key).equals(msg.get(key))) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 }

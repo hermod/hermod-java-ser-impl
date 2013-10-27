@@ -279,7 +279,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
                 }
                 previousKey = key;
 
-                final Object object = aSrcMsg.getAsObject(key);
+                final Object object = aSrcMsg.get(key);
                 //  all fixed type
                 if (object instanceof Byte) {
                     aDestBytes[pos++] = BYTE_TYPE;
@@ -390,7 +390,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
             // Size of the different values
             final int[] keys = aMsg.retrieveKeys();
             for (int i = 0; i < keys.length; i++) {
-                length += getValueLength(aMsg.getAsObject(i));
+                length += getValueLength(aMsg.get(i));
             }
             // Add length of skip keys
             for (int i = 1; i < keys.length; i++) {

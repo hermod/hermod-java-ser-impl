@@ -116,7 +116,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                 this.primitiveValues = new long[aKeyMax + 1];
                 this.objectValues = new Object[aKeyMax + 1];
                 for (int i = 0; i < keys.length; i++) {
-                    set(keys[i], aMsg.getAsObject(keys[i]));
+                    set(keys[i], aMsg.get(keys[i]));
                 }
             } else {
                 final int aKeyMax = DEFAULT_MAX_KEY;
@@ -217,7 +217,162 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         msg.setAll(values);
         return msg;
    }
+    
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#isEmpty()
+     */
+    @Override
+    public boolean isEmpty() {
+        for (int i = 0; i < this.types.length; i++) {
+            if (this.types[i] != NULL_TYPE) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser3.intmap.ReadIntMap#retrieveKeys()
+     */
+    @Override
+    public final @NonNull
+    int[] retrieveKeys() {
+        final int[] keys = new int[countKeys()];
+        int index = 0;
+        for (int i = 0; i < this.types.length; i++) {
+            if (this.types[i] != NULL_TYPE) {
+                keys[index++] = i;
+            }
+        }
+        return keys;
+    }
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#retrieveKeyMax()
+     */
+    public final int retrieveKeyMax() {
+        for (int i = this.types.length; i-- != 0; ) {
+            if (this.types[i] != NULL_TYPE) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#countKeys()
+     */
+    @Override
+    public int countKeys() {
+        int nbKey = 0;
+        for (int i = 0; i < this.types.length; i++) {
+            if (this.types[i] != NULL_TYPE) {
+                nbKey++;
+            }
+        }
+        return nbKey;
+    }
+
+    
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getType(int)
+     */
+    @Override
+    public final @NonNull
+    Type getType(final int aKey) {
+        try {
+            return Type.valueOf((byte) (this.types[aKey] & TYPE_MASK));
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return Type.NULL;
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getTypeAsByte(int)
+     */
+    @Override
+    public final byte getTypeAsByte(final int aKey) {
+        try {
+            return (byte) (this.types[aKey] & TYPE_MASK);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return Types.NULL_TYPE;
+        }
+    }
+
+    // @Override
+    private final byte getTypeWithLengthAsByte(final int aKey) {
+        try {
+            return (byte) (this.types[aKey]);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return Types.NULL_TYPE;
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#isArray(int)
+     */
+    @Override
+    public final boolean isArray(final int aKey) {
+        try {
+            return (((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE) || ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE)) ? true
+                    : false;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return false;
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getArrayLength(int)
+     */
+    @Override
+    public int getArrayLength(final int aKey) {
+        try {
+            if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE || (this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE) {
+                if ((this.objectValues[aKey] instanceof Object[])) {
+                    return ((Object[]) this.objectValues[aKey]).length;
+                } else if ((this.objectValues[aKey] instanceof byte[])) {
+                    return ((byte[]) this.objectValues[aKey]).length;
+                } else if ((this.objectValues[aKey] instanceof short[])) {
+                    return ((short[]) this.objectValues[aKey]).length;
+                } else if ((this.objectValues[aKey] instanceof int[])) {
+                    return ((int[]) this.objectValues[aKey]).length;
+                } else if ((this.objectValues[aKey] instanceof long[])) {
+                    return ((long[]) this.objectValues[aKey]).length;
+                } else if ((this.objectValues[aKey] instanceof float[])) {
+                    return ((float[]) this.objectValues[aKey]).length;
+                } else if ((this.objectValues[aKey] instanceof double[])) {
+                    return ((double[]) this.objectValues[aKey]).length;
+                } else {
+                    // Should not occur
+                    return 0;
+                }
+            } else {
+                return 0;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return 0;
+        }
+    }
+
+
+ 
     /**
      * (non-Javadoc)
      * 
@@ -573,18 +728,18 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      */
     @Override
     public final @Nullable
-    Object getAsObject(final int aKey) {
-        return getAsObject(aKey, Object.class);
+    Object get(final int aKey) {
+        return get(aKey, Object.class);
     }
 
     /**
      * (non-Javadoc)
      * 
-     * @see com.github.hermod.ser.Msg#getAsObject(int, java.lang.Class)
+     * @see com.github.hermod.ser.Msg#get(int, java.lang.Class)
      */
     @Override
     public final @Nullable
-    <T> T getAsObject(final int aKey, final Class<T> aClazz) {
+    <T> T get(final int aKey, final Class<T> aClazz) {
         try {
             final byte type = this.types[aKey];
             switch (type) {
@@ -1087,7 +1242,8 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @param aKey
      * @return
      */
-    private final @Nullable
+    @Override
+    public final @Nullable
     Object[] getAsObjects(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE) {
@@ -1118,6 +1274,22 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
         }
+        
+//        final Object[] objects = new Object[retrieveKeyMax()];
+//        getAsObjects(aKey, objects);
+//        return objects;
+    }
+    
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#getAsObjects(int, java.lang.Object[])
+     */
+    public final @Nullable
+    void getAsObjects(final int aKey, Object[] aDestObjects) {
+        //TODO to implement
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     /**
@@ -1132,7 +1304,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         final int[] keys = this.retrieveKeys();
         final Msg msg = new IndexedPrimitivesObjectsMsg(keys[keys.length - 1]);
         for (final int key : keys) {
-            msg.set(key, this.getAsObject(key));
+            msg.set(key, this.get(key));
         }
         return msg;
     }
@@ -1163,7 +1335,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         }
         final int[] keys = this.retrieveKeys();
         for (int i = 0; i < keys.length; i++) {
-            anObjects[i] = this.getAsObject(i);
+            anObjects[i] = this.get(i);
         }
     }
 
@@ -1178,161 +1350,12 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         final int[] keys = this.retrieveKeys();
         final Map<Integer, Object> map = new HashMap<>(keys.length);
         for (final int key : keys) {
-            map.put(key, this.getAsObject(key));
+            map.put(key, this.get(key));
         }
         return map;
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#getType(int)
-     */
-    @Override
-    public final @NonNull
-    Type getType(final int aKey) {
-        try {
-            return Type.valueOf((byte) (this.types[aKey] & TYPE_MASK));
-        } catch (ArrayIndexOutOfBoundsException e) {
-            return Type.NULL;
-        }
-    }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#getTypeAsByte(int)
-     */
-    @Override
-    public final byte getTypeAsByte(final int aKey) {
-        try {
-            return (byte) (this.types[aKey] & TYPE_MASK);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            return Types.NULL_TYPE;
-        }
-    }
-
-    // @Override
-    private final byte getTypeWithLengthAsByte(final int aKey) {
-        try {
-            return (byte) (this.types[aKey]);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            return Types.NULL_TYPE;
-        }
-    }
-
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#isArray(int)
-     */
-    @Override
-    public final boolean isArray(final int aKey) {
-        try {
-            return (((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE) || ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE)) ? true
-                    : false;
-        } catch (final ArrayIndexOutOfBoundsException e) {
-            return false;
-        }
-    }
-
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#getArrayLength(int)
-     */
-    @Override
-    public int getArrayLength(final int aKey) {
-        try {
-            if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE || (this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE) {
-                if ((this.objectValues[aKey] instanceof Object[])) {
-                    return ((Object[]) this.objectValues[aKey]).length;
-                } else if ((this.objectValues[aKey] instanceof byte[])) {
-                    return ((byte[]) this.objectValues[aKey]).length;
-                } else if ((this.objectValues[aKey] instanceof short[])) {
-                    return ((short[]) this.objectValues[aKey]).length;
-                } else if ((this.objectValues[aKey] instanceof int[])) {
-                    return ((int[]) this.objectValues[aKey]).length;
-                } else if ((this.objectValues[aKey] instanceof long[])) {
-                    return ((long[]) this.objectValues[aKey]).length;
-                } else if ((this.objectValues[aKey] instanceof float[])) {
-                    return ((float[]) this.objectValues[aKey]).length;
-                } else if ((this.objectValues[aKey] instanceof double[])) {
-                    return ((double[]) this.objectValues[aKey]).length;
-                } else {
-                    // Should not occur
-                    return 0;
-                }
-            } else {
-                return 0;
-            }
-        } catch (final ArrayIndexOutOfBoundsException e) {
-            return 0;
-        }
-    }
-
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser3.intmap.ReadIntMap#retrieveKeys()
-     */
-    @Override
-    public final @NonNull
-    int[] retrieveKeys() {
-        final int[] keys = new int[countKeys()];
-        int index = 0;
-        for (int i = 0; i < this.types.length; i++) {
-            if (this.types[i] != NULL_TYPE) {
-                keys[index++] = i;
-            }
-        }
-        return keys;
-    }
-    
-    /**
-     * (non-Javadoc)
-     *
-     * @see com.github.hermod.ser.Msg#retrieveKeyMax()
-     */
-    public final int retrieveKeyMax() {
-        for (int i = this.types.length; i-- != 0; ) {
-            if (this.types[i] != NULL_TYPE) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#countKeys()
-     */
-    @Override
-    public int countKeys() {
-        int nbKey = 0;
-        for (int i = 0; i < this.types.length; i++) {
-            if (this.types[i] != NULL_TYPE) {
-                nbKey++;
-            }
-        }
-        return nbKey;
-    }
-
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#isEmpty()
-     */
-    @Override
-    public boolean isEmpty() {
-        for (int i = 0; i < this.types.length; i++) {
-            if (this.types[i] != NULL_TYPE) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     /**
      * (non-Javadoc)
@@ -2198,7 +2221,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         if (aMsg != null) {
             final int[] keys = aMsg.retrieveKeys();
             for (int i = 0; i < keys.length; i++) {
-                set(keys[i], aMsg.getAsObject(keys[i]));
+                set(keys[i], aMsg.get(keys[i]));
             }
         }
     }
@@ -3001,62 +3024,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        final int[] keys = this.retrieveKeys();
-        for (final int key : keys) {
-            final byte typeAsByte = this.getTypeAsByte(key);
-            if (typeAsByte != NULL_TYPE) {
-                sb.append("\"");
-                sb.append(key);
-                sb.append("\"");
-                sb.append(":");
-                if (typeAsByte == ARRAY_FIXED_VALUE_TYPE || typeAsByte == ARRAY_VARIABLE_VALUE_TYPE) {
-                    final Object[] objects = this.getAsObjects(key);
-                    if (objects != null) {
-                        sb.append("[");
-                        for (Object object : objects) {
-                            sb.append(object);
-                            sb.append(",");
-                        }
-                        if (objects.length != 0) {
-                            sb.deleteCharAt(sb.length() - 1);
-                        }
-                        sb.append("]");
-                    } else {
-                        sb.append("null");
-                    }
-                } else if (typeAsByte == INTEGER_TYPE) {
-                    sb.append(this.getAsNullableLong(key));
-                } else if (typeAsByte == DECIMAL_TYPE) {
-                    sb.append(this.getAsNullableDouble(key));
-                } else if (typeAsByte == STRING_ISO_8859_1_TYPE || this.types[key] == STRING_UTF_16_TYPE) {
-                    final String s = this.getAsString(key);
-                    if (s != null) {
-                        sb.append("\"");
-                        sb.append(s);
-                        sb.append("\"");
-                    } else {
-                        sb.append("null");
-                    }
-                } else if (typeAsByte == MSG_TYPE) {
-                    Msg msg = this.getAsMsg(key);
-                    if (msg != null) {
-                        sb.append(msg);
-                    } else {
-                        sb.append("null");
-                    }
-                } else {
-                    // should not occur
-                }
-                sb.append(",");
-            }
-        }
-        if (keys.length > 0) {
-            sb.deleteCharAt(sb.length() - 1);
-        }
-        sb.append("}");
-        return sb.toString();
+        return Msgs.serializeToJson(this);
     }
 
     /**
@@ -3066,13 +3034,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      */
     @Override
     public int hashCode() {
-        int hashcode = 0;
-        // TODO to optimize
-        final int[] keys = this.retrieveKeys();
-        for (final int key : keys) {
-            hashcode += key ^ this.getAsObject(key).hashCode();
-        }
-        return hashcode;
+        return Msgs.hashCode(this);
     }
 
     /**
@@ -3082,22 +3044,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      */
     @Override
     public boolean equals(Object aObj) {
-        // TODO to optimize
-        if (aObj != null && aObj instanceof Msg) {
-            Msg msg = (Msg) aObj;
-            final int[] keys = this.retrieveKeys();
-            if (keys.length != msg.countKeys()) {
-                return false;
-            }
-            for (final int key : keys) {
-                if (!this.getAsObject(key).equals(msg.getAsObject(key))) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            return false;
-        }
+        return Msgs.equals(aObj, this);
     }
     
     

@@ -1007,16 +1007,16 @@ public abstract class AbstractMsgTest {
 
         this.bytesMsgSerializer.deserializeFromBytes(bytes, 0, bytes.length, destMsg);
 
-        assertThat(destMsg.getAsObject(KEY_ONE)).isEqualTo(LONG_TEST);
-        assertThat(destMsg.getAsObject(KEY_TWO)).isEqualTo(INT_TEST);
-        assertThat(destMsg.getAsObject(KEY_THREE)).isEqualTo(SHORT_TEST);
-        assertThat(destMsg.getAsObject(KEY_FOUR)).isEqualTo(BYTE_TEST);
+        assertThat(destMsg.get(KEY_ONE)).isEqualTo(LONG_TEST);
+        assertThat(destMsg.get(KEY_TWO)).isEqualTo(INT_TEST);
+        assertThat(destMsg.get(KEY_THREE)).isEqualTo(SHORT_TEST);
+        assertThat(destMsg.get(KEY_FOUR)).isEqualTo(BYTE_TEST);
 
-        assertThat(destMsg.getAsObject(KEY_FIVE)).isEqualTo(BYTE_TEST);
-        assertThat(destMsg.getAsObject(KEY_SIX)).isEqualTo(SHORT_TEST);
-        assertThat(destMsg.getAsObject(KEY_SEVEN)).isEqualTo(INT_TEST);
-        assertThat(destMsg.getAsObject(KEY_NINETY)).isEqualTo(LONG_TEST);
-        assertThat(destMsg.getAsObject(KEY_THREE_HUNDRED)).isEqualTo(LONG_TEST);
+        assertThat(destMsg.get(KEY_FIVE)).isEqualTo(BYTE_TEST);
+        assertThat(destMsg.get(KEY_SIX)).isEqualTo(SHORT_TEST);
+        assertThat(destMsg.get(KEY_SEVEN)).isEqualTo(INT_TEST);
+        assertThat(destMsg.get(KEY_NINETY)).isEqualTo(LONG_TEST);
+        assertThat(destMsg.get(KEY_THREE_HUNDRED)).isEqualTo(LONG_TEST);
         assertThat(destMsg.contains(KEY_ZERO)).isFalse();
 
     }
