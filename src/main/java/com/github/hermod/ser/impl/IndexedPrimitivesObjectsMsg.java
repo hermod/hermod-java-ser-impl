@@ -132,11 +132,11 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * 
      * @param keyMax
      */
-    private void increaseKeyMax(final int keyMax) {
-        if (keyMax < 0) {
-            throw new IllegalArgumentException("The maxKey=" + keyMax + " must be positive.");
+    private void increaseKeyMax(final int aKey) {
+        if (aKey < 0) {
+            throw new IllegalArgumentException("The key=" + aKey + " must be positive.");
         } else {
-            final int nextPow2 = Msgs.calculateNextPowerOf2(keyMax + 1);
+            final int nextPow2 = Msgs.calculateNextPowerOf2(aKey + 1);
             final byte[] destTypes = new byte[nextPow2];
             final long[] destPrimitiveValues = new long[nextPow2];
             final Object[] destObjectValues = new Object[nextPow2];
@@ -385,6 +385,74 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         } catch (final ArrayIndexOutOfBoundsException e) {
             return false;
         }
+    }
+    
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsObject(int)
+     */
+    @Override
+    public final @Nullable
+    Object get(final int aKey) {
+        return get(aKey, Object.class);
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#get(int, java.lang.Class)
+     */
+    @Override
+    public final @Nullable
+    <T> T get(final int aKey, final Class<T> aClazz) {
+        try {
+            final byte type = this.types[aKey];
+            switch (type) {
+            case BYTE_TYPE:
+                return aClazz.cast(getAsByte(aKey));
+
+            case SHORT_TYPE:
+                return aClazz.cast(getAsShort(aKey));
+
+            case INT_TYPE:
+                return aClazz.cast(getAsInt(aKey));
+
+            case LONG_TYPE:
+                return aClazz.cast(getAsLong(aKey));
+
+            case INTEGER_TYPE:
+                return aClazz.cast((Integer) null);
+
+            case FLOAT_TYPE:
+                return aClazz.cast(getAsFloat(aKey));
+
+            case FIVE_BITS_DECIMAL_TYPE:
+            case DOUBLE_TYPE:
+                return aClazz.cast(getAsDouble(aKey));
+
+            case DECIMAL_TYPE:
+                return aClazz.cast((Double) null);
+
+            case STRING_ISO_8859_1_TYPE:
+            case STRING_UTF_16_TYPE:
+                return aClazz.cast(getAsString(aKey));
+
+            case MSG_TYPE:
+                return aClazz.cast(getAsMsg(aKey));
+
+            case ARRAY_FIXED_VALUE_TYPE:
+            case ARRAY_VARIABLE_VALUE_TYPE:
+                return aClazz.cast(getAsObjects(aKey));
+
+            default:
+                return null;
+            }
+
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
+
     }
 
     /**
@@ -721,73 +789,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         }
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#getAsObject(int)
-     */
-    @Override
-    public final @Nullable
-    Object get(final int aKey) {
-        return get(aKey, Object.class);
-    }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#get(int, java.lang.Class)
-     */
-    @Override
-    public final @Nullable
-    <T> T get(final int aKey, final Class<T> aClazz) {
-        try {
-            final byte type = this.types[aKey];
-            switch (type) {
-            case BYTE_TYPE:
-                return aClazz.cast(getAsByte(aKey));
-
-            case SHORT_TYPE:
-                return aClazz.cast(getAsShort(aKey));
-
-            case INT_TYPE:
-                return aClazz.cast(getAsInt(aKey));
-
-            case LONG_TYPE:
-                return aClazz.cast(getAsLong(aKey));
-
-            case INTEGER_TYPE:
-                return aClazz.cast((Integer) null);
-
-            case FLOAT_TYPE:
-                return aClazz.cast(getAsFloat(aKey));
-
-            case FIVE_BITS_DECIMAL_TYPE:
-            case DOUBLE_TYPE:
-                return aClazz.cast(getAsDouble(aKey));
-
-            case DECIMAL_TYPE:
-                return aClazz.cast((Double) null);
-
-            case STRING_ISO_8859_1_TYPE:
-            case STRING_UTF_16_TYPE:
-                return aClazz.cast(getAsString(aKey));
-
-            case MSG_TYPE:
-                return aClazz.cast(getAsMsg(aKey));
-
-            case ARRAY_FIXED_VALUE_TYPE:
-            case ARRAY_VARIABLE_VALUE_TYPE:
-                return aClazz.cast(getAsObjects(aKey));
-
-            default:
-                return null;
-            }
-
-        } catch (final ArrayIndexOutOfBoundsException e) {
-            return null;
-        }
-
-    }
 
     /**
      * (non-Javadoc)
@@ -1356,6 +1358,46 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
     }
 
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Object)
+     */
+    @Override
+    public final void set(final int aKey, final Object aObject) {
+        try {
+
+            if (aObject instanceof Byte | aObject instanceof Short | aObject instanceof Integer | aObject instanceof Long) {
+                if (aObject != null) {
+                    set(aKey, ((Number) aObject).longValue());
+                } else {
+                    this.types[aKey] = INTEGER_TYPE;
+                    this.objectValues[aKey] = DEFAULT_VALUE;
+                }
+            } else if (aObject instanceof Float | aObject instanceof Double) {
+                if (aObject != null) {
+                    set(aKey, ((Number) aObject).doubleValue());
+                } else {
+                    this.types[aKey] = DECIMAL_TYPE;
+                    this.objectValues[aKey] = DEFAULT_VALUE;
+                }
+            } else if (aObject instanceof String) {
+                set(aKey, (String) aObject);
+            } else if (aObject instanceof Msg) {
+                set(aKey, (Msg) aObject);
+            } else if (aObject instanceof Boolean) {
+                set(aKey, (Boolean) aObject);
+            } else if (aObject instanceof Object[]) {
+                set(aKey, (Object[]) aObject);
+            } else {
+                throw new IllegalArgumentException("Impossible to set this type of value=" + aObject.getClass());
+            }
+            //this.objectValues[aKey] = aObject;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aObject);
+        }
+    }
 
     /**
      * (non-Javadoc)
@@ -1834,46 +1876,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         }
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#set(int, java.lang.Object)
-     */
-    @Override
-    public final void set(final int aKey, final Object aObject) {
-        try {
 
-            if (aObject instanceof Byte | aObject instanceof Short | aObject instanceof Integer | aObject instanceof Long) {
-                if (aObject != null) {
-                    set(aKey, ((Number) aObject).longValue());
-                } else {
-                    this.types[aKey] = INTEGER_TYPE;
-                    this.objectValues[aKey] = DEFAULT_VALUE;
-                }
-            } else if (aObject instanceof Float | aObject instanceof Double) {
-                if (aObject != null) {
-                    set(aKey, ((Number) aObject).doubleValue());
-                } else {
-                    this.types[aKey] = DECIMAL_TYPE;
-                    this.objectValues[aKey] = DEFAULT_VALUE;
-                }
-            } else if (aObject instanceof String) {
-                set(aKey, (String) aObject);
-            } else if (aObject instanceof Msg) {
-                set(aKey, (Msg) aObject);
-            } else if (aObject instanceof Boolean) {
-                set(aKey, (Boolean) aObject);
-            } else if (aObject instanceof Object[]) {
-                set(aKey, (Object[]) aObject);
-            } else {
-                throw new IllegalArgumentException("Impossible to set this type of value=" + aObject.getClass());
-            }
-            this.objectValues[aKey] = aObject;
-        } catch (final ArrayIndexOutOfBoundsException e) {
-            increaseKeyMax(aKey);
-            set(aKey, aObject);
-        }
-    }
 
     // @Override
     public final void set(final int aKey, final Object aObject, final boolean forceNoLengthOptimization) {
@@ -2258,9 +2261,23 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             }
         }
     }
+    
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#clear()
+     */
+    @Override
+    public final void removeAll() {
+        for (int i = 0; i < this.primitiveValues.length; i++) {
+            this.types[i] = 0;
+            this.primitiveValues[i] = 0;
+            this.objectValues[i] = null;
+        }
+    }
 
     /**
-     * clear.
+     * removeAll.
      * 
      * @param aKeyMax
      */
@@ -2278,19 +2295,6 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         }
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#clear()
-     */
-    @Override
-    public final void removeAll() {
-        for (int i = 0; i < this.primitiveValues.length; i++) {
-            this.types[i] = 0;
-            this.primitiveValues[i] = 0;
-            this.objectValues[i] = null;
-        }
-    }
 
     /**
      * serializeToBytes.

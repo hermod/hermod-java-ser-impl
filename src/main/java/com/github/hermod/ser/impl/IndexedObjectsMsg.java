@@ -35,7 +35,6 @@ public class IndexedObjectsMsg implements Msg {
 
     private Object[] objectValues;
 
-    // TODO set as private
     private IndexedObjectsMsg() {
         this(DEFAULT_MAX_KEY);
     }
@@ -45,7 +44,6 @@ public class IndexedObjectsMsg implements Msg {
      * 
      * @param aDescriptor
      */
-    // TODO set as private
     private IndexedObjectsMsg(final int aKeyMax) {
         this.objectValues = new Object[aKeyMax + 1];
     }
@@ -55,14 +53,12 @@ public class IndexedObjectsMsg implements Msg {
      * 
      * @param aMsg
      */
-    // TODO set as private
     private IndexedObjectsMsg(final Msg aMsg) {
         if (aMsg instanceof IndexedObjectsMsg) {
             final IndexedObjectsMsg indexedObjectsMsg = (IndexedObjectsMsg) aMsg;
             this.objectValues = new Object[indexedObjectsMsg.objectValues.length];
             System.arraycopy(indexedObjectsMsg.objectValues, 0, this.objectValues, 0, indexedObjectsMsg.objectValues.length);
         } else {
-            // TODO to optimize with getType
             if (aMsg != null) {
                 final int[] keys = aMsg.retrieveKeys();
                 final int aKeyMax = keys[keys.length - 1];
@@ -81,11 +77,11 @@ public class IndexedObjectsMsg implements Msg {
      * 
      * @param keyMax
      */
-    private void increaseKeyMax(final int keyMax) {
-        if (keyMax < 0) {
-            throw new IllegalArgumentException("The maxKey=" + keyMax + " must be positive.");
+    private void increaseKeyMax(final int aKey) {
+        if (aKey < 0) {
+            throw new IllegalArgumentException("The key=" + aKey + " must be positive.");
         } else {
-            final int nextPow2 = Msgs.calculateNextPowerOf2(keyMax + 1);
+            final int nextPow2 = Msgs.calculateNextPowerOf2(aKey);
             final Object[] destObjectValues = new Object[nextPow2];
             System.arraycopy(this.objectValues, 0, destObjectValues, 0, this.objectValues.length);
             this.objectValues = destObjectValues;
@@ -158,10 +154,10 @@ public class IndexedObjectsMsg implements Msg {
         msg.setAll(values);
         return msg;
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#isEmpty()
      */
     @Override
@@ -170,13 +166,13 @@ public class IndexedObjectsMsg implements Msg {
             if (value != null) {
                 return true;
             }
-        }            
+        }
         return false;
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#retrieveKeys()
      */
     @Override
@@ -193,12 +189,12 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#retrieveKeyMax()
      */
     @Override
     public final int retrieveKeyMax() {
-        for (int i = this.objectValues.length; i-- != 0; ) {
+        for (int i = this.objectValues.length; i-- != 0;) {
             if (this.objectValues != null) {
                 return i;
             }
@@ -208,7 +204,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#countKeys()
      */
     @Override
@@ -224,7 +220,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#getType(int)
      */
     @Override
@@ -238,7 +234,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#getTypeAsByte(int)
      */
     @Override
@@ -257,7 +253,7 @@ public class IndexedObjectsMsg implements Msg {
      */
     @Override
     public final boolean isArray(final int aKey) {
-         return (getType(aKey).equals(Type.ARRAY_FIXED_VALUE) || getType(aKey).equals(Type.ARRAY_VARIABLE_VALUE)) ? true : false;
+        return (getType(aKey).equals(Type.ARRAY_FIXED_VALUE) || getType(aKey).equals(Type.ARRAY_VARIABLE_VALUE)) ? true : false;
     }
 
     /**
@@ -268,13 +264,11 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final int getArrayLength(final int aKey) {
         try {
-            return (this.objectValues[aKey] instanceof Object[]) ?
-                 ((Object[]) this.objectValues[aKey]).length : 0;
+            return (this.objectValues[aKey] instanceof Object[]) ? ((Object[]) this.objectValues[aKey]).length : 0;
         } catch (final ArrayIndexOutOfBoundsException e) {
             return 0;
         }
     }
-
 
     /**
      * (non-Javadoc)
@@ -406,7 +400,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * getAsNullableInteger.
-     *
+     * 
      * @param aKey
      * @return
      */
@@ -595,7 +589,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * getAsObject.
-     *
+     * 
      * @param aKey
      * @param aClazz
      * @return
@@ -632,6 +626,8 @@ public class IndexedObjectsMsg implements Msg {
 
             case STRING_ISO_8859_1_TYPE:
             case STRING_UTF_16_TYPE:
+                //To add
+            //case STRING_UTF_8_TYPE;
                 return aClazz.cast(getAsString(aKey));
 
             case MSG_TYPE:
@@ -655,113 +651,113 @@ public class IndexedObjectsMsg implements Msg {
     public boolean[] getAsBooleans(int aKey) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
-        
+        // return null;
+
     }
 
     @Override
     public Boolean[] getAsNullableBooleans(int aKey) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
     public byte[] getAsBytes(int aKey) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
     public Byte[] getAsNullableBytes(int aKey) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
     public short[] getAsShorts(int aKey) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
     public Short[] getAsNullableShorts(int aKey) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
     public int[] getAsInts(int aKey) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
     public Integer[] getAsNullableIntegers(int aKey) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
     public long[] getAsLongs(int aKey) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
     public Long[] getAsNullableLongs(int aKey) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
     public float[] getAsFloats(int aKey) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
     public Float[] getAsNullableFloats(int aKey) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
     public double[] getAsDoubles(int aKey) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
     public Double[] getAsNullableDoubles(int aKey) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
     public String[] getAsStrings(int aKey) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
     public Msg[] getAsMsgs(int aKey) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
@@ -775,294 +771,527 @@ public class IndexedObjectsMsg implements Msg {
     Object[] getAsObjects(final int aKey) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
-    
+
     @Override
     public final @Nullable
-    void getAsObjects(final int aKey, final Object... aDestObjects ) {
+    void getAsObjects(final int aKey, final Object... aDestObjects) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
     public Msg getAllAsMsg() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
     public Object[] getAllAsObjects() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
     }
 
     @Override
     public void getAllAsObjects(Object... aObjects) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
-        //return null;
+        // return null;
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Object)
+     */
+    @Override
+    public final void set(final int aKey, final Object aObject) {
+        try {
+
+            if (aObject instanceof Byte) {
+                set(aKey, (Byte) aObject);
+            } else if (aObject instanceof Short) {
+                set(aKey, (Short) aObject);
+            } else if (aObject instanceof Integer) {
+                set(aKey, (Integer) aObject);
+            } else if (aObject instanceof Long) {
+                set(aKey, (Long) aObject);
+            } else if (aObject instanceof Float) {
+                set(aKey, (Float) aObject);
+            } else if (aObject instanceof Double) {
+                set(aKey, (Double) aObject);
+            } else if (aObject instanceof String) {
+                set(aKey, (String) aObject);
+            } else if (aObject instanceof Msg) {
+                set(aKey, (Msg) aObject);
+            } else if (aObject instanceof Boolean) {
+                set(aKey, (Boolean) aObject);
+            } else if (aObject instanceof Object[]) {
+                set(aKey, (Object[]) aObject);
+            } else {
+                throw new IllegalArgumentException("Impossible to set this type of value=" + aObject.getClass());
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aObject);
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, boolean)
+     */
+    @Override
+    public final void set(final int aKey, final boolean aBoolean) {
+        try {
+            this.objectValues[aKey] = Boolean.valueOf(aBoolean);
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, Boolean.valueOf(aBoolean));
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Boolean)
+     */
+    @Override
+    public final void set(final int aKey, final Boolean aBoolean) {
+        try {
+            this.objectValues[aKey] = aBoolean;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aBoolean);
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, byte)
+     */
+    @Override
+    public final void set(final int aKey, final byte aByte) {
+        try {
+            this.objectValues[aKey] = Byte.valueOf(aByte);
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, Byte.valueOf(aByte));
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Byte)
+     */
+    @Override
+    public final void set(final int aKey, final Byte aByte) {
+        try {
+            this.objectValues[aKey] = aByte;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aByte);
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, short)
+     */
+    @Override
+    public final void set(final int aKey, final short aShort) {
+        try {
+            this.objectValues[aKey] = Short.valueOf(aShort);
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, Short.valueOf(aShort));
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Short)
+     */
+    @Override
+    public final void set(final int aKey, final Short aShort) {
+        try {
+            this.objectValues[aKey] = aShort;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aShort);
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, int)
+     */
+    @Override
+    public final void set(final int aKey, final int aInt) {
+        try {
+            this.objectValues[aKey] = Integer.valueOf(aInt);
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, Integer.valueOf(aInt));
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Integer)
+     */
+    @Override
+    public final void set(final int aKey, final Integer aInt) {
+        try {
+            this.objectValues[aKey] = aInt;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aInt);
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, long)
+     */
+    @Override
+    public final void set(final int aKey, final long aLong) {
+        try {
+            this.objectValues[aKey] = Long.valueOf(aLong);
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, Long.valueOf(aLong));
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Long)
+     */
+    @Override
+    public final void set(final int aKey, final Long aLong) {
+        try {
+            this.objectValues[aKey] = aLong;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aLong);
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, float)
+     */
+    @Override
+    public final void set(final int aKey, final float aFloat) {
+        try {
+            this.objectValues[aKey] = aFloat;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aFloat);
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Float)
+     */
+    @Override
+    public final void set(final int aKey, final Float aFloat) {
+        set(aKey, aFloat);
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, double)
+     */
+    @Override
+    public final void set(final int aKey, final double aDouble) {
+        try {
+            this.objectValues[aKey] = aDouble;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aDouble);
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Double)
+     */
+    @Override
+    public final void set(final int aKey, final Double aDouble) {
+        set(aKey, aDouble);
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, double, int)
+     */
+    @Override
+    public final void set(final int aKey, final double aDouble, final int aNbDigit) {
+        set(aKey, aDouble);
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, double, com.github.hermod.ser.Precision)
+     */
+    @Override
+    public final void set(final int aKey, final double aDouble, final Precision aPrecision) {
+        set(aKey, aDouble);
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Double, int)
+     */
+    @Override
+    public final void set(final int aKey, final Double aDouble, final int aNbDigit) {
+        set(aKey, aDouble);
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Double, com.github.hermod.ser.Precision)
+     */
+    @Override
+    public final void set(final int aKey, final Double aDouble, final Precision aPrecision) {
+        set(aKey, aDouble);
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.String)
+     */
+    @Override
+    public final void set(final int aKey, final String aString) {
+        try {
+            this.objectValues[aKey] = aString;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aString);
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.String, boolean)
+     */
+    @Override
+    public final void set(final int aKey, final String aString, final boolean aForceIso88591Charset) {
+        set(aKey, aString);
     }
 
     @Override
-    public void set(int aKey, boolean aBoolean) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, Boolean aBoolean) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, byte aByte) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, Byte aByte) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, short aShort) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, Short aShort) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, int aInt) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, Integer aInt) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, long aLong) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, Long aLong) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, float aFloat) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, Float aFloat) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, double aDouble) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, Double aDouble) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, double aDouble, int aNbDigit) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, double aDouble, Precision aPrecision) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, Double aDouble, int aNbDigit) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, Double aDouble, Precision aPrecision) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, String aString) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, String aString, boolean aForceIso88591Charset) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, Msg aMsg) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void set(int aKey, Object aAnObject) {
-        // TODO Auto-generated method stub
-
+    public final void set(final int aKey, final Msg aMsg) {
+        try {
+            this.objectValues[aKey] = aMsg;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aMsg);
+        }
     }
 
     @Override
     public void set(int aKey, boolean... aBooleans) {
         // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("Not Yet Implemented.");
+        // return null;
     }
 
     @Override
     public void set(int aKey, Boolean... aBooleans) {
         // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("Not Yet Implemented.");
+        // return null;
     }
 
     @Override
     public void set(int aKey, byte... aBytes) {
         // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("Not Yet Implemented.");
+        // return null;
     }
 
     @Override
     public void set(int aKey, Byte... aBytes) {
         // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("Not Yet Implemented.");
+        // return null;
     }
 
     @Override
     public void set(int aKey, short... aShorts) {
         // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("Not Yet Implemented.");
+        // return null;
     }
 
     @Override
     public void set(int aKey, Short... aShorts) {
         // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("Not Yet Implemented.");
+        // return null;
     }
 
     @Override
     public void set(int aKey, int... aInts) {
         // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("Not Yet Implemented.");
+        // return null;
     }
 
     @Override
     public void set(int aKey, Integer... aInts) {
         // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("Not Yet Implemented.");
+        // return null;
     }
 
     @Override
     public void set(int aKey, long... aLongs) {
         // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("Not Yet Implemented.");
+        // return null;
     }
 
     @Override
     public void set(int aKey, Long... aLongs) {
         // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("Not Yet Implemented.");
+        // return null;
     }
 
     @Override
     public void set(int aKey, float... aFloats) {
         // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("Not Yet Implemented.");
+        // return null;
     }
 
     @Override
     public void set(int aKey, Float... aFloats) {
         // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("Not Yet Implemented.");
+        // return null;
     }
 
     @Override
     public void set(int aKey, double... aDoubles) {
         // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("Not Yet Implemented.");
+        // return null;
     }
 
     @Override
     public void set(int aKey, Double... aDoubles) {
         // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("Not Yet Implemented.");
+        // return null;
     }
 
     @Override
     public void set(int aKey, String... aStrings) {
         // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("Not Yet Implemented.");
+        // return null;
     }
 
     @Override
     public void set(int aKey, String[] aStrings, boolean aForceIso88591Charset) {
         // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("Not Yet Implemented.");
+        // return null;
     }
 
     @Override
     public void set(int aKey, Msg... aMsgs) {
         // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("Not Yet Implemented.");
+        // return null;
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#setAll(com.github.hermod.ser.Msg)
+     */
     @Override
-    public void setAll(Msg aMsg) {
-        // TODO Auto-generated method stub
-
+    public final void setAll(final Msg aMsg) {
+        // TODO to optimize with getType
+        if (aMsg != null) {
+            final int[] keys = aMsg.retrieveKeys();
+            for (int i = 0; i < keys.length; i++) {
+                set(keys[i], aMsg.get(keys[i]));
+            }
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#setAll(java.lang.Object[])
+     */
     @Override
-    public void setAll(Object... aObjects) {
-        // TODO Auto-generated method stub
-
+    public final void setAll(final Object... anObjects) {
+        for (int key = 0; key < anObjects.length; key++) {
+            set(key, anObjects[key]);
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#remove(int[])
+     */
     @Override
-    public void remove(int... aKeys) {
-        // TODO Auto-generated method stub
-
+    public final void remove(final int... aKeys) {
+        if (aKeys != null) {
+            for (final int aKey : aKeys) {
+                try {
+                    this.objectValues[aKey] = null;
+                } catch (final ArrayIndexOutOfBoundsException e) {
+                    increaseKeyMax(aKey);
+                    remove(aKey);
+                }
+            }
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#clear()
+     */
     @Override
-    public void removeAll() {
-        // TODO Auto-generated method stub
-
+    public final void removeAll() {
+        for (int i = 0; i < this.objectValues.length; i++) {
+            this.objectValues[i] = null;
+        }
     }
 
 }
