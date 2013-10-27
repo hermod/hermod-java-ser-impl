@@ -626,8 +626,8 @@ public class IndexedObjectsMsg implements Msg {
 
             case STRING_ISO_8859_1_TYPE:
             case STRING_UTF_16_TYPE:
-                //To add
-            //case STRING_UTF_8_TYPE;
+                // To add
+                // case STRING_UTF_8_TYPE;
                 return aClazz.cast(getAsString(aKey));
 
             case MSG_TYPE:
@@ -647,133 +647,474 @@ public class IndexedObjectsMsg implements Msg {
 
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsBooleans(int)
+     */
     @Override
-    public boolean[] getAsBooleans(int aKey) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
-
+    public final boolean[] getAsBooleans(final int aKey) {
+        try {
+            if ((this.objectValues[aKey] instanceof byte[])) {
+                final byte[] bytes = (byte[]) this.objectValues[aKey];
+                final boolean[] results = new boolean[bytes.length];
+                for (int i = 0; i < bytes.length; i++) {
+                    if (bytes[i] != 0 && bytes[i] != 1) {
+                        return null;
+                    }
+                    results[i] = (bytes[i] == 0) ? false : true;
+                }
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsNullableBooleans(int)
+     */
     @Override
-    public Boolean[] getAsNullableBooleans(int aKey) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final Boolean[] getAsNullableBooleans(final int aKey) {
+        try {
+            if ((this.objectValues[aKey] instanceof byte[])) {
+                final byte[] bytes = (byte[]) this.objectValues[aKey];
+                final Boolean[] results = new Boolean[bytes.length];
+                for (int i = 0; i < bytes.length; i++) {
+                    if (bytes[i] != 0 && bytes[i] != 1) {
+                        return null;
+                    }
+                    results[i] = (bytes[i] == 0) ? false : true;
+                }
+                return results;
+            } else if ((this.objectValues[aKey] instanceof Byte[])) {
+                final Byte[] bytes = (Byte[]) this.objectValues[aKey];
+                final Boolean[] results = new Boolean[bytes.length];
+                for (int i = 0; i < bytes.length; i++) {
+                    if (bytes[i] != 0 && bytes[i] != 1 && bytes[i] != null) {
+                        return null;
+                    }
+                    results[i] = (bytes[i] == null) ? null : (bytes[i] == 0) ? false : true;
+                }
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsBytes(int)
+     */
     @Override
-    public byte[] getAsBytes(int aKey) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final byte[] getAsBytes(final int aKey) {
+        try {
+            if ((this.objectValues[aKey] instanceof byte[])) {
+                final byte[] bytes = (byte[]) this.objectValues[aKey];
+                final byte[] results = new byte[bytes.length];
+                System.arraycopy(bytes, 0, results, 0, bytes.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsNullableBytes(int)
+     */
     @Override
-    public Byte[] getAsNullableBytes(int aKey) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final Byte[] getAsNullableBytes(final int aKey) {
+        try {
+            if ((this.objectValues[aKey] instanceof byte[])) {
+                final byte[] bytes = (byte[]) this.objectValues[aKey];
+                final int byteLength = bytes.length;
+                final Byte[] results = new Byte[byteLength];
+                // System.arraycopy(bytes, 0, results, 0, bytes.length);
+                for (int i = 0; i < byteLength; i++) {
+                    results[i] = bytes[i];
+                }
+                return results;
+            } else if ((this.objectValues[aKey] instanceof Byte[])) {
+                final Byte[] bytes = (Byte[]) this.objectValues[aKey];
+                final Byte[] results = new Byte[bytes.length];
+                System.arraycopy(bytes, 0, results, 0, bytes.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsShorts(int)
+     */
     @Override
-    public short[] getAsShorts(int aKey) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final short[] getAsShorts(final int aKey) {
+        try {
+            if ((this.objectValues[aKey] instanceof short[])) {
+                final short[] shorts = (short[]) this.objectValues[aKey];
+                final short[] results = new short[shorts.length];
+                System.arraycopy(shorts, 0, results, 0, shorts.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsNullableShorts(int)
+     */
     @Override
-    public Short[] getAsNullableShorts(int aKey) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final Short[] getAsNullableShorts(final int aKey) {
+        try {
+            if ((this.objectValues[aKey] instanceof short[])) {
+                final short[] shorts = (short[]) this.objectValues[aKey];
+                final int shortLength = shorts.length;
+                final Short[] results = new Short[shortLength];
+                for (int i = 0; i < shortLength; i++) {
+                    results[i] = shorts[i];
+                }
+                return results;
+            } else if ((this.objectValues[aKey] instanceof Short[])) {
+                final Short[] shorts = (Short[]) this.objectValues[aKey];
+                final Short[] results = new Short[shorts.length];
+                System.arraycopy(shorts, 0, results, 0, shorts.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsInts(int)
+     */
     @Override
-    public int[] getAsInts(int aKey) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final int[] getAsInts(final int aKey) {
+        try {
+            if (((this.objectValues[aKey] instanceof int[]))) {
+                final int[] ints = (int[]) this.objectValues[aKey];
+                final int[] results = new int[ints.length];
+                System.arraycopy(ints, 0, results, 0, ints.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsNullableIntegers(int)
+     */
     @Override
-    public Integer[] getAsNullableIntegers(int aKey) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final Integer[] getAsNullableIntegers(final int aKey) {
+        try {
+            if (((this.objectValues[aKey] instanceof int[]))) {
+                final int[] ints = (int[]) this.objectValues[aKey];
+                final int intsLength = ints.length;
+                final Integer[] results = new Integer[intsLength];
+                for (int i = 0; i < intsLength; i++) {
+                    results[i] = ints[i];
+                }
+                return results;
+            } else if (((this.objectValues[aKey] instanceof Integer[]))) {
+                final Integer[] ints = (Integer[]) this.objectValues[aKey];
+                final Integer[] results = new Integer[ints.length];
+                System.arraycopy(ints, 0, results, 0, ints.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsLongs(int)
+     */
     @Override
-    public long[] getAsLongs(int aKey) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final long[] getAsLongs(final int aKey) {
+        try {
+            if ((this.objectValues[aKey] instanceof long[])) {
+                final long[] longs = (long[]) this.objectValues[aKey];
+                final long[] results = new long[longs.length];
+                System.arraycopy(longs, 0, results, 0, longs.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsNullableLongs(int)
+     */
     @Override
-    public Long[] getAsNullableLongs(int aKey) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final Long[] getAsNullableLongs(final int aKey) {
+        try {
+            if ((this.objectValues[aKey] instanceof long[])) {
+                final long[] longs = (long[]) this.objectValues[aKey];
+                final int longsLength = longs.length;
+                final Long[] results = new Long[longsLength];
+                for (int i = 0; i < longsLength; i++) {
+                    results[i] = longs[i];
+                }
+                return results;
+            } else if ((this.objectValues[aKey] instanceof Long[])) {
+                final Long[] longs = (Long[]) this.objectValues[aKey];
+                final Long[] results = new Long[longs.length];
+                System.arraycopy(longs, 0, results, 0, longs.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsFloats(int)
+     */
     @Override
-    public float[] getAsFloats(int aKey) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final float[] getAsFloats(final int aKey) {
+        try {
+            if (((this.objectValues[aKey] instanceof float[]))) {
+                final float[] floats = (float[]) this.objectValues[aKey];
+                final float[] results = new float[floats.length];
+                System.arraycopy(floats, 0, results, 0, floats.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsNullableFloats(int)
+     */
     @Override
-    public Float[] getAsNullableFloats(int aKey) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final Float[] getAsNullableFloats(final int aKey) {
+        try {
+            if (((this.objectValues[aKey] instanceof float[]))) {
+                final float[] floats = (float[]) this.objectValues[aKey];
+                final int floatsLength = floats.length;
+                final Float[] results = new Float[floatsLength];
+                for (int i = 0; i < floatsLength; i++) {
+                    results[i] = floats[i];
+                }
+                return results;
+            } else if (((this.objectValues[aKey] instanceof Float[]))) {
+                final Float[] floats = (Float[]) this.objectValues[aKey];
+                final Float[] results = new Float[floats.length];
+                System.arraycopy(floats, 0, results, 0, floats.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsDoubles(int)
+     */
     @Override
-    public double[] getAsDoubles(int aKey) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final double[] getAsDoubles(final int aKey) {
+        try {
+            if ((this.objectValues[aKey] instanceof double[])) {
+                final double[] doubles = (double[]) this.objectValues[aKey];
+                final double[] results = new double[doubles.length];
+                System.arraycopy(doubles, 0, results, 0, doubles.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsNullableDoubles(int)
+     */
     @Override
-    public Double[] getAsNullableDoubles(int aKey) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final Double[] getAsNullableDoubles(final int aKey) {
+        try {
+            if ((this.objectValues[aKey] instanceof double[])) {
+                final double[] doubles = (double[]) this.objectValues[aKey];
+                final int doublesLength = doubles.length;
+                final Double[] results = new Double[doublesLength];
+                for (int i = 0; i < doublesLength; i++) {
+                    results[i] = doubles[i];
+                }
+                return results;
+            } else if ((this.objectValues[aKey] instanceof Double[])) {
+                final Double[] doubles = (Double[]) this.objectValues[aKey];
+                final Double[] results = new Double[doubles.length];
+                System.arraycopy(doubles, 0, results, 0, doubles.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsStrings(int)
+     */
     @Override
-    public String[] getAsStrings(int aKey) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final String[] getAsStrings(final int aKey) {
+        try {
+            if (((this.objectValues[aKey] instanceof String[]))) {
+                final String[] strings = (String[]) this.objectValues[aKey];
+                final String[] results = new String[strings.length];
+                System.arraycopy(strings, 0, results, 0, strings.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsMsgs(int)
+     */
     @Override
-    public Msg[] getAsMsgs(int aKey) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final Msg[] getAsMsgs(final int aKey) {
+        try {
+            if ((this.objectValues[aKey] instanceof Msg[])) {
+                final Msg[] msgs = (Msg[]) this.objectValues[aKey];
+                final Msg[] results = new IndexedPrimitivesObjectsMsg[msgs.length];
+                for (int i = 0; i < msgs.length; i++) {
+                    results[i] = new IndexedObjectsMsg(msgs[i]);
+                }
+                return results;
+            }
+            return ((this.objectValues[aKey] instanceof Msg[])) ? (Msg[]) this.objectValues[aKey] : null;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#getAsMsgs(int, com.github.hermod.ser.Msg[])
+     */
     @Override
-    public void getAsMsgs(int aKey, Msg... aDestMsgs) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
+    public final void getAsMsgs(final int aKey, final Msg... aDestMsgs) {
+        try {
+            if ((this.objectValues[aKey] instanceof Msg[])) {
+                final Msg[] msgs = (Msg[]) this.objectValues[aKey];
+                if (msgs.length == aDestMsgs.length) {
+                    for (int i = 0; i < msgs.length; i++) {
+                        aDestMsgs[i].setAll(msgs[i]);
+                    }
+                } else {
+                    throw new IllegalArgumentException("The destMsgs with length=" + aDestMsgs.length + " must be have the same field array length="
+                            + msgs.length + ". Use getArrayLength() to know the length before call this method.");
+                }
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#getAsObjects(int)
+     */
     @Override
     public final @Nullable
     Object[] getAsObjects(final int aKey) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+        try {
+            if (this.objectValues[aKey] instanceof byte[]) {
+                return getAsNullableBytes(aKey);
+            } else if (this.objectValues[aKey] instanceof short[]) {
+                return getAsNullableShorts(aKey);
+            } else if (this.objectValues[aKey] instanceof int[]) {
+                return getAsNullableIntegers(aKey);
+            } else if (this.objectValues[aKey] instanceof long[]) {
+                return getAsNullableLongs(aKey);
+            } else if (this.objectValues[aKey] instanceof float[]) {
+                return getAsNullableFloats(aKey);
+            } else if (this.objectValues[aKey] instanceof double[]) {
+                return getAsNullableDoubles(aKey);
+            } else if ((this.objectValues[aKey] instanceof Object[])) {
+                final Object[] objects = (Object[]) this.objectValues[aKey];
+                final Object[] results = new Object[objects.length];
+                System.arraycopy(objects, 0, results, 0, objects.length);
+                return results;
+            } else {
+                return null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#getAsObjects(int, java.lang.Object[])
+     */
     @Override
     public final @Nullable
     void getAsObjects(final int aKey, final Object... aDestObjects) {
@@ -782,22 +1123,41 @@ public class IndexedObjectsMsg implements Msg {
         // return null;
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#getAllAsMsg()
+     */
     @Override
-    public Msg getAllAsMsg() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final Msg getAllAsMsg() {
+        // TODO to optimize
+        final int[] keys = this.retrieveKeys();
+        final Msg msg = new IndexedObjectsMsg(keys[keys.length - 1]);
+        for (final int key : keys) {
+            msg.set(key, this.get(key));
+        }
+        return msg;
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#getAllAsObjects()
+     */
     @Override
     public Object[] getAllAsObjects() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+        final Object[] anObjects = new Object[this.retrieveKeyMax() + 1];
+        this.getAllAsObjects(anObjects);
+        return anObjects;
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#getAllAsObjects(java.lang.Object[])
+     */
     @Override
-    public void getAllAsObjects(Object... aObjects) {
+    public final void getAllAsObjects(final Object... aObjects) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
         // return null;
@@ -1106,6 +1466,11 @@ public class IndexedObjectsMsg implements Msg {
         set(aKey, aString);
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, com.github.hermod.ser.Msg)
+     */
     @Override
     public final void set(final int aKey, final Msg aMsg) {
         try {
@@ -1116,123 +1481,283 @@ public class IndexedObjectsMsg implements Msg {
         }
     }
 
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, boolean[])
+     */
     @Override
-    public void set(int aKey, boolean... aBooleans) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final void set(final int aKey, final boolean... aBooleans) {
+        try {
+            if (aBooleans != null) {
+                final byte[] bytes = new byte[aBooleans.length];
+                for (int i = 0; i < aBooleans.length; i++) {
+                    bytes[i] = (byte) ((aBooleans[i] == true) ? 1 : 0);
+                }
+                this.objectValues[aKey] = bytes;
+            } else {
+                this.objectValues[aKey] = null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aBooleans);
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Boolean[])
+     */
     @Override
-    public void set(int aKey, Boolean... aBooleans) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final void set(final int aKey, final Boolean... aBooleans) {
+        try {
+            if (aBooleans != null) {
+                final Byte[] bytes = new Byte[aBooleans.length];
+                for (int i = 0; i < aBooleans.length; i++) {
+                    bytes[i] = Boolean.TRUE.equals(aBooleans[i]) ? (byte) 1 : (Boolean.FALSE.equals(aBooleans[i])) ? (byte) 0 : null;
+                }
+                this.objectValues[aKey] = bytes;
+            } else {
+                this.objectValues[aKey] = null;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aBooleans);
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, byte[])
+     */
     @Override
-    public void set(int aKey, byte... aBytes) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final void set(final int aKey, final byte... aBytes) {
+        try {
+            this.objectValues[aKey] = aBytes;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aBytes);
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Byte[])
+     */
     @Override
-    public void set(int aKey, Byte... aBytes) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final void set(final int aKey, final Byte... aBytes) {
+        try {
+            this.objectValues[aKey] = aBytes;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aBytes);
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, short[])
+     */
     @Override
-    public void set(int aKey, short... aShorts) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final void set(final int aKey, final short... aShorts) {
+        try {
+            this.objectValues[aKey] = aShorts;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aShorts);
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Short[])
+     */
     @Override
-    public void set(int aKey, Short... aShorts) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final void set(final int aKey, final Short... aShorts) {
+        try {
+            this.objectValues[aKey] = aShorts;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aShorts);
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, int[])
+     */
     @Override
-    public void set(int aKey, int... aInts) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final void set(final int aKey, final int... aInts) {
+        try {
+            this.objectValues[aKey] = aInts;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aInts);
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Integer[])
+     */
     @Override
-    public void set(int aKey, Integer... aInts) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final void set(final int aKey, final Integer... aInts) {
+        try {
+            this.objectValues[aKey] = aInts;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aInts);
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, long[])
+     */
     @Override
-    public void set(int aKey, long... aLongs) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final void set(final int aKey, final long... aLongs) {
+        try {
+            this.objectValues[aKey] = aLongs;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aLongs);
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Long[])
+     */
     @Override
-    public void set(int aKey, Long... aLongs) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final void set(final int aKey, final Long... aLongs) {
+        try {
+            this.objectValues[aKey] = aLongs;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aLongs);
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, float[])
+     */
     @Override
-    public void set(int aKey, float... aFloats) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final void set(final int aKey, final float... aFloats) {
+        try {
+            this.objectValues[aKey] = aFloats;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aFloats);
+        }
+
+        try {
+            this.objectValues[aKey] = aFloats;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aFloats);
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Float[])
+     */
     @Override
-    public void set(int aKey, Float... aFloats) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final void set(final int aKey, final Float... aFloats) {
+        try {
+            this.objectValues[aKey] = aFloats;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aFloats);
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, double[])
+     */
     @Override
-    public void set(int aKey, double... aDoubles) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final void set(final int aKey, final double... aDoubles) {
+        try {
+            this.objectValues[aKey] = aDoubles;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aDoubles);
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Double[])
+     */
     @Override
-    public void set(int aKey, Double... aDoubles) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final void set(final int aKey, final Double... aDoubles) {
+        try {
+            this.objectValues[aKey] = aDoubles;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aDoubles);
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.String[])
+     */
     @Override
-    public void set(int aKey, String... aStrings) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final void set(final int aKey, final String... aStrings) {
+        try {
+            this.objectValues[aKey] = aStrings;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aStrings);
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.String[], boolean)
+     */
     @Override
-    public void set(int aKey, String[] aStrings, boolean aForceIso88591Charset) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final void set(final int aKey, final String[] aStrings, final boolean aForceIso88591Charset) {
+        try {
+            this.objectValues[aKey] = aStrings;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aStrings);
+        }
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, com.github.hermod.ser.Msg[])
+     */
     @Override
-    public void set(int aKey, Msg... aMsgs) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
+    public final void set(final int aKey, final Msg... aMsgs) {
+        try {
+            this.objectValues[aKey] = aMsgs;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aMsgs);
+        }
     }
 
     /**
