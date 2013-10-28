@@ -3,7 +3,7 @@ package com.github.hermod.ser.impl;
 import static com.github.hermod.ser.Types.ARRAY_FIXED_VALUE_TYPE;
 import static com.github.hermod.ser.Types.MSG_TYPE;
 import static com.github.hermod.ser.Types.NULL_TYPE;
-import static com.github.hermod.ser.Types.STRING_ISO_8859_1_TYPE;
+import static com.github.hermod.ser.Types.STRING_UTF_8_TYPE;
 import static com.github.hermod.ser.Types.TYPE_MASK;
 import static com.github.hermod.ser.impl.Msgs.BYTE_TYPE;
 import static com.github.hermod.ser.impl.Msgs.DOUBLE_TYPE;
@@ -169,7 +169,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
                                         | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR);
 
                         switch (typeMask) {
-                        case STRING_ISO_8859_1_TYPE:
+                        case STRING_UTF_8_TYPE:
                             // TODO manage null value
                             if (lengthMask != 0) {
                                 final char[] chars = new char[fieldLength];

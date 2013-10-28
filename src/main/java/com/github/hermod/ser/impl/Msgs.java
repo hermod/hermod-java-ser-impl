@@ -263,7 +263,7 @@ public final class Msgs {
                     sb.append(aMsg.getAsNullableLong(key));
                 } else if (typeAsByte == Types.DECIMAL_TYPE) {
                     sb.append(aMsg.getAsNullableDouble(key));
-                } else if (typeAsByte == Types.STRING_ISO_8859_1_TYPE || typeAsByte == Types.STRING_UTF_16_TYPE) {
+                } else if (typeAsByte == Types.STRING_UTF_8_TYPE) {
                     final String s = aMsg.getAsString(key);
                     if (s != null) {
                         sb.append("\"");

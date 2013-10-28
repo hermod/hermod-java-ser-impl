@@ -5,8 +5,7 @@ import static com.github.hermod.ser.Types.ARRAY_VARIABLE_VALUE_TYPE;
 import static com.github.hermod.ser.Types.DECIMAL_TYPE;
 import static com.github.hermod.ser.Types.INTEGER_TYPE;
 import static com.github.hermod.ser.Types.MSG_TYPE;
-import static com.github.hermod.ser.Types.STRING_ISO_8859_1_TYPE;
-import static com.github.hermod.ser.Types.STRING_UTF_16_TYPE;
+import static com.github.hermod.ser.Types.STRING_UTF_8_TYPE;
 import static com.github.hermod.ser.impl.Msgs.BYTE_TYPE;
 import static com.github.hermod.ser.impl.Msgs.DEFAULT_MAX_KEY;
 import static com.github.hermod.ser.impl.Msgs.DOUBLE_TYPE;
@@ -657,10 +656,7 @@ public class IndexedObjectsMsg implements Msg {
             case DECIMAL_TYPE:
                 return aClazz.cast((Double) null);
 
-            case STRING_ISO_8859_1_TYPE:
-            case STRING_UTF_16_TYPE:
-                // To add
-                // case STRING_UTF_8_TYPE;
+           case STRING_UTF_8_TYPE;
                 return aClazz.cast(getAsString(aKey));
 
             case MSG_TYPE:

@@ -8,10 +8,10 @@ import static com.github.hermod.ser.Types.DECIMAL_TYPE;
 import static com.github.hermod.ser.Types.INTEGER_TYPE;
 import static com.github.hermod.ser.Types.MSG_TYPE;
 import static com.github.hermod.ser.Types.NULL_TYPE;
-import static com.github.hermod.ser.Types.STRING_ISO_8859_1_TYPE;
-import static com.github.hermod.ser.Types.STRING_UTF_16_TYPE;
+import static com.github.hermod.ser.Types.STRING_UTF_8_TYPE;
 import static com.github.hermod.ser.Types.TYPE_MASK;
-import static com.github.hermod.ser.Types.UTF_16_CHARSET;
+import static com.github.hermod.ser.Types.UTF_8_CHARSET;
+import static com.github.hermod.ser.Types.UTF_8_CHARSET_NAME;
 import static com.github.hermod.ser.impl.Msgs.BYTE_TYPE;
 import static com.github.hermod.ser.impl.Msgs.DEFAULT_MAX_KEY;
 import static com.github.hermod.ser.impl.Msgs.DEFAULT_VALUE;
@@ -44,6 +44,7 @@ import static com.github.hermod.ser.impl.Msgs.ZERO;
 import static com.github.hermod.ser.impl.Msgs.ERROR_WHEN_KEY_NOT_PRESENT;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.CharsetEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -464,8 +465,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             case DECIMAL_TYPE:
                 return aClazz.cast((Double) null);
 
-            case STRING_ISO_8859_1_TYPE:
-            case STRING_UTF_16_TYPE:
+            case STRING_UTF_8_TYPE:
                 return aClazz.cast(getAsString(aKey));
 
             case MSG_TYPE:
@@ -761,7 +761,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
     public final @Nullable
     String getAsString(final int aKey) {
         try {
-            return ((this.types[aKey] & TYPE_MASK) == STRING_ISO_8859_1_TYPE || (this.types[aKey] & TYPE_MASK) == STRING_UTF_16_TYPE) ? (String) this.objectValues[aKey]
+            return ((this.types[aKey] & TYPE_MASK) == STRING_UTF_8_TYPE) ? (String) this.objectValues[aKey]
                     : null;
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
@@ -1817,25 +1817,25 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
     public final void set(final int aKey, final String aString) {
         try {
             this.objectValues[aKey] = aString;
-            this.types[aKey] = checkIfEncodableInIso88591(aString) ? STRING_ISO_8859_1_TYPE : STRING_UTF_16_TYPE;
-
+            this.types[aKey] = STRING_UTF_8_TYPE;
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aString);
         }
     }
 
+    
     /**
-     * checkIfEncodableInIso88591.
-     * 
+     * checkIfEncodableInAscii.
+     *
      * @param aString
      * @return
      */
-    private final boolean checkIfEncodableInIso88591(final String aString) {
+    private static final boolean checkIfEncodableInAscii(final String aString) {
         if (aString != null) {
             for (int i = 0; i < aString.length(); i++) {
                 final char c = aString.charAt(i);
-                if (c != (byte) c) {
+                if (c != ((byte) c)) {
                     return false;
                 }
             }
@@ -1850,15 +1850,15 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @param aString
      * @param stringType
      */
-    private void set(final int aKey, final String aString, final byte stringType) {
-        try {
-            this.objectValues[aKey] = aString;
-            this.types[aKey] = stringType;
-        } catch (final ArrayIndexOutOfBoundsException e) {
-            increaseKeyMax(aKey);
-            set(aKey, aString);
-        }
-    }
+//    private void set(final int aKey, final String aString, final byte stringType) {
+//        try {
+//            this.objectValues[aKey] = aString;
+//            this.types[aKey] = stringType;
+//        } catch (final ArrayIndexOutOfBoundsException e) {
+//            increaseKeyMax(aKey);
+//            set(aKey, aString);
+//        }
+//    }
 
     /**
      * (non-Javadoc)
@@ -1866,12 +1866,15 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#set(int, java.lang.String, boolean)
      */
     @Override
+    //TODO to remove
     public final void set(final int aKey, final String aString, final boolean forceIso88591Charset) {
-        if (forceIso88591Charset) {
-            set(aKey, aString, STRING_ISO_8859_1_TYPE);
-        } else {
-            set(aKey, aString, STRING_UTF_16_TYPE);
-        }
+//        if (forceIso88591Charset) {
+//            set(aKey, aString, STRING_ISO_8859_1_TYPE);
+//        } else {
+//            set(aKey, aString, STRING_UTF_16_TYPE);
+//        }
+        
+        set(aKey, aString);
     }
 
     /**
@@ -2434,25 +2437,45 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                     bytes[pos++] = (byte) (aLong >> FIFTY_SIX);
                     break;
 
-                case STRING_ISO_8859_1_TYPE:
-                    final String aAsciiString = (String) this.objectValues[key];
-                    if (aAsciiString != null) {
-                        final int stringLength = aAsciiString.length();
-                        pos = writeVariableLength(bytes, pos - 1, stringLength, (stringLength == 0) ? TWO : ONE);
-                        for (int j = 0; j < stringLength; j++) {
-                            bytes[pos++] = (byte) aAsciiString.charAt(j);
-                        }
-                    }
-                    break;
-
-                case STRING_UTF_16_TYPE:
+//                case STRING_ISO_8859_1_TYPE:
+//                    final String aAsciiString = (String) this.objectValues[key];
+//                    if (aAsciiString != null) {
+//                        final int stringLength = aAsciiString.length();
+//                        pos = writeVariableLength(bytes, pos - 1, stringLength, (stringLength == 0) ? TWO : ONE);
+//                        for (int j = 0; j < stringLength; j++) {
+//                            bytes[pos++] = (byte) aAsciiString.charAt(j);
+//                        }
+//                    }
+//                    break;
+//
+//                case STRING_UTF_16_TYPE:
+//                    final String aString = (String) this.objectValues[key];
+//                    if (aString != null) {
+//                        final byte[] stringBytes = aString.getBytes(UTF_16_CHARSET);
+//                        final int stringLength = stringBytes.length;
+//                        pos = writeVariableLength(bytes, pos - 1, stringLength, (stringLength == 0) ? TWO : ONE);
+//                        System.arraycopy(stringBytes, 0, bytes, pos, stringLength);
+//                        pos += stringBytes.length;
+//                    }
+//                    break;
+                    
+                case STRING_UTF_8_TYPE:
                     final String aString = (String) this.objectValues[key];
                     if (aString != null) {
-                        final byte[] stringBytes = aString.getBytes(UTF_16_CHARSET);
-                        final int stringLength = stringBytes.length;
-                        pos = writeVariableLength(bytes, pos - 1, stringLength, (stringLength == 0) ? TWO : ONE);
-                        System.arraycopy(stringBytes, 0, bytes, pos, stringLength);
-                        pos += stringBytes.length;
+                        if (checkIfEncodableInAscii(aString)) {
+                            final int stringLength = aString.length();
+                            pos = writeVariableLength(bytes, pos - 1, stringLength, (stringLength == 0) ? TWO : ONE);
+                            for (int j = 0; j < stringLength; j++) {
+                                bytes[pos++] = (byte) aString.charAt(j);
+                            }
+                        } else {
+                          final byte[] stringBytes = aString.getBytes(UTF_8_CHARSET);
+                          final int stringLength = stringBytes.length;
+                          pos = writeVariableLength(bytes, pos - 1, stringLength, (stringLength == 0) ? TWO : ONE);
+                          System.arraycopy(stringBytes, 0, bytes, pos, stringLength);
+                          pos += stringBytes.length;
+                        }
+                            
                     }
                     break;
 
@@ -2696,16 +2719,21 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
 
                     if (lengthMask != 0) {
                         switch (typeMask) {
-                        case STRING_ISO_8859_1_TYPE:
-                            final char[] chars = new char[fieldLength];
-                            for (int i = 0; i < fieldLength; i++) {
-                                chars[i] = (char) bytes[pos++];
-                            }
-                            this.objectValues[key] = new String(chars);
-                            break;
-
-                        case STRING_UTF_16_TYPE:
-                            this.objectValues[key] = new String(bytes, pos, fieldLength, UTF_16_CHARSET);
+//                        case STRING_ISO_8859_1_TYPE:
+//                            final char[] chars = new char[fieldLength];
+//                            for (int i = 0; i < fieldLength; i++) {
+//                                chars[i] = (char) bytes[pos++];
+//                            }
+//                            this.objectValues[key] = new String(chars);
+//                            break;
+//
+//                        case STRING_UTF_16_TYPE:
+//                            this.objectValues[key] = new String(bytes, pos, fieldLength, UTF_16_CHARSET);
+//                            pos += fieldLength;
+//                            break;
+                            
+                        case STRING_UTF_8_TYPE:
+                            this.objectValues[key] = new String(bytes, pos, fieldLength, UTF_8_CHARSET);
                             pos += fieldLength;
                             break;
 
@@ -2848,8 +2876,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
 
                                     break;
 
-                                case STRING_UTF16:
-                                case STRING_ISO_8859_1:
+                                case STRING_UTF8:   
                                     final String[] strings = new String[variableArrayLength];
                                     for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
                                         strings[arrayKey] = arrayAsMsg.getAsString(arrayKey);
@@ -2995,14 +3022,10 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         } else {
             switch (this.types[key]) {
             // TODO refactor it
-            case STRING_ISO_8859_1_TYPE:
-                final int stringIso88591length = (this.objectValues[key] != null) ? ((String) this.objectValues[key]).length() : 0;
-                return getVariableLength(stringIso88591length, (stringIso88591length == 0) ? TWO : ONE) + stringIso88591length;
-
-            case STRING_UTF_16_TYPE:
-                final int stringUtf16length = (this.objectValues[key] != null) ? ((String) this.objectValues[key]).getBytes(UTF_16_CHARSET).length
+            case STRING_UTF_8_TYPE:
+                final int stringUtf8length = (this.objectValues[key] != null) ? ((String) this.objectValues[key]).getBytes(UTF_8_CHARSET).length
                         : 0;
-                return getVariableLength(stringUtf16length, (stringUtf16length == 0) ? TWO : ONE) + stringUtf16length;
+                return getVariableLength(stringUtf8length, (stringUtf8length == 0) ? TWO : ONE) + stringUtf8length;
 
             case MSG_TYPE:
                 // TODO change to Serializer.getLength();
