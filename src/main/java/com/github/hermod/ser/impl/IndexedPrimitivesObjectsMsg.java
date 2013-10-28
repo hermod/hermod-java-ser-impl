@@ -233,6 +233,36 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         return true;
     }
     
+    /**
+     * isBytesSerializable.
+     *
+     * @return
+     */
+    @Override
+    public final boolean isBytesSerializable() {
+        return true;
+    }
+    
+    /**
+     * isByteBufferSerializable.
+     *
+     * @return
+     */
+    @Override
+    public final boolean isByteBufferSerializable(){
+        return true;
+    }
+    
+    /**
+     * isByteBufSerializable.
+     *
+     * @return
+     */
+    @Override
+    public final boolean isByteBufSerializable(){
+        return false;
+    }
+    
     
     /**
      * (non-Javadoc)

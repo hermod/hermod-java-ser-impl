@@ -18,6 +18,9 @@ import static com.github.hermod.ser.impl.Msgs.LONG_TYPE;
 import static com.github.hermod.ser.impl.Msgs.SHORT_TYPE;
 
 import java.nio.ByteBuffer;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 import checkers.nullness.quals.Nullable;
 
@@ -167,6 +170,36 @@ public class IndexedObjectsMsg implements Msg {
                 return true;
             }
         }
+        return false;
+    }
+    
+    /**
+     * isBytesSerializable.
+     *
+     * @return
+     */
+    @Override
+    public final boolean isBytesSerializable() {
+        return false;
+    }
+    
+    /**
+     * isByteBufferSerializable.
+     *
+     * @return
+     */
+    @Override
+    public final boolean isByteBufferSerializable(){
+        return false;
+    }
+    
+    /**
+     * isByteBufSerializable.
+     *
+     * @return
+     */
+    @Override
+    public final boolean isByteBufSerializable(){
         return false;
     }
 
@@ -1818,5 +1851,6 @@ public class IndexedObjectsMsg implements Msg {
             this.objectValues[i] = null;
         }
     }
+
 
 }
