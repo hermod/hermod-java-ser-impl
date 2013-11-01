@@ -3,6 +3,7 @@ package com.github.hermod.ser.impl;
 import static com.github.hermod.ser.Types.ARRAY_FIXED_VALUE_TYPE;
 import static com.github.hermod.ser.Types.MSG_TYPE;
 import static com.github.hermod.ser.Types.NULL_TYPE;
+import static com.github.hermod.ser.Types.SKIPPED_KEYS_TYPE;
 import static com.github.hermod.ser.Types.STRING_UTF_8_TYPE;
 import static com.github.hermod.ser.Types.TYPE_MASK;
 import static com.github.hermod.ser.impl.Msgs.BYTE_TYPE;
@@ -85,7 +86,8 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
             // Calculate max key value
             // TODO to optimize with a try catch, lastPos and relaunch readFrom
             while (pos < offset + length) {
-                if ((bytes[pos] & TYPE_MASK) == NULL_TYPE) {
+                //if ((bytes[pos] & TYPE_MASK) == NULL_TYPE) {
+                if ((bytes[pos] & TYPE_MASK) == SKIPPED_KEYS_TYPE) {
                     final int lengthMask = bytes[pos++] & LENGTH_MASK;
                     key += (((lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos++]
                             : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR))) + 1;
@@ -269,7 +271,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
             int pos = aDestOffset;
 
             // Write Type / Values
-            final int[] keys = aSrcMsg.retrieveKeys();
+            final int[] keys = aSrcMsg.getKeysArray();
             int previousKey = 0;
             for (int j = 0; j < keys.length; j++) {
                 final int key = keys[j];
@@ -388,7 +390,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
         } else {
             int length = 0;
             // Size of the different values
-            final int[] keys = aMsg.retrieveKeys();
+            final int[] keys = aMsg.getKeysArray();
             for (int i = 0; i < keys.length; i++) {
                 length += getValueLength(aMsg.get(i));
             }

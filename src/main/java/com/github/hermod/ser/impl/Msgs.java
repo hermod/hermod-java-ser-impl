@@ -147,7 +147,7 @@ public final class Msgs {
     /**
      * 
      */
-    static final byte LENGTH_MASK = (byte) 0b0001_1111;
+    static final byte LENGTH_MASK = (byte) 0x1F;//(byte) 0b0001_1111;
 
     /**
      * 
@@ -185,7 +185,7 @@ public final class Msgs {
     // TODO replace
     static final double[] DOZENS = { 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0, 100000000.0 };
 
-    static final double[] DOZENS2 = { 1.0 / Precision.UNITS.getPrecision(), 1.0 / Precision.TENS.getPrecision(),
+    static final double[] TENTHS = { 1.0 / Precision.UNITS.getPrecision(), 1.0 / Precision.TENS.getPrecision(),
             1.0 / Precision.HUNDREDS.getPrecision(), 1.0 / Precision.THOUSANDS.getPrecision(), 1.0 / Precision.TEN_THOUSANDS.getPrecision(),
             1.0 / Precision.HUNDRED_THOUSANDS.getPrecision(), 1.0 / Precision.MILLIONS.getPrecision(), 1.0 / Precision.TEN_MILLIONS.getPrecision(),
             1.0 / Precision.HUNDRED_MILLIONS.getPrecision() };
@@ -236,7 +236,7 @@ public final class Msgs {
     public static final String serializeToJson(final Msg aMsg) {
         final StringBuilder sb = new StringBuilder();
         sb.append("{");
-        final int[] keys = aMsg.retrieveKeys();
+        final int[] keys = aMsg.getKeysArray();
         for (final int key : keys) {
             final byte typeAsByte = aMsg.getTypeAsByte(key);
             if (typeAsByte != NULL_TYPE) {
@@ -303,7 +303,7 @@ public final class Msgs {
     public static final int hashCode(final Msg aMsg) {
         int hashcode = 0;
         // TODO to optimize
-        final int[] keys = aMsg.retrieveKeys();
+        final int[] keys = aMsg.getKeysArray();
         for (final int key : keys) {
             hashcode += key ^ aMsg.get(key).hashCode();
         }
@@ -319,8 +319,8 @@ public final class Msgs {
         // TODO to optimize
         if (aObj != null && aObj instanceof Msg) {
             final Msg msg = (Msg) aObj;
-            final int[] keys = aMsg.retrieveKeys();
-            if (keys.length != msg.countKeys()) {
+            final int[] keys = aMsg.getKeysArray();
+            if (keys.length != msg.getKeysLength()) {
                 return false;
             }
             for (final int key : keys) {

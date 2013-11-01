@@ -132,9 +132,9 @@ public abstract class AbstractMsgTest {
     @Test
     public void testRemoveAll() {
         srcMsg.set(KEY_ONE, INT_TEST);
-        assertThat(srcMsg.retrieveKeys()).hasSize(1);
+        assertThat(srcMsg.getKeysArray()).hasSize(1);
         srcMsg.removeAll();
-        assertThat(srcMsg.retrieveKeys()).hasSize(0);
+        assertThat(srcMsg.getKeysArray()).hasSize(0);
     }
 
     /**
@@ -161,7 +161,7 @@ public abstract class AbstractMsgTest {
         final byte[] bytes = this.bytesMsgSerializer.serializeToBytes(srcMsg);
 
         this.bytesMsgSerializer.deserializeFromBytes(bytes, 0, bytes.length, destMsg);
-        final int[] keys = destMsg.retrieveKeys();
+        final int[] keys = destMsg.getKeysArray();
 
         assertThat(keys).isEqualTo(new int[] { KEY_ONE, KEY_TWO });
     }
@@ -628,7 +628,7 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_THREE, STRING_TEST132);
         srcMsg.set(KEY_FOUR, (String) null);
 
-        srcMsg.set(KEY_SEVEN, STRING_TEST, true);
+        srcMsg.set(KEY_SEVEN, STRING_TEST);
         
         srcMsg.set(KEY_NINETY, STRING_TEST);
         srcMsg.set(KEY_THREE_HUNDRED, STRING_TEST);
@@ -658,8 +658,8 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_THREE, STRING_TEST132);
         srcMsg.set(KEY_FOUR, (String) null);
         srcMsg.set(KEY_FIVE, STRING_TEST_UTF16);
-        srcMsg.set(KEY_SIX, STRING_TEST_UTF16, false);
-        srcMsg.set(KEY_SEVEN, STRING_TEST, true);
+        srcMsg.set(KEY_SIX, STRING_TEST_UTF16);
+        srcMsg.set(KEY_SEVEN, STRING_TEST);
         
         srcMsg.set(KEY_NINETY, STRING_TEST);
         srcMsg.set(KEY_THREE_HUNDRED, STRING_TEST);
