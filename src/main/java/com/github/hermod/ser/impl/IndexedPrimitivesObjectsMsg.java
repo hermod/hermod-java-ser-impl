@@ -1358,7 +1358,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAllAsObjects(java.lang.Object[])
      */
     @Override 
-    public final void getAllAsObjects(final Object[] anObjects) {
+    public final void getAllAsObjects(final Object... anObjects) {
         // TODO to optimize
         final int keyMax = this.getKeyMax();
         if (keyMax > anObjects.length) {
