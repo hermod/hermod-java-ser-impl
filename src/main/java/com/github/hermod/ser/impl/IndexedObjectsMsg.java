@@ -9,18 +9,22 @@ import static com.github.hermod.ser.Types.STRING_UTF_8_TYPE;
 import static com.github.hermod.ser.impl.Msgs.BYTE_TYPE;
 import static com.github.hermod.ser.impl.Msgs.DEFAULT_MAX_KEY;
 import static com.github.hermod.ser.impl.Msgs.DOUBLE_TYPE;
+import static com.github.hermod.ser.impl.Msgs.EIGHT;
 import static com.github.hermod.ser.impl.Msgs.ERROR_WHEN_KEY_NOT_PRESENT;
 import static com.github.hermod.ser.impl.Msgs.FIVE_BITS_DECIMAL_TYPE;
 import static com.github.hermod.ser.impl.Msgs.FLOAT_TYPE;
+import static com.github.hermod.ser.impl.Msgs.FOUR;
 import static com.github.hermod.ser.impl.Msgs.INT_TYPE;
 import static com.github.hermod.ser.impl.Msgs.LONG_TYPE;
+import static com.github.hermod.ser.impl.Msgs.ONE;
 import static com.github.hermod.ser.impl.Msgs.SHORT_TYPE;
+import static com.github.hermod.ser.impl.Msgs.TWO;
+import static com.github.hermod.ser.impl.Msgs.FIVE;
 
 import java.nio.ByteBuffer;
 
 import com.github.hermod.ser.Msg;
 import com.github.hermod.ser.Null;
-import com.github.hermod.ser.Precision;
 import com.github.hermod.ser.Type;
 
 /**
@@ -167,34 +171,34 @@ public class IndexedObjectsMsg implements Msg {
         }
         return false;
     }
-    
+
     /**
      * isBytesSerializable.
-     *
+     * 
      * @return
      */
     @Override
     public final boolean isBytesSerializable() {
         return false;
     }
-    
+
     /**
      * isByteBufferSerializable.
-     *
+     * 
      * @return
      */
     @Override
-    public final boolean isByteBufferSerializable(){
+    public final boolean isByteBufferSerializable() {
         return false;
     }
-    
+
     /**
      * isByteBufSerializable.
-     *
+     * 
      * @return
      */
     @Override
-    public final boolean isByteBufSerializable(){
+    public final boolean isByteBufSerializable() {
         return false;
     }
 
@@ -332,8 +336,7 @@ public class IndexedObjectsMsg implements Msg {
      * @see com.github.hermod.ser.Msg#getAsNullableBoolean(int)
      */
     @Override
-    public final 
-    Boolean getAsNullableBoolean(final int aKey) {
+    public final Boolean getAsNullableBoolean(final int aKey) {
         try {
             final Object value = this.objectValues[aKey];
             if (value instanceof Boolean) {
@@ -364,8 +367,7 @@ public class IndexedObjectsMsg implements Msg {
      * @see com.github.hermod.ser.Msg#getAsNullableBoolean(int)
      */
     @Override
-    public final 
-    Byte getAsNullableByte(final int aKey) {
+    public final Byte getAsNullableByte(final int aKey) {
         try {
             final Object value = this.objectValues[aKey];
             if (value instanceof Byte) {
@@ -397,8 +399,7 @@ public class IndexedObjectsMsg implements Msg {
      * @see com.github.hermod.ser.Msg#getAsNullableBoolean(int)
      */
     @Override
-    public final 
-    Short getAsNullableShort(final int aKey) {
+    public final Short getAsNullableShort(final int aKey) {
         try {
             final Object value = this.objectValues[aKey];
             if (value instanceof Short) {
@@ -652,7 +653,7 @@ public class IndexedObjectsMsg implements Msg {
             case DECIMAL_TYPE:
                 return aClazz.cast((Double) null);
 
-           case STRING_UTF_8_TYPE:
+            case STRING_UTF_8_TYPE:
                 return aClazz.cast(getAsString(aKey));
 
             case MSG_TYPE:
@@ -1103,12 +1104,11 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#getAsObjects(int)
      */
     @Override
-    public final 
-    Object[] getAsObjects(final int aKey) {
+    public final Object[] getAsObjects(final int aKey) {
         try {
             if (this.objectValues[aKey] instanceof byte[]) {
                 return getAsNullableBytes(aKey);
@@ -1137,12 +1137,11 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#getAsObjects(int, java.lang.Object[])
      */
     @Override
-    public final 
-    void getAsObjects(final int aKey, final Object... aDestObjects) {
+    public final void getAsObjects(final int aKey, final Object... aDestObjects) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not Yet Implemented.");
         // return null;
@@ -1150,7 +1149,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#getAllAsMsg()
      */
     @Override
@@ -1166,7 +1165,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#getAllAsObjects()
      */
     @Override
@@ -1178,7 +1177,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#getAllAsObjects(java.lang.Object[])
      */
     @Override
@@ -1225,10 +1224,10 @@ public class IndexedObjectsMsg implements Msg {
             set(aKey, aObject);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, com.github.hermod.ser.Null)
      */
     @Override
@@ -1240,7 +1239,6 @@ public class IndexedObjectsMsg implements Msg {
             set(aKey, aNull);
         }
     }
-    
 
     /**
      * (non-Javadoc)
@@ -1268,6 +1266,20 @@ public class IndexedObjectsMsg implements Msg {
             this.objectValues[aKey] = aBoolean;
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
+            set(aKey, aBoolean);
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Boolean, boolean)
+     */
+    @Override
+    public final void set(final int aKey, final Boolean aBoolean, final boolean optimizeLength) {
+        if (aBoolean == null) {
+            set(aKey, Null.valueOf(ONE));
+        } else {
             set(aKey, aBoolean);
         }
     }
@@ -1305,12 +1317,26 @@ public class IndexedObjectsMsg implements Msg {
     /**
      * (non-Javadoc)
      * 
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Byte, boolean)
+     */
+    @Override
+    public final void set(final int aKey, final Byte aByte, final boolean optimizeLength) {
+        if (aByte == null) {
+            set(aKey, Null.valueOf(ONE));
+        } else {
+            set(aKey, aByte);
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
      * @see com.github.hermod.ser.Msg#set(int, short)
      */
     @Override
     public final void set(final int aKey, final short aShort) {
         try {
-            this.objectValues[aKey] = Short.valueOf(aShort);
+            this.objectValues[aKey] = (aShort == (byte) aShort) ? Byte.valueOf((byte) aShort) : Short.valueOf(aShort);
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, Short.valueOf(aShort));
@@ -1323,12 +1349,57 @@ public class IndexedObjectsMsg implements Msg {
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Short)
      */
     @Override
-    public final void set(final int aKey, final Short aShort) {
+    public final void set(final int aKey, final Short aShort1) {
         try {
-            this.objectValues[aKey] = aShort;
+            if (aShort1 == null) {
+                this.objectValues[aKey] = aShort1;
+            } else {
+                final short aShort = aShort1.shortValue();
+                this.objectValues[aKey] = (aShort == (byte) aShort) ? Byte.valueOf((byte) aShort) : aShort;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
+            set(aKey, aShort1);
+        }
+    }
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, short, boolean)
+     */
+    @Override
+    public final void set(final int aKey, final short aShort, final boolean optimizeLength) {
+        if (optimizeLength) {
             set(aKey, aShort);
+        } else {
+            try {
+                this.objectValues[aKey] = Short.valueOf(aShort);
+            } catch (final ArrayIndexOutOfBoundsException e) {
+                increaseKeyMax(aKey);
+                set(aKey, aShort);
+            }
+        }
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Short, boolean)
+     */
+    @Override
+    public final void set(final int aKey, final Short aShort, final boolean optimizeLength) {
+        if (optimizeLength) {
+            set(aKey, aShort);
+        } else if (aShort == null) {
+            set(aKey, Null.valueOf(TWO));
+        } else {
+            try {
+                this.objectValues[aKey] = aShort;
+            } catch (final ArrayIndexOutOfBoundsException e) {
+                increaseKeyMax(aKey);
+                set(aKey, aShort);
+            }
         }
     }
 
@@ -1340,7 +1411,7 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final int aInt) {
         try {
-            this.objectValues[aKey] = Integer.valueOf(aInt);
+            this.objectValues[aKey] = (aInt == (byte) aInt) ?  Byte.valueOf((byte) aInt) : (aInt == (short) aInt) ? Short.valueOf((short) aInt) : Integer.valueOf(aInt);
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, Integer.valueOf(aInt));
@@ -1353,12 +1424,57 @@ public class IndexedObjectsMsg implements Msg {
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Integer)
      */
     @Override
-    public final void set(final int aKey, final Integer aInt) {
+    public final void set(final int aKey, final Integer aInteger) {
         try {
-            this.objectValues[aKey] = aInt;
+            if (aInteger == null ) {
+                this.objectValues[aKey] = aInteger;
+            } else {                
+                final int aInt = aInteger.intValue();
+                this.objectValues[aKey] = (aInt == (byte) aInt) ?  Byte.valueOf((byte) aInt) : (aInt == (short) aInt) ? Short.valueOf((short) aInt) : Integer.valueOf(aInt);
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
+            set(aKey, aInteger);
+        }
+    }
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Integer, boolean)
+     */
+    @Override
+    public final void set(final int aKey, final int aInt, final boolean optimizeLength) {
+        if (optimizeLength) {
             set(aKey, aInt);
+        } else {
+            try {
+                this.objectValues[aKey] = Integer.valueOf(aInt);
+            } catch (final ArrayIndexOutOfBoundsException e) {
+                increaseKeyMax(aKey);
+                set(aKey, aInt);
+            }
+        }
+    }
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Integer, boolean)
+     */
+    @Override
+    public final void set(final int aKey, final Integer aInt, final boolean optimizeLength) {
+        if (optimizeLength) {
+            set(aKey, aInt);
+        } else if (aInt == null) {
+            set(aKey, Null.valueOf(FOUR));
+        } else {
+            try {
+                this.objectValues[aKey] = aInt;
+            } catch (final ArrayIndexOutOfBoundsException e) {
+                increaseKeyMax(aKey);
+                set(aKey, aInt);
+            }
         }
     }
 
@@ -1370,7 +1486,7 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final long aLong) {
         try {
-            this.objectValues[aKey] = Long.valueOf(aLong);
+            this.objectValues[aKey] = (aLong == (byte) aLong) ?  Byte.valueOf((byte) aLong) : (aLong == (short) aLong) ? Short.valueOf((short) aLong) : (aLong == (short) aLong) ? Integer.valueOf((int) aLong) : Long.valueOf(aLong);
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, Long.valueOf(aLong));
@@ -1383,12 +1499,58 @@ public class IndexedObjectsMsg implements Msg {
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Long)
      */
     @Override
-    public final void set(final int aKey, final Long aLong) {
+    public final void set(final int aKey, final Long aLong1) {
         try {
-            this.objectValues[aKey] = aLong;
+            if (aLong1 == null) {
+                this.objectValues[aKey] = aLong1;
+            } else {
+                final long aLong = aLong1.longValue();
+                this.objectValues[aKey] = (aLong == (byte) aLong) ?  Byte.valueOf((byte) aLong) : (aLong == (short) aLong) ? Short.valueOf((short) aLong) : (aLong == (short) aLong) ? Integer.valueOf((int) aLong) : Long.valueOf(aLong);
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
+            set(aKey, aLong1);
+        }
+    }
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, long, boolean)
+     */
+    @Override
+    public final void set(final int aKey, final long aLong, final boolean optimizeLength) {
+        if (optimizeLength) {
             set(aKey, aLong);
+        } else {
+            try {
+                this.objectValues[aKey] = Long.valueOf(aLong);
+            } catch (final ArrayIndexOutOfBoundsException e) {
+                increaseKeyMax(aKey);
+                set(aKey, aLong);
+            }
+        }
+    }
+    
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Long, boolean)
+     */
+    @Override
+    public final void set(final int aKey, final Long aLong, final boolean optimizeLength) {
+        if (optimizeLength) {
+            set(aKey, aLong);
+        } else if (aLong == null) {
+            set(aKey, Null.valueOf(EIGHT));
+        } else {
+            try {
+                this.objectValues[aKey] = aLong;
+            } catch (final ArrayIndexOutOfBoundsException e) {
+                increaseKeyMax(aKey);
+                set(aKey, aLong);
+            }
         }
     }
 
@@ -1416,6 +1578,28 @@ public class IndexedObjectsMsg implements Msg {
     public final void set(final int aKey, final Float aFloat) {
         set(aKey, aFloat);
     }
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Float, boolean)
+     */
+    @Override
+    public final void set(final int aKey, final Float aFloat, final boolean optimizeLength) {
+        if (optimizeLength) {
+            set(aKey, aFloat);
+        } else if (aFloat == null) {
+            set(aKey, Null.valueOf(FOUR));
+        } else {
+            try {
+                this.objectValues[aKey] = aFloat;
+            } catch (final ArrayIndexOutOfBoundsException e) {
+                increaseKeyMax(aKey);
+                set(aKey, aFloat);
+            }
+        }
+    }
+
 
     /**
      * (non-Javadoc)
@@ -1425,7 +1609,8 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final double aDouble) {
         try {
-            this.objectValues[aKey] = aDouble;
+            final boolean isEncodeableInAFloat = (aDouble == (float) aDouble) ? true : false;
+            this.objectValues[aKey] = (isEncodeableInAFloat) ? (float) aDouble : aDouble;
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aDouble);
@@ -1439,8 +1624,59 @@ public class IndexedObjectsMsg implements Msg {
      */
     @Override
     public final void set(final int aKey, final Double aDouble) {
-        set(aKey, aDouble);
+        try {
+            if (aDouble == null) {
+                this.objectValues[aKey] = aDouble;
+            } else {
+                final boolean isEncodeableInAFloat = (aDouble == aDouble.floatValue()) ? true : false;
+                this.objectValues[aKey] = (isEncodeableInAFloat) ? aDouble.floatValue() : aDouble;
+            }
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            increaseKeyMax(aKey);
+            set(aKey, aDouble);
+        }
     }
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Double, int, boolean)
+     */
+    @Override
+    public final void set(final int aKey, final double aDouble,  final boolean optimizeLength) {
+        if (optimizeLength) {
+            set(aKey, aDouble);
+        } else {
+            try {
+                this.objectValues[aKey] = aDouble;
+            } catch (final ArrayIndexOutOfBoundsException e) {
+                increaseKeyMax(aKey);
+                set(aKey, aDouble);
+            }
+        }
+    }
+    
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Double, int, boolean)
+     */
+    @Override
+    public final void set(final int aKey, final Double aDouble, final boolean optimizeLength) {
+        if (optimizeLength) {
+            set(aKey, aDouble);
+        } else if (aDouble == null) {
+            set(aKey, Null.valueOf(EIGHT));
+        } else {
+            try {
+                this.objectValues[aKey] = aDouble;
+            } catch (final ArrayIndexOutOfBoundsException e) {
+                increaseKeyMax(aKey);
+                set(aKey, aDouble);
+            }
+        }
+    }
+    
 
     /**
      * (non-Javadoc)
@@ -1448,17 +1684,8 @@ public class IndexedObjectsMsg implements Msg {
      * @see com.github.hermod.ser.Msg#set(int, double, int)
      */
     @Override
-    public final void set(final int aKey, final double aDouble, final int aNbDigit) {
-        set(aKey, aDouble);
-    }
-
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#set(int, double, com.github.hermod.ser.Precision)
-     */
-    //@Override
-    public final void set(final int aKey, final double aDouble, final Precision aPrecision) {
+    public final void set(final int aKey, final double aDouble, final int aScale) {
+        //TODO to really implement it
         set(aKey, aDouble);
     }
 
@@ -1468,20 +1695,26 @@ public class IndexedObjectsMsg implements Msg {
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Double, int)
      */
     @Override
-    public final void set(final int aKey, final Double aDouble, final int aNbDigit) {
+    public final void set(final int aKey, final Double aDouble, final int aScale) {
+      //TODO to really implement it
         set(aKey, aDouble);
     }
-
+    
+    
     /**
      * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#set(int, java.lang.Double, com.github.hermod.ser.Precision)
+     *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.Double, int, boolean)
      */
-    //@Override
-    public final void set(final int aKey, final Double aDouble, final Precision aPrecision) {
-        set(aKey, aDouble);
+    @Override
+    public final void set(final int aKey, final Double aDouble, final int aScale, final boolean optimizeLength) {
+        if (aDouble == null) {
+            set(aKey, Null.valueOf(FIVE));
+        } else {
+            set(aKey, aDouble, aScale);
+        }
     }
-
+    
     /**
      * (non-Javadoc)
      * 
@@ -1496,12 +1729,20 @@ public class IndexedObjectsMsg implements Msg {
             set(aKey, aString);
         }
     }
-
     
-
     /**
      * (non-Javadoc)
      *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.String, boolean)
+     */
+    @Override
+    public final void set(final int aKey, final String aString, final boolean forceAsciiEncoding) {
+        set(aKey, aString);
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
      * @see com.github.hermod.ser.Msg#set(int, com.github.hermod.ser.Msg)
      */
     @Override
@@ -1514,10 +1755,9 @@ public class IndexedObjectsMsg implements Msg {
         }
     }
 
-    
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, boolean[])
      */
     @Override
@@ -1540,7 +1780,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Boolean[])
      */
     @Override
@@ -1563,7 +1803,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, byte[])
      */
     @Override
@@ -1578,7 +1818,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Byte[])
      */
     @Override
@@ -1593,7 +1833,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, short[])
      */
     @Override
@@ -1608,7 +1848,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Short[])
      */
     @Override
@@ -1623,7 +1863,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, int[])
      */
     @Override
@@ -1638,7 +1878,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Integer[])
      */
     @Override
@@ -1653,7 +1893,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, long[])
      */
     @Override
@@ -1668,7 +1908,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Long[])
      */
     @Override
@@ -1683,7 +1923,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, float[])
      */
     @Override
@@ -1705,7 +1945,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Float[])
      */
     @Override
@@ -1720,7 +1960,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, double[])
      */
     @Override
@@ -1735,7 +1975,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Double[])
      */
     @Override
@@ -1750,7 +1990,7 @@ public class IndexedObjectsMsg implements Msg {
 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.String[])
      */
     @Override
@@ -1762,10 +2002,20 @@ public class IndexedObjectsMsg implements Msg {
             set(aKey, aStrings);
         }
     }
-
+    
     /**
      * (non-Javadoc)
      *
+     * @see com.github.hermod.ser.Msg#set(int, java.lang.String[], boolean)
+     */
+    @Override
+    public final void set(final int aKey, final String[] aStrings, boolean forceAsciiEncoding) {
+        set(aKey, aStrings);
+    }
+
+    /**
+     * (non-Javadoc)
+     * 
      * @see com.github.hermod.ser.Msg#set(int, com.github.hermod.ser.Msg[])
      */
     @Override
@@ -1836,6 +2086,5 @@ public class IndexedObjectsMsg implements Msg {
             this.objectValues[i] = null;
         }
     }
-
 
 }

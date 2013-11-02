@@ -5,7 +5,7 @@ import static com.github.hermod.ser.Types.ARRAY_VARIABLE_VALUE_TYPE;
 import static com.github.hermod.ser.Types.NULL_TYPE;
 
 import com.github.hermod.ser.Msg;
-import com.github.hermod.ser.Precision;
+import com.github.hermod.ser.Scale;
 import com.github.hermod.ser.Type;
 import com.github.hermod.ser.Types;
 
@@ -185,10 +185,10 @@ public final class Msgs {
     // TODO replace
     static final double[] DOZENS = { 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0, 100000000.0 };
 
-    static final double[] TENTHS = { 1.0 / Precision.UNITS.getPrecision(), 1.0 / Precision.TENS.getPrecision(),
-            1.0 / Precision.HUNDREDS.getPrecision(), 1.0 / Precision.THOUSANDS.getPrecision(), 1.0 / Precision.TEN_THOUSANDS.getPrecision(),
-            1.0 / Precision.HUNDRED_THOUSANDS.getPrecision(), 1.0 / Precision.MILLIONS.getPrecision(), 1.0 / Precision.TEN_MILLIONS.getPrecision(),
-            1.0 / Precision.HUNDRED_MILLIONS.getPrecision() };
+    static final double[] TENTHS = { 1.0 / Scale.UNITS.getDecimal(), 1.0 / Scale.TENS.getDecimal(),
+            1.0 / Scale.HUNDREDS.getDecimal(), 1.0 / Scale.THOUSANDS.getDecimal(), 1.0 / Scale.TEN_THOUSANDS.getDecimal(),
+            1.0 / Scale.HUNDRED_THOUSANDS.getDecimal(), 1.0 / Scale.MILLIONS.getDecimal(), 1.0 / Scale.TEN_MILLIONS.getDecimal(),
+            1.0 / Scale.HUNDRED_MILLIONS.getDecimal() };
 
     /**
      * FORCE_ENCODING_ZERO_ON_2BITS
@@ -225,6 +225,24 @@ public final class Msgs {
             // Do nothing
         }
         return POW_2[i];
+    }
+    
+    /**
+     * isAsciiString.
+     *
+     * @param aString
+     * @return
+     */
+    public static final boolean isAsciiString(final String aString) {
+        if (aString != null) {
+            for (int i = 0; i < aString.length(); i++) {
+                final char c = aString.charAt(i);
+                if (c != ((byte) c)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     
     /**

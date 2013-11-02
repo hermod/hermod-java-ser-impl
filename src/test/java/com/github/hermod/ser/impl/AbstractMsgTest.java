@@ -1253,7 +1253,7 @@ public abstract class AbstractMsgTest {
         final byte[] bytes = this.bytesMsgSerializer.serializeToBytes(srcMsg);
         this.bytesMsgSerializer.deserializeFromBytes(bytes, 0, bytes.length, destMsg);
 
-        final Map<Integer, Object> map = new HashMap<>();
+        final Map<Integer, Object> map = new HashMap<Integer, Object>();
         map.put(KEY_ONE, BYTE_TEST);
         map.put(KEY_TWO, DOUBLE_TEST);
         map.put(KEY_THREE, null);
@@ -1273,7 +1273,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.toString()).isEqualTo(jsonMap);
 
         final Msg srcMsg2 = newMsg();
-        final String jsonMap2 = gson.toJson(new HashMap<>());
+        final String jsonMap2 = gson.toJson(new HashMap<String, Object>());
         assertThat(srcMsg2.toString()).isEqualTo(jsonMap2);
 
     }

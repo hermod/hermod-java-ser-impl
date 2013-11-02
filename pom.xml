@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.github.hermod</groupId>
 		<artifactId>hermod-java-parent</artifactId>
-		<version>0.0.2</version>
+		<version>0.0.3-SNAPSHOT</version>
 	</parent>
 	<artifactId>hermod-java-ser-impl</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -17,11 +17,6 @@
 			<groupId>com.github.hermod</groupId>
 			<artifactId>hermod-java-ser-api</artifactId>
 			<version>0.0.3-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.washington.cs.types.checker</groupId>
-			<artifactId>checker-framework</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
