@@ -1317,8 +1317,8 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      *
      * @see com.github.hermod.ser.Msg#getAsObjects(int, java.lang.Object[])
      */
-    public final 
-    void getAsObjects(final int aKey, Object[] aDestObjects) {
+    @Override
+    public final void getAsObjects(final int aKey, Object... aDestObjects) {
         //TODO to implement
         throw new UnsupportedOperationException("Not Implemented");
     }
