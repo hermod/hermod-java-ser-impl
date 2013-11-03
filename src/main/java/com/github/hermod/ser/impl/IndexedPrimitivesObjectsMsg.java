@@ -1959,7 +1959,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                         set(aKey, aDouble, aScale);
                     }
                 } else {
-                    this.set(aKey, d * TENTHS[aScale]);
+                    this.set(aKey, aDouble);
                 }
             }
         } catch (final ArrayIndexOutOfBoundsException e) {

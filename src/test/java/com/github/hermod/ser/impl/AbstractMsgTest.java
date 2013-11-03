@@ -540,6 +540,8 @@ public abstract class AbstractMsgTest {
         for (int i = 0; i < 9; i++) {
             srcMsg.set(KEY_TEN + i, DOUBLE_TEST1, i);
         }
+        
+        srcMsg.getAsDouble(15);
 
         srcMsg.set(KEY_NINETY, DOUBLE_TEST);
         srcMsg.set(KEY_NINETYTWO, DOUBLE_TEST, 5);
@@ -939,6 +941,8 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_NINETY, DOUBLES_TEST2);
         srcMsg.set(KEY_THREE_HUNDRED, DOUBLES_TEST);
 
+        srcMsg.get(KEY_NINETY);
+        
         final byte[] bytes = this.bytesMsgSerializer.serializeToBytes(srcMsg);
         this.bytesMsgSerializer.deserializeFromBytes(bytes, 0, bytes.length, destMsg);
 
