@@ -57,7 +57,7 @@ public abstract class AbstractMsgTest {
     protected static final Float[] FLOATS_TEST2 = { 0f, 1f, 2f, 3f, Float.MAX_VALUE };
     protected static final double[] DOUBLES_TEST = { 0, 1, 2, 3, Double.MAX_VALUE };
     protected static final Double[] DOUBLES_TEST2 = { 0d, 1d, 2d, 3d, Double.MAX_VALUE };
-
+    
     protected static final String[] STRINGS_TEST = { "string1", "string2", "string3", "string4" };
 
     protected static final int KEY_MINUS_ONE = -1;
@@ -927,6 +927,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsFloats(KEY_MINUS_ONE)).isNull();
         assertThat(destMsg.getAsNullableFloats(KEY_FOUR_HUNDRED)).isNull();
     }
+    
 
     /**
      * testSetGetAsDoubles.
@@ -935,13 +936,12 @@ public abstract class AbstractMsgTest {
     @Test
     public void testSetGetAsDoubles() {
         srcMsg.set(KEY_ONE, DOUBLES_TEST);
-        srcMsg.set(KEY_TWO, (double[]) null);
+        srcMsg.set(KEY_TWO,  Double.MAX_VALUE);
         srcMsg.set(KEY_THREE, (Double[]) null);
         srcMsg.set(KEY_FOUR, SHORTS_TEST);
         srcMsg.set(KEY_NINETY, DOUBLES_TEST2);
         srcMsg.set(KEY_THREE_HUNDRED, DOUBLES_TEST);
 
-        srcMsg.get(KEY_NINETY);
         
         final byte[] bytes = this.bytesMsgSerializer.serializeToBytes(srcMsg);
         this.bytesMsgSerializer.deserializeFromBytes(bytes, 0, bytes.length, destMsg);

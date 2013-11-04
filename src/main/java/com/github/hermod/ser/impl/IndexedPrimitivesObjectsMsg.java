@@ -2135,8 +2135,10 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
 
 
     // @Override
-    public final void set(final int aKey, final Object aObject, final boolean forceNoLengthOptimization) {
-        if (forceNoLengthOptimization) {
+    public final void set(final int aKey, final Object aObject, final boolean optimizeLength) {
+        if (optimizeLength) {
+            set(aKey, aObject);
+        } else {
             try {
 
                 if (aObject instanceof Boolean | aObject instanceof Byte | aObject instanceof Short | aObject instanceof Integer
@@ -2152,7 +2154,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                 } else if (aObject instanceof Float | aObject instanceof Double) {
                     if (aObject != null) {
                         if (aObject instanceof Double) {
-                            set(aKey, ((Double) aObject).doubleValue(), true);
+                            set(aKey, ((Double) aObject).doubleValue(), false);
                         } else {
                             set(aKey, ((Float) aObject).floatValue());
                         }
@@ -2172,8 +2174,6 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                 increaseKeyMax(aKey);
                 set(aKey, aObject);
             }
-        } else {
-            set(aKey, aObject);
         }
     }
 
@@ -2799,7 +2799,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             boolean firstElementSet = false;
             //  Force first element without compression
             while (i < objects.length && objects[i] != null && !firstElementSet) {
-                msg.set(i, objects[i], true);
+                msg.set(i, objects[i], false);
                 i++;
                 firstElementSet = true;
             }
