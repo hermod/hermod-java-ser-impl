@@ -28,7 +28,8 @@ import static com.github.hermod.ser.impl.Msgs.FORTY_EIGHT;
 import static com.github.hermod.ser.impl.Msgs.FOUR;
 import static com.github.hermod.ser.impl.Msgs.INT_TYPE;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_AN_INT;
-import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_A_BIT;
+import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE;
+import static com.github.hermod.ser.impl.Msgs.MAX_LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_MASK;
 import static com.github.hermod.ser.impl.Msgs.LONG_TYPE;
 import static com.github.hermod.ser.impl.Msgs.ONE;
@@ -725,29 +726,29 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      */
     private double getAs5BitsDecimal(final int aKey) {
         final int nbDigit = (int) (XFF & this.primitiveValues[aKey]);
-        final double integerMantissa = (this.primitiveValues[aKey] >> EIGHT);
+        final double unscaledValue = (this.primitiveValues[aKey] >> EIGHT);
         // return Precisions.fromNbDigit((int) (XFF & this.primitiveValues[aKey])).calculateDouble((this.primitiveValues[aKey] >> EIGHT));
         switch (nbDigit) {
         case ZERO:
-            return integerMantissa;
+            return unscaledValue;
         case ONE:
-            return integerMantissa * Scale.TENTHS.getDecimal();
+            return unscaledValue * Scale.TENTHS.getDecimal();
         case TWO:
-            return integerMantissa * Scale.HUNDREDTHS.getDecimal();
+            return unscaledValue * Scale.HUNDREDTHS.getDecimal();
         case THREE:
-            return integerMantissa * Scale.THOUSANDTHS.getDecimal();
+            return unscaledValue * Scale.THOUSANDTHS.getDecimal();
         case FOUR:
-            return integerMantissa * Scale.TEN_THOUSANDTHS.getDecimal();
+            return unscaledValue * Scale.TEN_THOUSANDTHS.getDecimal();
         case FIVE:
-            return integerMantissa * Scale.HUNDRED_THOUSANDTHS.getDecimal();
+            return unscaledValue * Scale.HUNDRED_THOUSANDTHS.getDecimal();
         case SIX:
-            return integerMantissa * Scale.MILLIONTHS.getDecimal();
+            return unscaledValue * Scale.MILLIONTHS.getDecimal();
         case SEVEN:
-            return integerMantissa * Scale.TEN_MILLIONTHS.getDecimal();
+            return unscaledValue * Scale.TEN_MILLIONTHS.getDecimal();
         case EIGHT:
-            return integerMantissa * Scale.HUNDRED_MILLIONTHS.getDecimal();
+            return unscaledValue * Scale.HUNDRED_MILLIONTHS.getDecimal();
         default:
-            return Scale.valueOf(nbDigit).calculateUnscaledValue(integerMantissa);
+            return Scale.valueOf(nbDigit).calculateUnscaledValue(unscaledValue);
         }
     }
 
@@ -783,25 +784,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         }
     }
 
-    /**
-     * getAsMap.
-     * 
-     * @param aKey
-     * @return
-     */
-    // private final Map<Integer, Object> getAsMap(final int aKey) {
-    // final IMsg msg = this.getAsMsg(aKey);
-    // if (msg != null) {
-    // final int[] keys = msg.retrieveKeys();
-    // final Map<Integer, Object> map = new HashMap<>(keys.length);
-    // for (final int key : keys) {
-    // map.put(key, msg.getAsObject(key));
-    // }
-    // return map;
-    // } else {
-    // return null;
-    // }
-    // }
+
 
     /**
      * (non-Javadoc)
@@ -1305,10 +1288,6 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
         }
-        
-//        final Object[] objects = new Object[retrieveKeyMax()];
-//        getAsObjects(aKey, objects);
-//        return objects;
     }
     
     
@@ -2812,6 +2791,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         return msg;
     }
 
+    
     /**
      * (non-Javadoc)
      * 
@@ -2828,16 +2808,16 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         while (pos < offset + length) {
             if ((bytes[pos] & TYPE_MASK) == SKIPPED_KEYS_TYPE) {
                 final int lengthMask = bytes[pos++] & LENGTH_MASK;
-                key += (((lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos++]
+                key += (((lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? (XFF & bytes[pos++])
                         : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN)
                                 | ((bytes[pos++] & XFF) << TWENTY_FOUR))) + 1;
             } else {
                 final int lengthMask = bytes[pos++] & LENGTH_MASK;
                 // TODO to optimize
-                pos += (((lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask
-                        : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos] : ((bytes[pos] & XFF) | ((bytes[pos + ONE] & XFF) << EIGHT)
+                pos += (((lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask
+                        : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF & bytes[pos] : ((bytes[pos] & XFF) | ((bytes[pos + ONE] & XFF) << EIGHT)
                                 | ((bytes[pos + TWO] & XFF) << SIXTEEN) | ((bytes[pos + THREE] & XFF) << TWENTY_FOUR))));
-                pos += (lengthMask < LENGTH_ENCODED_IN_A_BIT) ? 0 : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? ONE : FOUR;
+                pos += (lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? 0 : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? ONE : FOUR;
 
                 key++;
             }
@@ -2853,7 +2833,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             // Skip null key
             if ((type & TYPE_MASK) == NULL_TYPE) {
                 final int sizeMask = type & LENGTH_MASK;
-                key += ((sizeMask < LENGTH_ENCODED_IN_A_BIT) ? sizeMask : (sizeMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos++] : (bytes[pos++] & XFF)
+                key += ((sizeMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? sizeMask : (sizeMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF & bytes[pos++] : (bytes[pos++] & XFF)
                         | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR)) + 1;
             }
             // Decode values
@@ -2911,24 +2891,12 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                     final byte typeMask = (byte) (type & TYPE_MASK);
                     this.types[key] = typeMask;
                     final int lengthMask = (LENGTH_MASK & type);
-                    final int fieldLength = (lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask
-                            : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos++] : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT)
+                    final int fieldLength = (lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask
+                            : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF & bytes[pos++] : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT)
                                     | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR);
 
                     if (lengthMask != 0) {
                         switch (typeMask) {
-//                        case STRING_ISO_8859_1_TYPE:
-//                            final char[] chars = new char[fieldLength];
-//                            for (int i = 0; i < fieldLength; i++) {
-//                                chars[i] = (char) bytes[pos++];
-//                            }
-//                            this.objectValues[key] = new String(chars);
-//                            break;
-//
-//                        case STRING_UTF_16_TYPE:
-//                            this.objectValues[key] = new String(bytes, pos, fieldLength, UTF_16_CHARSET);
-//                            pos += fieldLength;
-//                            break;
                             
                         case STRING_UTF_8_TYPE:
                             this.objectValues[key] = new String(bytes, pos, fieldLength, UTF_8_CHARSET);
@@ -3177,11 +3145,11 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @return
      */
     private int writeVariableLength(final byte[] bytes, int pos, final int length, final int forceEncodingAtLeastOn) {
-        if (length < LENGTH_ENCODED_IN_A_BIT && forceEncodingAtLeastOn == ONE) {
+        if (length < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE && forceEncodingAtLeastOn == ONE) {
             bytes[pos++] |= (byte) length;
         } else {
-            final boolean isEncodedInAnInt = (length > Byte.MAX_VALUE) || (forceEncodingAtLeastOn == FIVE);
-            bytes[pos++] |= (byte) ((isEncodedInAnInt) ? LENGTH_ENCODED_IN_AN_INT : LENGTH_ENCODED_IN_A_BIT);
+            final boolean isEncodedInAnInt = (length > MAX_LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) || (forceEncodingAtLeastOn == FIVE);
+            bytes[pos++] |= (byte) ((isEncodedInAnInt) ? LENGTH_ENCODED_IN_AN_INT : LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE);
             bytes[pos++] = (byte) (length);
             if (isEncodedInAnInt) {
                 bytes[pos++] = (byte) (length >> EIGHT);
@@ -3200,8 +3168,8 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @return
      */
     private int getVariableLength(final int length, final int forceEncodingAtLeastOn) {
-        return (length < LENGTH_ENCODED_IN_A_BIT && (forceEncodingAtLeastOn == ONE)) ? ONE
-                : (length > Byte.MAX_VALUE || forceEncodingAtLeastOn == FIVE) ? FIVE : TWO;
+        return (length < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE && (forceEncodingAtLeastOn == ONE)) ? ONE
+                : (length > MAX_LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE || forceEncodingAtLeastOn == FIVE) ? FIVE : TWO;
     }
 
     /**

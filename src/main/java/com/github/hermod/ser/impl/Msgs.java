@@ -152,8 +152,12 @@ public final class Msgs {
     /**
      * 
      */
-    static final int LENGTH_ENCODED_IN_A_BIT = LENGTH_MASK - ONE;
+    static final int LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE = LENGTH_MASK - ONE;
 
+    /**
+     * MAX_LENGTH_ENCODED_IN_A_BIT
+     */
+    static final int MAX_LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE = 255;
     /**
      * 
      */
@@ -182,6 +186,7 @@ public final class Msgs {
     /**
      * DOZENS
      */
+    
     // TODO replace
     static final double[] DOZENS = { 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0, 100000000.0 };
 

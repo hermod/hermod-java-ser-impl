@@ -19,7 +19,7 @@ import static com.github.hermod.ser.impl.Msgs.FORTY_EIGHT;
 import static com.github.hermod.ser.impl.Msgs.FOUR;
 import static com.github.hermod.ser.impl.Msgs.INT_TYPE;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_AN_INT;
-import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_A_BIT;
+import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_MASK;
 import static com.github.hermod.ser.impl.Msgs.LONG_TYPE;
 import static com.github.hermod.ser.impl.Msgs.ONE;
@@ -89,15 +89,15 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
                 //if ((bytes[pos] & TYPE_MASK) == NULL_TYPE) {
                 if ((bytes[pos] & TYPE_MASK) == SKIPPED_KEYS_TYPE) {
                     final int lengthMask = bytes[pos++] & LENGTH_MASK;
-                    key += (((lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos++]
+                    key += (((lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? bytes[pos++]
                             : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR))) + 1;
                 } else {
                     final int lengthMask = bytes[pos++] & LENGTH_MASK;
                     // TODO to optimize
-                    pos += (((lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask
-                            : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos] : ((bytes[pos] & XFF) | ((bytes[pos + ONE] & XFF) << EIGHT)
+                    pos += (((lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask
+                            : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? bytes[pos] : ((bytes[pos] & XFF) | ((bytes[pos + ONE] & XFF) << EIGHT)
                                     | ((bytes[pos + TWO] & XFF) << SIXTEEN) | ((bytes[pos + THREE] & XFF) << TWENTY_FOUR))));
-                    pos += (lengthMask < LENGTH_ENCODED_IN_A_BIT) ? 0 : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? 1 : FOUR;
+                    pos += (lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? 0 : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? 1 : FOUR;
 
                     key++;
                 }
@@ -113,7 +113,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
                 // Skip null key
                 if ((type & TYPE_MASK) == NULL_TYPE) {
                     final int lengthMask = type & LENGTH_MASK;
-                    key += ((lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos++]
+                    key += ((lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? bytes[pos++]
                             : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR)) + 1;
                 }
                 // Decode values
@@ -166,8 +166,8 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
                     default:
                         final byte typeMask = (byte) (type & TYPE_MASK);
                         final int lengthMask = (LENGTH_MASK & type);
-                        final int fieldLength = (lengthMask < LENGTH_ENCODED_IN_A_BIT) ? lengthMask
-                                : (lengthMask == LENGTH_ENCODED_IN_A_BIT) ? bytes[pos++] : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT)
+                        final int fieldLength = (lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask
+                                : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? bytes[pos++] : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT)
                                         | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR);
 
                         switch (typeMask) {
@@ -363,11 +363,11 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
      * @return
      */
     private int writeVariableLength(final byte[] bytes, int pos, final int length, boolean forceEncodingZeroOn2Bits) {
-        if (length < LENGTH_ENCODED_IN_A_BIT && !(forceEncodingZeroOn2Bits && length == 0)) {
+        if (length < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE && !(forceEncodingZeroOn2Bits && length == 0)) {
             bytes[pos++] |= (byte) length;
         } else {
             final boolean isEncodedInAnInt = (length > Byte.MAX_VALUE);
-            bytes[pos++] |= (byte) ((isEncodedInAnInt) ? LENGTH_ENCODED_IN_AN_INT : LENGTH_ENCODED_IN_A_BIT);
+            bytes[pos++] |= (byte) ((isEncodedInAnInt) ? LENGTH_ENCODED_IN_AN_INT : LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE);
             bytes[pos++] = (byte) (length);
             if (isEncodedInAnInt) {
                 bytes[pos++] = (byte) (length >> EIGHT);
@@ -413,7 +413,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
      * @return
      */
     private int getVariableLength(final int length, final boolean forceEncodingZeroOn2Bits) {
-        return (length < LENGTH_ENCODED_IN_A_BIT && !(forceEncodingZeroOn2Bits && length == 0)) ? ONE : (length <= Byte.MAX_VALUE) ? TWO : FIVE;
+        return (length < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE && !(forceEncodingZeroOn2Bits && length == 0)) ? ONE : (length <= Byte.MAX_VALUE) ? TWO : FIVE;
     }
 
     /**

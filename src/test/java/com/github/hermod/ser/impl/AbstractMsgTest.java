@@ -40,6 +40,8 @@ public abstract class AbstractMsgTest {
     protected static final String STRING_TEST = "string";
     protected static final String STRING_TEST32 = "12345678901234567890123456789012";
     protected static final String STRING_TEST132 = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012";
+    protected static final String STRING_TEST260 = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+    
     protected static final Object[] OBJECT_ARRAY_TEST = {};
     protected static final boolean[] BOOLEANS_TEST = { true, false };
     protected static final Boolean[] BOOLEANS_TEST2 = { true, false };
@@ -629,7 +631,8 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_TWO, STRING_TEST32);
         srcMsg.set(KEY_THREE, STRING_TEST132);
         srcMsg.set(KEY_FOUR, (String) null);
-
+        srcMsg.set(KEY_FIVE, STRING_TEST260);
+        
         srcMsg.set(KEY_SEVEN, STRING_TEST);
         
         srcMsg.set(KEY_NINETY, STRING_TEST);
@@ -643,6 +646,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsString(KEY_TWO)).isEqualTo(STRING_TEST32);
         assertThat(destMsg.getAsString(KEY_THREE)).isEqualTo(STRING_TEST132);
         assertThat(destMsg.getAsString(KEY_FOUR)).isNull();
+        assertThat(destMsg.getAsString(KEY_FIVE)).isEqualTo(STRING_TEST260);
         assertThat(destMsg.getAsString(KEY_SEVEN)).isEqualTo(STRING_TEST);
         assertThat(destMsg.getAsString(KEY_NINETY)).isEqualTo(STRING_TEST);
         assertThat(destMsg.getAsString(KEY_THREE_HUNDRED)).isEqualTo(STRING_TEST);
