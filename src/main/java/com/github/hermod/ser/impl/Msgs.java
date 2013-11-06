@@ -209,9 +209,10 @@ public final class Msgs {
      */
     
     // TODO replace
-    static final double[] DOZENS; // = { 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0, 100000000.0 };
+    //static final double[] DOZENS; // = { 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0, 100000000.0 };
 
-    static final double[] TENTHS; /* = { 1.0 / Scale.UNITS.getDecimal(), 1.0 / Scale.TENS.getDecimal(),
+    //static final double[] TENTHS; 
+    /* = { 1.0 / Scale.UNITS.getDecimal(), 1.0 / Scale.TENS.getDecimal(),
             1.0 / Scale.HUNDREDS.getDecimal(), 1.0 / Scale.THOUSANDS.getDecimal(), 1.0 / Scale.TEN_THOUSANDS.getDecimal(),
             1.0 / Scale.HUNDRED_THOUSANDS.getDecimal(), 1.0 / Scale.MILLIONS.getDecimal(), 1.0 / Scale.TEN_MILLIONS.getDecimal(),
             1.0 / Scale.HUNDRED_MILLIONS.getDecimal() };*/
@@ -228,18 +229,18 @@ public final class Msgs {
         POW_2[POW_2.length - 1] = Integer.MAX_VALUE;
         
         
-        //DOZENS
-        DOZENS = new double[Byte.MAX_VALUE];
-        for (int i = 0; i < DOZENS.length; i++) {
-            DOZENS[i] = Math.pow(10, i);
-        }
-        
-        
-        // TENTHS
-        TENTHS = new double[- Byte.MIN_VALUE];
-        for (int i = 0; i < TENTHS.length; i++) {
-            TENTHS[i] = 1 / Math.pow(10, i);
-        }
+//        //DOZENS
+//        DOZENS = new double[Byte.MAX_VALUE];
+//        for (int i = 0; i < DOZENS.length; i++) {
+//            DOZENS[i] = Math.pow(10, i);
+//        }
+//        
+//        
+//        // TENTHS
+//        TENTHS = new double[- Byte.MIN_VALUE];
+//        for (int i = 0; i < TENTHS.length; i++) {
+//            TENTHS[i] = 1 / Math.pow(10, i);
+//        }
         
         
         // TENTHS_DOZENS
