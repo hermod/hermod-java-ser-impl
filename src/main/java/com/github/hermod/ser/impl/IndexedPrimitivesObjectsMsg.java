@@ -2309,7 +2309,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#set(int, double[])
      */
     @Override
-    public final void set(final int aKey, final double[] aDoubles) {
+    public final void set(final int aKey, final double... aDoubles) {
         try {
             this.objectValues[aKey] = aDoubles;
             this.types[aKey] = ARRAY_FIXED_VALUE_TYPE;
@@ -2325,7 +2325,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Double[])
      */
     @Override
-    public final void set(final int aKey, final Double[] aDoubles) {
+    public final void set(final int aKey, final Double... aDoubles) {
         try {
             this.objectValues[aKey] = aDoubles;
             this.types[aKey] = ARRAY_VARIABLE_VALUE_TYPE;
