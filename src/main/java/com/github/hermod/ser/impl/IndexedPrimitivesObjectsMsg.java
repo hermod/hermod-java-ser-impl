@@ -1,7 +1,5 @@
 package com.github.hermod.ser.impl;
 
-
-import static com.github.hermod.ser.Scale.HALF;
 import static com.github.hermod.ser.Types.ARRAY_FIXED_VALUE_TYPE;
 import static com.github.hermod.ser.Types.ARRAY_VARIABLE_VALUE_TYPE;
 import static com.github.hermod.ser.Types.DECIMAL_TYPE;
@@ -13,6 +11,7 @@ import static com.github.hermod.ser.Types.STRING_UTF_8_TYPE;
 import static com.github.hermod.ser.Types.TYPE_MASK;
 import static com.github.hermod.ser.Types.UTF_8_CHARSET;
 import static com.github.hermod.ser.impl.Msgs.BYTE_TYPE;
+import static com.github.hermod.ser.impl.Msgs.HALF;
 import static com.github.hermod.ser.impl.Msgs.DEFAULT_MAX_KEY;
 import static com.github.hermod.ser.impl.Msgs.DEFAULT_VALUE;
 import static com.github.hermod.ser.impl.Msgs.DOUBLE_TYPE;
@@ -29,7 +28,7 @@ import static com.github.hermod.ser.impl.Msgs.FOUR;
 import static com.github.hermod.ser.impl.Msgs.INT_TYPE;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_AN_INT;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE;
-import static com.github.hermod.ser.impl.Msgs.MAX_LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE;
+import static com.github.hermod.ser.impl.Msgs.MAX_VALUE_FOR_UNSIGNED_BYTE;
 import static com.github.hermod.ser.impl.Msgs.LENGTH_MASK;
 import static com.github.hermod.ser.impl.Msgs.LONG_TYPE;
 import static com.github.hermod.ser.impl.Msgs.ONE;
@@ -38,6 +37,7 @@ import static com.github.hermod.ser.impl.Msgs.SHORT_TYPE;
 import static com.github.hermod.ser.impl.Msgs.SIX;
 import static com.github.hermod.ser.impl.Msgs.SIXTEEN;
 import static com.github.hermod.ser.impl.Msgs.TENTHS;
+import static com.github.hermod.ser.impl.Msgs.DOZENS_TENTHS;
 import static com.github.hermod.ser.impl.Msgs.THIRTY_TWO;
 import static com.github.hermod.ser.impl.Msgs.THREE;
 import static com.github.hermod.ser.impl.Msgs.TWENTY_FOUR;
@@ -53,7 +53,6 @@ import com.github.hermod.ser.ByteBufferSerializable;
 import com.github.hermod.ser.BytesSerializable;
 import com.github.hermod.ser.Msg;
 import com.github.hermod.ser.Null;
-import com.github.hermod.ser.Scale;
 import com.github.hermod.ser.Type;
 import com.github.hermod.ser.Types;
 
@@ -69,12 +68,11 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
     private long[] primitiveValues;
     private Object[] objectValues;
 
-
     /**
      * Constructor.
      * 
      */
-    //TODO set as private
+    // TODO set as private
     private IndexedPrimitivesObjectsMsg() {
         this(DEFAULT_MAX_KEY);
     }
@@ -84,7 +82,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * 
      * @param aDescriptor
      */
-    //TODO set as private
+    // TODO set as private
     private IndexedPrimitivesObjectsMsg(final int aKeyMax) {
         this.types = new byte[aKeyMax + 1];
         this.primitiveValues = new long[aKeyMax + 1];
@@ -96,7 +94,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * 
      * @param aMsg
      */
-    //TODO set as private
+    // TODO set as private
     private IndexedPrimitivesObjectsMsg(final Msg aMsg) {
         if (aMsg instanceof IndexedPrimitivesObjectsMsg) {
             final IndexedPrimitivesObjectsMsg keyObjectMsg = (IndexedPrimitivesObjectsMsg) aMsg;
@@ -148,45 +146,44 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             this.objectValues = destObjectValues;
         }
     }
-    
+
     /**
      * newMsg.
-     *
+     * 
      * @return
      */
     public static IndexedPrimitivesObjectsMsg create() {
         return new IndexedPrimitivesObjectsMsg(DEFAULT_MAX_KEY);
     }
-    
 
     /**
      * newMsg.
-     *
+     * 
      * @param keyMax
      * @return
      */
     public static IndexedPrimitivesObjectsMsg createWithKeyMax(final int keyMax) {
         return new IndexedPrimitivesObjectsMsg(keyMax);
     }
-    
+
     /**
      * createFromBytes.
-     *
+     * 
      * @param bytes
      * @param offset
      * @param length
      * @return
      */
-    //TODO createFromBytes?
+    // TODO createFromBytes?
     public static IndexedPrimitivesObjectsMsg createFromBytes(final byte[] aSrcBytes, final int offset, final int length) {
-         final IndexedPrimitivesObjectsMsg msg = new IndexedPrimitivesObjectsMsg();
-         msg.deserializeFromBytes(aSrcBytes, offset, length);
-         return msg;
+        final IndexedPrimitivesObjectsMsg msg = new IndexedPrimitivesObjectsMsg();
+        msg.deserializeFromBytes(aSrcBytes, offset, length);
+        return msg;
     }
-    
+
     /**
      * createFromByteBuffer.
-     *
+     * 
      * @param byteBuffer
      * @return
      */
@@ -194,21 +191,21 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         final IndexedPrimitivesObjectsMsg msg = new IndexedPrimitivesObjectsMsg();
         msg.deserializeFromByteBuffer(aSrcByteBuffer);
         return msg;
-   }
-    
+    }
+
     /**
      * createFromMsg.
-     *
+     * 
      * @param aMsg
      * @return
      */
     public static IndexedPrimitivesObjectsMsg createFromMsg(final Msg aMsg) {
         return new IndexedPrimitivesObjectsMsg(aMsg);
-   }
-    
+    }
+
     /**
      * createFromValues.
-     *
+     * 
      * @param values
      * @return
      */
@@ -216,8 +213,8 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         final IndexedPrimitivesObjectsMsg msg = new IndexedPrimitivesObjectsMsg(values.length);
         msg.setAll(values);
         return msg;
-   }
-    
+    }
+
     /**
      * (non-Javadoc)
      * 
@@ -232,46 +229,44 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         }
         return true;
     }
-    
+
     /**
      * isBytesSerializable.
-     *
+     * 
      * @return
      */
     @Override
     public final boolean isBytesSerializable() {
         return true;
     }
-    
+
     /**
      * isByteBufferSerializable.
-     *
+     * 
      * @return
      */
     @Override
-    public final boolean isByteBufferSerializable(){
+    public final boolean isByteBufferSerializable() {
         return true;
     }
-    
+
     /**
      * isByteBufSerializable.
-     *
+     * 
      * @return
      */
     @Override
-    public final boolean isByteBufSerializable(){
+    public final boolean isByteBufSerializable() {
         return false;
     }
-    
-    
+
     /**
      * (non-Javadoc)
      * 
      * @see com.github.hermod.ser3.intmap.ReadIntMap#retrieveKeys()
      */
     @Override
-    public final 
-    int[] getKeysArray() {
+    public final int[] getKeysArray() {
         final int[] keys = new int[getKeysLength()];
         int index = 0;
         for (int i = 0; i < this.types.length; i++) {
@@ -281,15 +276,15 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         }
         return keys;
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#retrieveKeyMax()
      */
     @Override
     public final int getKeyMax() {
-        for (int i = this.types.length; i-- != 0; ) {
+        for (int i = this.types.length; i-- != 0;) {
             if (this.types[i] != NULL_TYPE) {
                 return i;
             }
@@ -313,15 +308,13 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         return nbKey;
     }
 
-    
     /**
      * (non-Javadoc)
      * 
      * @see com.github.hermod.ser.Msg#getType(int)
      */
     @Override
-    public final 
-    Type getType(final int aKey) {
+    public final Type getType(final int aKey) {
         try {
             return Type.valueOf((byte) (this.types[aKey] & TYPE_MASK));
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -402,8 +395,6 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         }
     }
 
-
- 
     /**
      * (non-Javadoc)
      * 
@@ -417,15 +408,14 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             return false;
         }
     }
-    
+
     /**
      * (non-Javadoc)
      * 
      * @see com.github.hermod.ser.Msg#getAsObject(int)
      */
     @Override
-    public final 
-    Object get(final int aKey) {
+    public final Object get(final int aKey) {
         return get(aKey, Object.class);
     }
 
@@ -435,8 +425,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#get(int, java.lang.Class)
      */
     @Override
-    public final 
-    <T> T get(final int aKey, final Class<T> aClazz) {
+    public final <T> T get(final int aKey, final Class<T> aClazz) {
         try {
             final byte type = this.types[aKey];
             switch (type) {
@@ -507,8 +496,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsNullableBoolean(int)
      */
     @Override
-    public final 
-    Boolean getAsNullableBoolean(final int aKey) {
+    public final Boolean getAsNullableBoolean(final int aKey) {
         try {
             return Boolean.valueOf(getAsBoolean(aKey));
         } catch (IllegalArgumentException e) {
@@ -538,8 +526,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsNullableByte(int)
      */
     @Override
-    public final 
-    Byte getAsNullableByte(final int aKey) {
+    public final Byte getAsNullableByte(final int aKey) {
         try {
             return Byte.valueOf(getAsByte(aKey));
         } catch (IllegalArgumentException e) {
@@ -569,8 +556,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsNullableShort(int)
      */
     @Override
-    public final 
-    Short getAsNullableShort(final int aKey) {
+    public final Short getAsNullableShort(final int aKey) {
         try {
             return Short.valueOf(getAsShort(aKey));
         } catch (IllegalArgumentException e) {
@@ -601,8 +587,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @return
      */
     @Override
-    public final 
-    Integer getAsNullableInteger(final int aKey) {
+    public final Integer getAsNullableInteger(final int aKey) {
         try {
             return Integer.valueOf(getAsInt(aKey));
         } catch (IllegalArgumentException e) {
@@ -633,8 +618,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @return
      */
     @Override
-    public final 
-    Long getAsNullableLong(final int aKey) {
+    public final Long getAsNullableLong(final int aKey) {
         try {
             return Long.valueOf(getAsLong(aKey));
         } catch (IllegalArgumentException e) {
@@ -665,8 +649,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsNullableFloat(int)
      */
     @Override
-    public final 
-    Float getAsNullableFloat(final int aKey) {
+    public final Float getAsNullableFloat(final int aKey) {
         try {
             return getAsFloat(aKey);
         } catch (IllegalArgumentException e) {
@@ -684,9 +667,6 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
     public final double getAsDouble(final int aKey) {
         try {
             switch (this.types[aKey]) {
-            // case THREE_BITS_DECIMAL_TYPE:
-            // return (this.primitiveValues[aKey] >> 8) / DOZENS[(int) (XFF &
-            // this.primitiveValues[aKey])];
             case FIVE_BITS_DECIMAL_TYPE:
                 // return Precisions.fromNbDigit((int) (XFF & this.primitiveValues[aKey])).calculateDouble((this.primitiveValues[aKey] >> 8));
                 return getAs5BitsDecimal(aKey);
@@ -709,8 +689,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @return
      */
     @Override
-    public final 
-    Double getAsNullableDouble(final int aKey) {
+    public final Double getAsNullableDouble(final int aKey) {
         try {
             return getAsDouble(aKey);
         } catch (IllegalArgumentException e) {
@@ -725,30 +704,34 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @return
      */
     private double getAs5BitsDecimal(final int aKey) {
-        final int nbDigit = (int) (XFF & this.primitiveValues[aKey]);
+        final byte scale = (byte) (XFF & this.primitiveValues[aKey]);
         final double unscaledValue = (this.primitiveValues[aKey] >> EIGHT);
+
+        // TODO to benchmark
         // return Precisions.fromNbDigit((int) (XFF & this.primitiveValues[aKey])).calculateDouble((this.primitiveValues[aKey] >> EIGHT));
-        switch (nbDigit) {
+
+        switch (scale) {
         case ZERO:
             return unscaledValue;
         case ONE:
-            return unscaledValue * Scale.TENTHS.getDecimal();
+            return unscaledValue * 0.1;
         case TWO:
-            return unscaledValue * Scale.HUNDREDTHS.getDecimal();
+            return unscaledValue * 0.01;
         case THREE:
-            return unscaledValue * Scale.THOUSANDTHS.getDecimal();
+            return unscaledValue * 0.001;
         case FOUR:
-            return unscaledValue * Scale.TEN_THOUSANDTHS.getDecimal();
+            return unscaledValue * 0.0001;
         case FIVE:
-            return unscaledValue * Scale.HUNDRED_THOUSANDTHS.getDecimal();
+            return unscaledValue * 0.00001;
         case SIX:
-            return unscaledValue * Scale.MILLIONTHS.getDecimal();
+            return unscaledValue * 0.000001;
         case SEVEN:
-            return unscaledValue * Scale.TEN_MILLIONTHS.getDecimal();
+            return unscaledValue * 0.0000001;
         case EIGHT:
-            return unscaledValue * Scale.HUNDRED_MILLIONTHS.getDecimal();
+            return unscaledValue * 0.00000001;
         default:
-            return Scale.valueOf(nbDigit).calculateUnscaledValue(unscaledValue);
+            // return Scale.valueOf(scale).calculateUnscaledValue(unscaledValue);
+            return unscaledValue / DOZENS_TENTHS[(int) (XFF & scale)];
         }
     }
 
@@ -758,11 +741,9 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsString(int)
      */
     @Override
-    public final 
-    String getAsString(final int aKey) {
+    public final String getAsString(final int aKey) {
         try {
-            return ((this.types[aKey] & TYPE_MASK) == STRING_UTF_8_TYPE) ? (String) this.objectValues[aKey]
-                    : null;
+            return ((this.types[aKey] & TYPE_MASK) == STRING_UTF_8_TYPE) ? (String) this.objectValues[aKey] : null;
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
         }
@@ -774,17 +755,14 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsMsg(int)
      */
     @Override
-    public final 
-    Msg getAsMsg(final int aKey) {
+    public final Msg getAsMsg(final int aKey) {
         try {
-            return ((this.types[aKey] & TYPE_MASK) == MSG_TYPE && this.objectValues[aKey] != null) ? new IndexedPrimitivesObjectsMsg((Msg) this.objectValues[aKey])
-                    : null;
+            return ((this.types[aKey] & TYPE_MASK) == MSG_TYPE && this.objectValues[aKey] != null) ? new IndexedPrimitivesObjectsMsg(
+                    (Msg) this.objectValues[aKey]) : null;
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
         }
     }
-
-
 
     /**
      * (non-Javadoc)
@@ -801,16 +779,13 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         }
     }
 
-
-
     /**
      * (non-Javadoc)
      * 
      * @see com.github.hermod.ser.Msg#getAsBooleans(int)
      */
     @Override
-    public final 
-    boolean[] getAsBooleans(final int aKey) {
+    public final boolean[] getAsBooleans(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof byte[])) {
                 final byte[] bytes = (byte[]) this.objectValues[aKey];
@@ -836,8 +811,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsNullableBooleans(int)
      */
     @Override
-    public final 
-    Boolean[] getAsNullableBooleans(final int aKey) {
+    public final Boolean[] getAsNullableBooleans(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof byte[])) {
                 final byte[] bytes = (byte[]) this.objectValues[aKey];
@@ -873,8 +847,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsBytes(int)
      */
     @Override
-    public final 
-    byte[] getAsBytes(final int aKey) {
+    public final byte[] getAsBytes(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof byte[])) {
                 final byte[] bytes = (byte[]) this.objectValues[aKey];
@@ -895,8 +868,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsNullableBytes(int)
      */
     @Override
-    public final 
-    Byte[] getAsNullableBytes(final int aKey) {
+    public final Byte[] getAsNullableBytes(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof byte[])) {
                 final byte[] bytes = (byte[]) this.objectValues[aKey];
@@ -926,8 +898,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsShorts(int)
      */
     @Override
-    public final 
-    short[] getAsShorts(final int aKey) {
+    public final short[] getAsShorts(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof short[])) {
                 final short[] shorts = (short[]) this.objectValues[aKey];
@@ -948,8 +919,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsNullableBytes(int)
      */
     @Override
-    public final 
-    Short[] getAsNullableShorts(final int aKey) {
+    public final Short[] getAsNullableShorts(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof short[])) {
                 final short[] shorts = (short[]) this.objectValues[aKey];
@@ -978,8 +948,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsInts(int)
      */
     @Override
-    public final 
-    int[] getAsInts(final int aKey) {
+    public final int[] getAsInts(final int aKey) {
         try {
             if (((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof int[]))) {
                 final int[] ints = (int[]) this.objectValues[aKey];
@@ -1000,8 +969,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsNullableIntegers(int)
      */
     @Override
-    public final 
-    Integer[] getAsNullableIntegers(final int aKey) {
+    public final Integer[] getAsNullableIntegers(final int aKey) {
         try {
             if (((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof int[]))) {
                 final int[] ints = (int[]) this.objectValues[aKey];
@@ -1030,8 +998,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsLongs(int)
      */
     @Override
-    public final 
-    long[] getAsLongs(final int aKey) {
+    public final long[] getAsLongs(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof long[])) {
                 final long[] longs = (long[]) this.objectValues[aKey];
@@ -1052,8 +1019,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsNullableLongs(int)
      */
     @Override
-    public final 
-    Long[] getAsNullableLongs(final int aKey) {
+    public final Long[] getAsNullableLongs(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof long[])) {
                 final long[] longs = (long[]) this.objectValues[aKey];
@@ -1082,8 +1048,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsFloats(int)
      */
     @Override
-    public final 
-    float[] getAsFloats(final int aKey) {
+    public final float[] getAsFloats(final int aKey) {
         try {
             if (((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof float[]))) {
                 final float[] floats = (float[]) this.objectValues[aKey];
@@ -1104,8 +1069,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsNullableFloats(int)
      */
     @Override
-    public final 
-    Float[] getAsNullableFloats(final int aKey) {
+    public final Float[] getAsNullableFloats(final int aKey) {
         try {
             if (((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof float[]))) {
                 final float[] floats = (float[]) this.objectValues[aKey];
@@ -1134,8 +1098,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsDoubles(int)
      */
     @Override
-    public final 
-    double[] getAsDoubles(final int aKey) {
+    public final double[] getAsDoubles(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof double[])) {
                 final double[] doubles = (double[]) this.objectValues[aKey];
@@ -1156,8 +1119,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsNullableDoubles(int)
      */
     @Override
-    public final 
-    Double[] getAsNullableDoubles(final int aKey) {
+    public final Double[] getAsNullableDoubles(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE && (this.objectValues[aKey] instanceof double[])) {
                 final double[] doubles = (double[]) this.objectValues[aKey];
@@ -1186,8 +1148,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsStrings(int)
      */
     @Override
-    public final 
-    String[] getAsStrings(final int aKey) {
+    public final String[] getAsStrings(final int aKey) {
         try {
             if (((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof String[]))) {
                 final String[] strings = (String[]) this.objectValues[aKey];
@@ -1208,8 +1169,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAsMsgs(int)
      */
     @Override
-    public final 
-    Msg[] getAsMsgs(final int aKey) {
+    public final Msg[] getAsMsgs(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof Msg[])) {
                 final Msg[] msgs = (Msg[]) this.objectValues[aKey];
@@ -1257,8 +1217,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @return
      */
     @Override
-    public final 
-    Object[] getAsObjects(final int aKey) {
+    public final Object[] getAsObjects(final int aKey) {
         try {
             if ((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE) {
                 if (this.objectValues[aKey] instanceof byte[]) {
@@ -1289,16 +1248,15 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             return null;
         }
     }
-    
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#getAsObjects(int, java.lang.Object[])
      */
     @Override
     public final void getAsObjects(final int aKey, Object... aDestObjects) {
-        //TODO to implement
+        // TODO to implement
         throw new UnsupportedOperationException("Not Implemented");
     }
 
@@ -1308,8 +1266,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#getAll()
      */
     @Override
-    public final 
-    Msg getAllAsMsg() {
+    public final Msg getAllAsMsg() {
         // TODO to optimize
         final int[] keys = this.getKeysArray();
         final Msg msg = new IndexedPrimitivesObjectsMsg(keys[keys.length - 1]);
@@ -1318,10 +1275,10 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         }
         return msg;
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#getAllAsObjects()
      */
     @Override
@@ -1330,18 +1287,19 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         this.getAllAsObjects(anObjects);
         return anObjects;
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#getAllAsObjects(java.lang.Object[])
      */
-    @Override 
+    @Override
     public final void getAllAsObjects(final Object... anObjects) {
         // TODO to optimize
         final int keyMax = this.getKeyMax();
         if (keyMax > anObjects.length) {
-            throw new IllegalArgumentException("You must pass anObjects with a length=" + anObjects.length + " equals or superior than keyMax=" + keyMax);
+            throw new IllegalArgumentException("You must pass anObjects with a length=" + anObjects.length + " equals or superior than keyMax="
+                    + keyMax);
         }
         final int[] keys = this.getKeysArray();
         for (int i = 0; i < keys.length; i++) {
@@ -1354,8 +1312,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * 
      * @return
      */
-    final 
-    Map<Integer, Object> getAllAsMap() {
+    final Map<Integer, Object> getAllAsMap() {
         // TODO to optimize
         final int[] keys = this.getKeysArray();
         final Map<Integer, Object> map = new HashMap<Integer, Object>(keys.length);
@@ -1364,7 +1321,6 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         }
         return map;
     }
-
 
     /**
      * (non-Javadoc)
@@ -1400,16 +1356,16 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             } else {
                 throw new IllegalArgumentException("Impossible to set this type of value=" + aObject.getClass());
             }
-            //this.objectValues[aKey] = aObject;
+            // this.objectValues[aKey] = aObject;
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aObject);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, com.github.hermod.ser.Null)
      */
     @Override
@@ -1457,10 +1413,10 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             }
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Boolean, boolean)
      */
     @Override
@@ -1506,10 +1462,10 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             }
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Byte, boolean)
      */
     @Override
@@ -1555,10 +1511,10 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             }
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, short, boolean)
      */
     @Override
@@ -1632,10 +1588,10 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             }
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Integer, boolean)
      */
     @Override
@@ -1646,16 +1602,16 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             try {
                 this.primitiveValues[aKey] = aInt;
                 this.types[aKey] = INT_TYPE;
-                 } catch (final ArrayIndexOutOfBoundsException e) {
+            } catch (final ArrayIndexOutOfBoundsException e) {
                 increaseKeyMax(aKey);
                 set(aKey, aInt);
             }
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Integer, boolean)
      */
     @Override
@@ -1727,11 +1683,10 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             }
         }
     }
-    
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, long, boolean)
      */
     @Override
@@ -1748,11 +1703,10 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             }
         }
     }
-    
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Long, boolean)
      */
     @Override
@@ -1771,7 +1725,6 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             }
         }
     }
-    
 
     /*
      * (non-Javadoc)
@@ -1807,10 +1760,10 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             }
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Float, boolean)
      */
     @Override
@@ -1846,7 +1799,6 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             set(aKey, aDouble);
         }
     }
-   
 
     /**
      * (non-Javadoc)
@@ -1888,10 +1840,9 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         }
     }
 
-    
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Double, int, boolean)
      */
     @Override
@@ -1918,31 +1869,23 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      */
     @Override
     public final void set(final int aKey, final double aDouble, final int aScale) {
-        try {
-            final double d = (aDouble * ((aScale >= 0 ) ? DOZENS[aScale] : TENTHS[aScale]) + HALF);
-
-            // precision.HUNDREDTHS.calculateIntegerMantissa(aValue);
-            // if (d >= Short.MIN_VALUE && d <= Short.MAX_VALUE)
-            // {
-            // this.primitiveValues[aKey] = (nbDigit) | (((short) (d)) << EIGHT);
-            // this.types[aKey] = TYPE_3BITS_DECIMAL;
-            // }
-            // else
-            {
-                if (d >= Integer.MIN_VALUE && d <= Integer.MAX_VALUE) {
-                    try {
-                        this.primitiveValues[aKey] = (aScale) | (((long) (d)) << EIGHT);
-                        this.types[aKey] = FIVE_BITS_DECIMAL_TYPE;
-                    } catch (final ArrayIndexOutOfBoundsException e) {
-                        increaseKeyMax(aKey);
-                        set(aKey, aDouble, aScale);
-                    }
-                } else {
-                    this.set(aKey, aDouble);
+        final byte scale = (byte) aScale;
+        if (scale == aScale) {
+            final double d = aDouble * DOZENS_TENTHS[(XFF & scale)];
+            // TODO to bench, maybe add some common value before this
+            if (d >= Integer.MIN_VALUE && d <= Integer.MAX_VALUE) {
+                try {
+                    this.primitiveValues[aKey] = (aScale) | (((long) (d)) << EIGHT);
+                    this.types[aKey] = FIVE_BITS_DECIMAL_TYPE;
+                } catch (final ArrayIndexOutOfBoundsException e) {
+                    increaseKeyMax(aKey);
+                    set(aKey, aDouble, aScale);
                 }
+            } else {
+                this.set(aKey, aDouble);
             }
-        } catch (final ArrayIndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("Scale must be between 0 and " + (DOZENS.length - 1), e);
+        } else {
+            throw new IllegalArgumentException("Scale=" + aScale + " is not supported. Must be a byte.");
         }
     }
 
@@ -1965,10 +1908,9 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         }
     }
 
- 
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Double, int, boolean)
      */
     @Override
@@ -1977,79 +1919,79 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             set(aKey, Null.valueOf(FIVE));
         } else {
             set(aKey, aDouble, aScale);
-        } 
+        }
     }
-    
+
     /**
      * (non-Javadoc)
      * 
      * @see com.github.hermod.ser.Msg#set(int, double, com.github.hermod.ser.Scale)
      */
-//    @Override
-//    public final void set(final int aKey, final double aDouble, final Precision aPrecision) {
-//        final double mantissa = aPrecision.calculateIntegerMantissa(aDouble);
-//        if (!Double.isNaN(mantissa)) {
-//            try {
-//                this.primitiveValues[aKey] = (aPrecision.getNbDigit()) | (((long) (mantissa)) << EIGHT);
-//                this.types[aKey] = FIVE_BITS_DECIMAL_TYPE;
-//            } catch (final ArrayIndexOutOfBoundsException e) {
-//                increaseKeyMax(aKey);
-//                set(aKey, aDouble, aPrecision.getNbDigit());
-//            }
-//        } else {
-//            this.set(aKey, aDouble);
-//        }
-//    }
-    
-    //@Override
-//    public final void set(final int aKey, final double aDouble, final Scale aPrecision) {
-//        try {
-//            final int nbDigit = aPrecision.getScale();
-//            final double d = (aDouble * DOZENS[nbDigit]) + HALF;
-//
-//            // precision.HUNDREDTHS.calculateIntegerMantissa(aValue);
-//            // if (d >= Short.MIN_VALUE && d <= Short.MAX_VALUE)
-//            // {
-//            // this.primitiveValues[aKey] = (nbDigit) | (((short) (d)) << EIGHT);
-//            // this.types[aKey] = TYPE_3BITS_DECIMAL;
-//            // }
-//            // else
-//            {
-//                if (d >= Integer.MIN_VALUE && d <= Integer.MAX_VALUE) {
-//                    try {
-//                        this.primitiveValues[aKey] = (nbDigit) | (((long) (d)) << EIGHT);
-//                        this.types[aKey] = FIVE_BITS_DECIMAL_TYPE;
-//                    } catch (final ArrayIndexOutOfBoundsException e) {
-//                        increaseKeyMax(aKey);
-//                        set(aKey, aDouble, nbDigit);
-//                    }
-//                } else {
-//                    this.set(aKey, aDouble);
-//                }
-//            }
-//        } catch (final ArrayIndexOutOfBoundsException e) {
-//            throw new IllegalArgumentException("NbDigit must be between 0 and " + (DOZENS.length - 1), e);
-//        }
-//    }
+    // @Override
+    // public final void set(final int aKey, final double aDouble, final Precision aPrecision) {
+    // final double mantissa = aPrecision.calculateIntegerMantissa(aDouble);
+    // if (!Double.isNaN(mantissa)) {
+    // try {
+    // this.primitiveValues[aKey] = (aPrecision.getNbDigit()) | (((long) (mantissa)) << EIGHT);
+    // this.types[aKey] = FIVE_BITS_DECIMAL_TYPE;
+    // } catch (final ArrayIndexOutOfBoundsException e) {
+    // increaseKeyMax(aKey);
+    // set(aKey, aDouble, aPrecision.getNbDigit());
+    // }
+    // } else {
+    // this.set(aKey, aDouble);
+    // }
+    // }
+
+    // @Override
+    // public final void set(final int aKey, final double aDouble, final Scale aPrecision) {
+    // try {
+    // final int nbDigit = aPrecision.getScale();
+    // final double d = (aDouble * DOZENS[nbDigit]) + HALF;
+    //
+    // // precision.HUNDREDTHS.calculateIntegerMantissa(aValue);
+    // // if (d >= Short.MIN_VALUE && d <= Short.MAX_VALUE)
+    // // {
+    // // this.primitiveValues[aKey] = (nbDigit) | (((short) (d)) << EIGHT);
+    // // this.types[aKey] = TYPE_3BITS_DECIMAL;
+    // // }
+    // // else
+    // {
+    // if (d >= Integer.MIN_VALUE && d <= Integer.MAX_VALUE) {
+    // try {
+    // this.primitiveValues[aKey] = (nbDigit) | (((long) (d)) << EIGHT);
+    // this.types[aKey] = FIVE_BITS_DECIMAL_TYPE;
+    // } catch (final ArrayIndexOutOfBoundsException e) {
+    // increaseKeyMax(aKey);
+    // set(aKey, aDouble, nbDigit);
+    // }
+    // } else {
+    // this.set(aKey, aDouble);
+    // }
+    // }
+    // } catch (final ArrayIndexOutOfBoundsException e) {
+    // throw new IllegalArgumentException("NbDigit must be between 0 and " + (DOZENS.length - 1), e);
+    // }
+    // }
 
     /**
      * (non-Javadoc)
      * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Byte)
      */
-    //@Override
-//    public final void set(final int aKey, final Double aDouble, final Scale aPrecision) {
-//        if (aDouble != null) {
-//            this.set(aKey, aDouble.doubleValue(), aPrecision);
-//        } else {
-//            try {
-//                this.types[aKey] = DECIMAL_TYPE;
-//            } catch (final ArrayIndexOutOfBoundsException e) {
-//                increaseKeyMax(aKey);
-//                set(aKey, aDouble, aPrecision);
-//            }
-//        }
-//    }
+    // @Override
+    // public final void set(final int aKey, final Double aDouble, final Scale aPrecision) {
+    // if (aDouble != null) {
+    // this.set(aKey, aDouble.doubleValue(), aPrecision);
+    // } else {
+    // try {
+    // this.types[aKey] = DECIMAL_TYPE;
+    // } catch (final ArrayIndexOutOfBoundsException e) {
+    // increaseKeyMax(aKey);
+    // set(aKey, aDouble, aPrecision);
+    // }
+    // }
+    // }
 
     /*
      * (non-Javadoc)
@@ -2066,18 +2008,17 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             set(aKey, aString);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.String, boolean)
      */
     @Override
     public final void set(final int aKey, final String aString, final boolean forceAsciiEncoding) {
-        //TODO manage really ascii
+        // TODO manage really ascii
         set(aKey, aString);
     }
-
 
     /**
      * (non-Javadoc)
@@ -2110,8 +2051,6 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             set(aKey, aObjectArray);
         }
     }
-
-
 
     // @Override
     public final void set(final int aKey, final Object aObject, final boolean optimizeLength) {
@@ -2155,8 +2094,6 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             }
         }
     }
-
-
 
     /**
      * (non-Javadoc)
@@ -2372,7 +2309,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#set(int, double[])
      */
     @Override
-    public final void set(final int aKey, final double... aDoubles) {
+    public final void set(final int aKey, final double[] aDoubles) {
         try {
             this.objectValues[aKey] = aDoubles;
             this.types[aKey] = ARRAY_FIXED_VALUE_TYPE;
@@ -2388,7 +2325,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      * @see com.github.hermod.ser.Msg#set(int, java.lang.Double[])
      */
     @Override
-    public final void set(final int aKey, final Double... aDoubles) {
+    public final void set(final int aKey, final Double[] aDoubles) {
         try {
             this.objectValues[aKey] = aDoubles;
             this.types[aKey] = ARRAY_VARIABLE_VALUE_TYPE;
@@ -2413,19 +2350,17 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             set(aKey, aStrings);
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#set(int, java.lang.String[], boolean)
      */
     @Override
     public final void set(final int aKey, final String[] aStrings, final boolean forceAsciiEncoding) {
-        // TODO manage 
+        // TODO manage
         set(aKey, aStrings);
     }
-
-
 
     /**
      * (non-Javadoc)
@@ -2442,7 +2377,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             set(aKey, aMsgs);
         }
     }
-    
+
     /**
      * (non-Javadoc)
      * 
@@ -2458,14 +2393,14 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             }
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.Msg#setAll(java.lang.Object[])
      */
     public final void setAll(final Object... anObjects) {
-        //TODO to optimize
+        // TODO to optimize
         for (int key = 0; key < anObjects.length; key++) {
             set(key, anObjects[key]);
         }
@@ -2491,7 +2426,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             }
         }
     }
-    
+
     /**
      * (non-Javadoc)
      * 
@@ -2524,7 +2459,6 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             }
         }
     }
-
 
     /**
      * serializeToBytes.
@@ -2635,7 +2569,6 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                     bytes[pos++] = (byte) (aLong >> FIFTY_SIX);
                     break;
 
-                    
                 case STRING_UTF_8_TYPE:
                     final String aString = (String) this.objectValues[key];
                     if (aString != null) {
@@ -2646,13 +2579,13 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                                 bytes[pos++] = (byte) aString.charAt(j);
                             }
                         } else {
-                          final byte[] stringBytes = aString.getBytes(UTF_8_CHARSET);
-                          final int stringLength = stringBytes.length;
-                          pos = writeVariableLength(bytes, pos - 1, stringLength, (stringLength == 0) ? TWO : ONE);
-                          System.arraycopy(stringBytes, 0, bytes, pos, stringLength);
-                          pos += stringBytes.length;
+                            final byte[] stringBytes = aString.getBytes(UTF_8_CHARSET);
+                            final int stringLength = stringBytes.length;
+                            pos = writeVariableLength(bytes, pos - 1, stringLength, (stringLength == 0) ? TWO : ONE);
+                            System.arraycopy(stringBytes, 0, bytes, pos, stringLength);
+                            pos += stringBytes.length;
                         }
-                            
+
                     }
                     break;
 
@@ -2791,7 +2724,6 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         return msg;
     }
 
-    
     /**
      * (non-Javadoc)
      * 
@@ -2808,15 +2740,16 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         while (pos < offset + length) {
             if ((bytes[pos] & TYPE_MASK) == SKIPPED_KEYS_TYPE) {
                 final int lengthMask = bytes[pos++] & LENGTH_MASK;
-                key += (((lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? (XFF & bytes[pos++])
-                        : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN)
-                                | ((bytes[pos++] & XFF) << TWENTY_FOUR))) + 1;
+                key += (((lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask
+                        : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? (XFF & bytes[pos++]) : (bytes[pos++] & XFF)
+                                | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR))) + 1;
             } else {
                 final int lengthMask = bytes[pos++] & LENGTH_MASK;
                 // TODO to optimize
                 pos += (((lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask
-                        : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF & bytes[pos] : ((bytes[pos] & XFF) | ((bytes[pos + ONE] & XFF) << EIGHT)
-                                | ((bytes[pos + TWO] & XFF) << SIXTEEN) | ((bytes[pos + THREE] & XFF) << TWENTY_FOUR))));
+                        : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF & bytes[pos]
+                                : ((bytes[pos] & XFF) | ((bytes[pos + ONE] & XFF) << EIGHT) | ((bytes[pos + TWO] & XFF) << SIXTEEN) | ((bytes[pos
+                                        + THREE] & XFF) << TWENTY_FOUR))));
                 pos += (lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? 0 : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? ONE : FOUR;
 
                 key++;
@@ -2833,8 +2766,9 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             // Skip null key
             if ((type & TYPE_MASK) == NULL_TYPE) {
                 final int sizeMask = type & LENGTH_MASK;
-                key += ((sizeMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? sizeMask : (sizeMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF & bytes[pos++] : (bytes[pos++] & XFF)
-                        | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR)) + 1;
+                key += ((sizeMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? sizeMask : (sizeMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF
+                        & bytes[pos++] : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN)
+                        | ((bytes[pos++] & XFF) << TWENTY_FOUR)) + 1;
             }
             // Decode values
             else {
@@ -2892,12 +2826,12 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                     this.types[key] = typeMask;
                     final int lengthMask = (LENGTH_MASK & type);
                     final int fieldLength = (lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask
-                            : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF & bytes[pos++] : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT)
-                                    | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR);
+                            : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF & bytes[pos++] : (bytes[pos++] & XFF)
+                                    | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR);
 
                     if (lengthMask != 0) {
                         switch (typeMask) {
-                            
+
                         case STRING_UTF_8_TYPE:
                             this.objectValues[key] = new String(bytes, pos, fieldLength, UTF_8_CHARSET);
                             pos += fieldLength;
@@ -3042,7 +2976,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
 
                                     break;
 
-                                case STRING_UTF8:   
+                                case STRING_UTF8:
                                     final String[] strings = new String[variableArrayLength];
                                     for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
                                         strings[arrayKey] = arrayAsMsg.getAsString(arrayKey);
@@ -3075,15 +3009,14 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             }
         }
     }
-    
+
     /**
      * (non-Javadoc)
-     *
+     * 
      * @see com.github.hermod.ser.ByteBufferSerializable#serializeToByteBuffer()
      */
     @Override
-    public ByteBuffer serializeToByteBuffer()
-    {
+    public ByteBuffer serializeToByteBuffer() {
         final byte[] bytes = serializeToBytes();
         final ByteBuffer aDestByteBuffer = ByteBuffer.allocate(bytes.length);
         aDestByteBuffer.put(bytes);
@@ -3148,7 +3081,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         if (length < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE && forceEncodingAtLeastOn == ONE) {
             bytes[pos++] |= (byte) length;
         } else {
-            final boolean isEncodedInAnInt = (length > MAX_LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) || (forceEncodingAtLeastOn == FIVE);
+            final boolean isEncodedInAnInt = (length > MAX_VALUE_FOR_UNSIGNED_BYTE) || (forceEncodingAtLeastOn == FIVE);
             bytes[pos++] |= (byte) ((isEncodedInAnInt) ? LENGTH_ENCODED_IN_AN_INT : LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE);
             bytes[pos++] = (byte) (length);
             if (isEncodedInAnInt) {
@@ -3169,7 +3102,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      */
     private int getVariableLength(final int length, final int forceEncodingAtLeastOn) {
         return (length < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE && (forceEncodingAtLeastOn == ONE)) ? ONE
-                : (length > MAX_LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE || forceEncodingAtLeastOn == FIVE) ? FIVE : TWO;
+                : (length > MAX_VALUE_FOR_UNSIGNED_BYTE || forceEncodingAtLeastOn == FIVE) ? FIVE : TWO;
     }
 
     /**
@@ -3189,8 +3122,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             switch (this.types[key]) {
             // TODO refactor it
             case STRING_UTF_8_TYPE:
-                final int stringUtf8length = (this.objectValues[key] != null) ? ((String) this.objectValues[key]).getBytes(UTF_8_CHARSET).length
-                        : 0;
+                final int stringUtf8length = (this.objectValues[key] != null) ? ((String) this.objectValues[key]).getBytes(UTF_8_CHARSET).length : 0;
                 return getVariableLength(stringUtf8length, (stringUtf8length == 0) ? TWO : ONE) + stringUtf8length;
 
             case MSG_TYPE:
@@ -3269,6 +3201,5 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
     public boolean equals(Object aObj) {
         return Msgs.equals(aObj, this);
     }
-    
 
 }

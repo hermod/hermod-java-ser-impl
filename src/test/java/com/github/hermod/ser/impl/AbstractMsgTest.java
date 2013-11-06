@@ -543,7 +543,6 @@ public abstract class AbstractMsgTest {
             srcMsg.set(KEY_TEN + i, DOUBLE_TEST1, i);
         }
         
-        srcMsg.getAsDouble(15);
 
         srcMsg.set(KEY_NINETY, DOUBLE_TEST);
         srcMsg.set(KEY_NINETYTWO, DOUBLE_TEST, 5);
@@ -556,7 +555,7 @@ public abstract class AbstractMsgTest {
 
         assertThat(destMsg.getAsFloat(KEY_ONE)).isEqualTo(FLOAT_TEST);
         assertThat(destMsg.getAsDouble(KEY_TWO)).isEqualTo(DOUBLE_TEST);
-        // assertThat(msg2.getAsDouble(KEY_THREE)).isEqualTo(DOUBLE_TEST);
+        //assertThat(msg2.getAsDouble(KEY_THREE)).isEqualTo(DOUBLE_TEST);
         assertThat(destMsg.getAsDouble(KEY_FOUR)).isEqualTo(FLOAT_TEST);
         assertThat(destMsg.getAsDouble(KEY_FIVE)).isEqualTo(DOUBLE_TEST2);
         assertThat(destMsg.getAsNullableDouble(KEY_FIVE)).isEqualTo(DOUBLE_TEST2);
@@ -612,14 +611,6 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_MINUS_ONE, DOUBLE_TEST, 1);
     }
 
-    /**
-     * testSetGetAsDoubleWithDigitWithNbDigitIllegalArgument.
-     * 
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void testSetGetAsDoubleWithDigitWithNbDigitIllegalArgument() {
-        srcMsg.set(KEY_ONE, DOUBLE_TEST, 9);
-    }
 
     /**
      * testGetAsString.

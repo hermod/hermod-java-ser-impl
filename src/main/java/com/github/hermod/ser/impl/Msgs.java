@@ -5,7 +5,6 @@ import static com.github.hermod.ser.Types.ARRAY_VARIABLE_VALUE_TYPE;
 import static com.github.hermod.ser.Types.NULL_TYPE;
 
 import com.github.hermod.ser.Msg;
-import com.github.hermod.ser.Scale;
 import com.github.hermod.ser.Type;
 import com.github.hermod.ser.Types;
 
@@ -157,7 +156,7 @@ public final class Msgs {
     /**
      * MAX_LENGTH_ENCODED_IN_A_BIT
      */
-    static final int MAX_LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE = 255;
+    static final int MAX_VALUE_FOR_UNSIGNED_BYTE = 255;
     /**
      * 
      */
@@ -183,18 +182,7 @@ public final class Msgs {
      */
     static final int DEFAULT_VALUE = ZERO;
 
-    /**
-     * DOZENS
-     */
-    
-    // TODO replace
-    static final double[] DOZENS = { 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0, 100000000.0 };
-
-    static final double[] TENTHS = { 1.0 / Scale.UNITS.getDecimal(), 1.0 / Scale.TENS.getDecimal(),
-            1.0 / Scale.HUNDREDS.getDecimal(), 1.0 / Scale.THOUSANDS.getDecimal(), 1.0 / Scale.TEN_THOUSANDS.getDecimal(),
-            1.0 / Scale.HUNDRED_THOUSANDS.getDecimal(), 1.0 / Scale.MILLIONS.getDecimal(), 1.0 / Scale.TEN_MILLIONS.getDecimal(),
-            1.0 / Scale.HUNDRED_MILLIONS.getDecimal() };
-
+    //static final double[] TENTHS_DOZENS;
     /**
      * FORCE_ENCODING_ZERO_ON_2BITS
      * 
@@ -208,14 +196,62 @@ public final class Msgs {
      */
     static final String ERROR_WHEN_KEY_NOT_PRESENT = "The key=%s is not present for type asked.";
 
+    static final double HALF = 0.5;
+    
 
     private static final int[] POW_2 = new int[Integer.SIZE];
 
+  
+    
+    
+    /**
+     * DOZENS
+     */
+    
+    // TODO replace
+    static final double[] DOZENS; // = { 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0, 100000000.0 };
+
+    static final double[] TENTHS; /* = { 1.0 / Scale.UNITS.getDecimal(), 1.0 / Scale.TENS.getDecimal(),
+            1.0 / Scale.HUNDREDS.getDecimal(), 1.0 / Scale.THOUSANDS.getDecimal(), 1.0 / Scale.TEN_THOUSANDS.getDecimal(),
+            1.0 / Scale.HUNDRED_THOUSANDS.getDecimal(), 1.0 / Scale.MILLIONS.getDecimal(), 1.0 / Scale.TEN_MILLIONS.getDecimal(),
+            1.0 / Scale.HUNDRED_MILLIONS.getDecimal() };*/
+
+    
+    static final double[] DOZENS_TENTHS;
+    
     static {
+        
+        //PWO_2 init
         for (int i = 0; i < POW_2.length - 1; i++) {
             POW_2[i] = 1 << i;
         }
         POW_2[POW_2.length - 1] = Integer.MAX_VALUE;
+        
+        
+        //DOZENS
+        DOZENS = new double[Byte.MAX_VALUE];
+        for (int i = 0; i < DOZENS.length; i++) {
+            DOZENS[i] = Math.pow(10, i);
+        }
+        
+        
+        // TENTHS
+        TENTHS = new double[- Byte.MIN_VALUE];
+        for (int i = 0; i < TENTHS.length; i++) {
+            TENTHS[i] = 1 / Math.pow(10, i);
+        }
+        
+        
+        // TENTHS_DOZENS
+        DOZENS_TENTHS = new double[MAX_VALUE_FOR_UNSIGNED_BYTE];
+        for (int i = 0; i < DOZENS_TENTHS.length; i++) {
+            if (i == (byte) i) {
+                DOZENS_TENTHS[i] = Math.pow(10, i);
+            } else {
+                DOZENS_TENTHS[i] = 1 / Math.pow(10, i);
+            }
+        }
+        
     }
 
     /**
