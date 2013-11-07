@@ -770,6 +770,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsNullableBooleans(KEY_FOUR_HUNDRED)).isNull();
     }
 
+    
     /**
      * testSetGetAsBytes.
      * 

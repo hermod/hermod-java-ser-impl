@@ -2491,8 +2491,13 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         for (int key = 0; key < this.types.length; key++) {
             if (this.types[key] != NULL_TYPE) {
                 if (consecutiveNullKey != 0) {
-                    bytes[pos] = SKIPPED_KEYS_TYPE;
-                    pos = writeVariableLength(bytes, pos, consecutiveNullKey - 1, ONE);
+                    //TODO to add
+//                    if (consecutiveNullKey == 1) {
+//                        bytes[pos] = NULL_TYPE;
+//                    } else {
+                        bytes[pos] = SKIPPED_KEYS_TYPE;
+                        pos = writeVariableLength(bytes, pos, consecutiveNullKey - 1, ONE);
+//                    }
                     consecutiveNullKey = 0;
                 }
 
@@ -2760,8 +2765,8 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         while (pos < offset + length) {
             final byte type = bytes[pos++];
 
-            // Skip null key
-            if ((type & TYPE_MASK) == NULL_TYPE) {
+            // Skip keys
+            if ((type & TYPE_MASK) == SKIPPED_KEYS_TYPE) {
                 final int sizeMask = type & LENGTH_MASK;
                 key += ((sizeMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? sizeMask : (sizeMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF
                         & bytes[pos++] : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN)
@@ -2815,6 +2820,9 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                             | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
                             | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
                             | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX);
+                    
+                case NULL_TYPE:
+                    //Do Nothing
                     break;
 
                 // All non fixed type
@@ -2828,7 +2836,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
 
                     if (lengthMask != 0) {
                         switch (typeMask) {
-
+                            
                         case STRING_UTF_8_TYPE:
                             this.objectValues[key] = new String(bytes, pos, fieldLength, UTF_8_CHARSET);
                             pos += fieldLength;
@@ -2841,6 +2849,10 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                             this.objectValues[key] = msg;
                             break;
 
+                        case NULL_TYPE:
+                            //Do Nothing
+                            break;
+                            
                         case ARRAY_FIXED_VALUE_TYPE:
                             final byte arrayType = bytes[pos++];
                             final int fixedArrayLength = fieldLength - ONE;
@@ -3114,7 +3126,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         // Fixed value
         if (lengthMask != 0) {
             return lengthMask + 1;
-            // Non Fixed value
+        // Non Fixed value (the length does not contain length before serialize)
         } else {
             switch (this.types[key]) {
             // TODO refactor it
@@ -3127,6 +3139,8 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                 final int msgLength = (this.objectValues[key] != null) ? ((BytesSerializable) this.objectValues[key]).getLength() : 0;
                 return getVariableLength(msgLength, (msgLength == 0) ? TWO : ONE) + msgLength;
 
+                //TODO addd NULL_TYPE
+                
             case ARRAY_FIXED_VALUE_TYPE:
                 int arrayFixedValueLength = ONE;
                 if ((this.objectValues[key] != null)) {
