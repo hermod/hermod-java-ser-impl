@@ -146,7 +146,7 @@ public final class Msgs {
     /**
      * 
      */
-    static final byte LENGTH_MASK = (byte) 0x1F;//(byte) 0b0001_1111;
+    static final byte LENGTH_MASK = (byte) 0x1F;// (byte) 0b0001_1111;
 
     /**
      * 
@@ -182,7 +182,7 @@ public final class Msgs {
      */
     static final int DEFAULT_VALUE = ZERO;
 
-    //static final double[] TENTHS_DOZENS;
+    // static final double[] TENTHS_DOZENS;
     /**
      * FORCE_ENCODING_ZERO_ON_2BITS
      * 
@@ -190,59 +190,53 @@ public final class Msgs {
      */
     // TODO to remove
     static final boolean FORCE_ENCODING_ZERO_ON_2BITS = true;
-    
+
     /**
      * ERROR_WHEN_KEY_NOT_PRESENT
      */
     static final String ERROR_WHEN_KEY_NOT_PRESENT = "The key=%s is not present for type asked.";
 
     static final double HALF = 0.5;
-    
 
     private static final int[] POW_2 = new int[Integer.SIZE];
 
-  
-    
-    
     /**
      * DOZENS
      */
-    
+
     // TODO replace
-    //static final double[] DOZENS; // = { 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0, 100000000.0 };
+    // static final double[] DOZENS; // = { 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0, 100000000.0 };
 
-    //static final double[] TENTHS; 
-    /* = { 1.0 / Scale.UNITS.getDecimal(), 1.0 / Scale.TENS.getDecimal(),
-            1.0 / Scale.HUNDREDS.getDecimal(), 1.0 / Scale.THOUSANDS.getDecimal(), 1.0 / Scale.TEN_THOUSANDS.getDecimal(),
-            1.0 / Scale.HUNDRED_THOUSANDS.getDecimal(), 1.0 / Scale.MILLIONS.getDecimal(), 1.0 / Scale.TEN_MILLIONS.getDecimal(),
-            1.0 / Scale.HUNDRED_MILLIONS.getDecimal() };*/
+    // static final double[] TENTHS;
+    /*
+     * = { 1.0 / Scale.UNITS.getDecimal(), 1.0 / Scale.TENS.getDecimal(), 1.0 / Scale.HUNDREDS.getDecimal(), 1.0 / Scale.THOUSANDS.getDecimal(), 1.0 /
+     * Scale.TEN_THOUSANDS.getDecimal(), 1.0 / Scale.HUNDRED_THOUSANDS.getDecimal(), 1.0 / Scale.MILLIONS.getDecimal(), 1.0 /
+     * Scale.TEN_MILLIONS.getDecimal(), 1.0 / Scale.HUNDRED_MILLIONS.getDecimal() };
+     */
 
-    
     static final double[] DOZENS_TENTHS;
-    
+
     static {
-        
-        //PWO_2 init
+
+        // PWO_2 init
         for (int i = 0; i < POW_2.length - 1; i++) {
             POW_2[i] = 1 << i;
         }
         POW_2[POW_2.length - 1] = Integer.MAX_VALUE;
-        
-        
-//        //DOZENS
-//        DOZENS = new double[Byte.MAX_VALUE];
-//        for (int i = 0; i < DOZENS.length; i++) {
-//            DOZENS[i] = Math.pow(10, i);
-//        }
-//        
-//        
-//        // TENTHS
-//        TENTHS = new double[- Byte.MIN_VALUE];
-//        for (int i = 0; i < TENTHS.length; i++) {
-//            TENTHS[i] = 1 / Math.pow(10, i);
-//        }
-        
-        
+
+        // //DOZENS
+        // DOZENS = new double[Byte.MAX_VALUE];
+        // for (int i = 0; i < DOZENS.length; i++) {
+        // DOZENS[i] = Math.pow(10, i);
+        // }
+        //
+        //
+        // // TENTHS
+        // TENTHS = new double[- Byte.MIN_VALUE];
+        // for (int i = 0; i < TENTHS.length; i++) {
+        // TENTHS[i] = 1 / Math.pow(10, i);
+        // }
+
         // TENTHS_DOZENS
         DOZENS_TENTHS = new double[MAX_VALUE_FOR_UNSIGNED_BYTE];
         for (int i = 0; i < DOZENS_TENTHS.length; i++) {
@@ -252,7 +246,7 @@ public final class Msgs {
                 DOZENS_TENTHS[i] = 1 / Math.pow(10, i);
             }
         }
-        
+
     }
 
     /**
@@ -268,10 +262,10 @@ public final class Msgs {
         }
         return POW_2[i];
     }
-    
+
     /**
      * isAsciiString.
-     *
+     * 
      * @param aString
      * @return
      */
@@ -286,10 +280,10 @@ public final class Msgs {
         }
         return true;
     }
-    
+
     /**
      * serializeToJsonString.
-     *
+     * 
      * @param aSrcMsg
      * @return
      */
@@ -299,64 +293,62 @@ public final class Msgs {
         final int[] keys = aMsg.getKeysArray();
         for (final int key : keys) {
             final byte typeAsByte = aMsg.getTypeAsByte(key);
-            if (typeAsByte != NULL_TYPE) {
-                sb.append("\"");
-                sb.append(key);
-                sb.append("\"");
-                sb.append(":");
-                if (typeAsByte == ARRAY_FIXED_VALUE_TYPE || typeAsByte == ARRAY_VARIABLE_VALUE_TYPE) {
-                    final Object[] objects = aMsg.getAsObjects(key);
-                    if (objects != null) {
-                        sb.append("[");
-                        for (Object object : objects) {
-                            sb.append(object);
-                            sb.append(",");
-                        }
-                        if (objects.length != 0) {
-                            sb.deleteCharAt(sb.length() - 1);
-                        }
-                        sb.append("]");
-                    } else {
-                        sb.append("null");
+            sb.append("\"");
+            sb.append(key);
+            sb.append("\"");
+            sb.append(":");
+            if (typeAsByte == ARRAY_FIXED_VALUE_TYPE || typeAsByte == ARRAY_VARIABLE_VALUE_TYPE) {
+                final Object[] objects = aMsg.getAsObjects(key);
+                if (objects != null) {
+                    sb.append("[");
+                    for (Object object : objects) {
+                        sb.append(object);
+                        sb.append(",");
                     }
-                } else if (typeAsByte == Types.INTEGER_TYPE) {
-                    sb.append(aMsg.getAsNullableLong(key));
-                } else if (typeAsByte == Types.DECIMAL_TYPE) {
-                    sb.append(aMsg.getAsNullableDouble(key));
-                } else if (typeAsByte == Types.STRING_UTF_8_TYPE) {
-                    final String s = aMsg.getAsString(key);
-                    if (s != null) {
-                        sb.append("\"");
-                        sb.append(s);
-                        sb.append("\"");
-                    } else {
-                        sb.append("null");
+                    if (objects.length != 0) {
+                        sb.deleteCharAt(sb.length() - 1);
                     }
-                } else if (typeAsByte == Types.MSG_TYPE) {
-                    Msg msg = aMsg.getAsMsg(key);
-                    if (msg != null) {
-                        sb.append(msg);
-                    } else {
-                        sb.append("null");
-                    }
+                    sb.append("]");
                 } else {
-                    // should not occur
+                    sb.append("null");
                 }
-                sb.append(",");
+            } else if (typeAsByte == Types.INTEGER_TYPE) {
+                sb.append(aMsg.getAsNullableLong(key));
+            } else if (typeAsByte == Types.DECIMAL_TYPE) {
+                sb.append(aMsg.getAsNullableDouble(key));
+            } else if (typeAsByte == Types.STRING_UTF_8_TYPE) {
+                final String s = aMsg.getAsString(key);
+                if (s != null) {
+                    sb.append("\"");
+                    sb.append(s);
+                    sb.append("\"");
+                } else {
+                    sb.append("null");
+                }
+            } else if (typeAsByte == Types.MSG_TYPE) {
+                Msg msg = aMsg.getAsMsg(key);
+                if (msg != null) {
+                    sb.append(msg);
+                } else {
+                    sb.append("null");
+                }
+            } else if (typeAsByte == Types.NULL_TYPE) {
+                sb.append("null");
             }
+            sb.append(",");
+
         }
         if (keys.length > 0) {
             sb.deleteCharAt(sb.length() - 1);
         }
         sb.append("}");
         return sb.toString();
-    
+
     }
-    
-    
+
     /**
      * hashCode.
-     *
+     * 
      * @param aMsg
      * @return
      */

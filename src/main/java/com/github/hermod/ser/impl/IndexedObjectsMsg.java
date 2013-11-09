@@ -316,6 +316,20 @@ public class IndexedObjectsMsg implements Msg {
         }
     }
 
+    
+   @Override
+   public final Null getAsNull(final int aKey) {
+       try {
+           final Object value = this.objectValues[aKey];
+           if (value instanceof Null) {
+               return (Null) this.objectValues[aKey];
+           }
+       } catch (final ArrayIndexOutOfBoundsException e) {
+       }
+       return null;
+   }
+
+    
     /**
      * (non-Javadoc)
      * 
@@ -1135,17 +1149,6 @@ public class IndexedObjectsMsg implements Msg {
         }
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#getAsObjects(int, java.lang.Object[])
-     */
-    @Override
-    public final void getAsObjects(final int aKey, final Object... aDestObjects) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not Yet Implemented.");
-        // return null;
-    }
 
     /**
      * (non-Javadoc)

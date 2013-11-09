@@ -10,6 +10,8 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.github.hermod.ser.ByteBufSerializable;
+import com.github.hermod.ser.Null;
 import com.github.hermod.ser.Type;
 import com.github.hermod.ser.ByteBufferMsgSerializer;
 import com.github.hermod.ser.ByteBufferSerializable;
@@ -27,6 +29,8 @@ import com.google.gson.GsonBuilder;
  */
 public abstract class AbstractMsgTest {
 
+    protected static final Null NULL_TEST = Null.valueOf(4);
+    protected static final Null NULL_TEST2 = Null.valueOf(8);
     protected static final boolean BOOLEAN_TEST = true;
     protected static final byte BYTE_TEST = Byte.MIN_VALUE;
     protected static final short SHORT_TEST = Short.MAX_VALUE;
@@ -36,6 +40,7 @@ public abstract class AbstractMsgTest {
     protected static final double DOUBLE_TEST = 11.11;
     protected static final double DOUBLE_TEST1 = 1.0;
     protected static final double DOUBLE_TEST2 = Double.MAX_VALUE / 2;
+    protected static final double DOUBLE_TEST3 = 0.0000000001;
     protected static final String STRING_TEST_UTF16 = "€" + new String(Character.toChars(119070));
     protected static final String STRING_TEST = "string";
     protected static final String STRING_TEST32 = "12345678901234567890123456789012";
@@ -104,7 +109,7 @@ public abstract class AbstractMsgTest {
      * 
      * @return
      */
-    public abstract Msg newMsg();
+    public abstract Msg create();
 
     /**
      * Constructor.
@@ -112,7 +117,7 @@ public abstract class AbstractMsgTest {
      */
     public AbstractMsgTest() {
         super();
-        this.msgTest = newMsg();
+        this.msgTest = create();
         this.msgTest.set(KEY_ONE, BYTE_TEST);
     }
 
@@ -123,9 +128,47 @@ public abstract class AbstractMsgTest {
      */
     @Before
     public void setUp() throws Exception {
-        this.srcMsg = newMsg();
-        this.destMsg = newMsg();
+        this.srcMsg = create();
+        this.destMsg = create();
     }
+    
+    
+    /**
+     * testIsBytesSerializable.
+     *
+     */
+    @Test
+    public void testIsBytesSerializable(){
+        assertThat((this.srcMsg instanceof BytesSerializable)).isEqualTo(this.srcMsg.isBytesSerializable());
+    }
+    
+    /**
+     * testIsByteBufSerializable.
+     *
+     */
+    @Test
+    public void testIsByteBufSerializable(){
+        assertThat((this.srcMsg instanceof ByteBufSerializable)).isEqualTo(this.srcMsg.isByteBufSerializable());
+    }
+    
+    /**
+     * testIsByteBufferSerializable.
+     *
+     */
+    @Test
+    public void testIsByteBufferSerializable(){
+        assertThat((this.srcMsg instanceof ByteBufferSerializable)).isEqualTo(this.srcMsg.isByteBufferSerializable());
+    }
+    
+   
+   @Test
+   public void testGetKeyMax(){
+       final int keyMax = 32;
+       assertThat(this.srcMsg.getKeyMax()).isEqualTo(-1);
+       this.srcMsg.set(keyMax, keyMax);
+       assertThat(this.srcMsg.getKeyMax()).isEqualTo(keyMax);
+   }
+
 
     /**
      * testClear.
@@ -138,7 +181,7 @@ public abstract class AbstractMsgTest {
         srcMsg.removeAll();
         assertThat(srcMsg.getKeysArray()).hasSize(0);
     }
-
+   
     /**
      * testContains.
      * 
@@ -157,15 +200,51 @@ public abstract class AbstractMsgTest {
      * 
      */
     @Test
-    public void testGetKeys() {
+    public void testGetKeysArray() {
+        srcMsg.set(KEY_ZERO, Null.valueOf(1));
         srcMsg.set(KEY_ONE, BYTE_TEST);
         srcMsg.set(KEY_TWO, SHORT_TEST);
+        srcMsg.getKeysArray();
+        
         final byte[] bytes = this.bytesMsgSerializer.serializeToBytes(srcMsg);
 
         this.bytesMsgSerializer.deserializeFromBytes(bytes, 0, bytes.length, destMsg);
         final int[] keys = destMsg.getKeysArray();
 
-        assertThat(keys).isEqualTo(new int[] { KEY_ONE, KEY_TWO });
+        assertThat(keys).isEqualTo(new int[] { KEY_ZERO, KEY_ONE, KEY_TWO });
+    }
+    
+    /**
+     * testGetAsByte.
+     * 
+     */
+    @Test
+    public void testSetGetAsNull() {
+        srcMsg.set(KEY_ZERO, NULL_TEST);
+        srcMsg.set(KEY_ONE, BOOLEAN_TEST);
+        srcMsg.set(KEY_TWO, NULL_TEST2);
+        srcMsg.set(KEY_THREE, (Boolean) null);
+        srcMsg.set(KEY_NINETY, Null.valueOf(KEY_NINETY));
+        srcMsg.set(KEY_THREE_HUNDRED, Null.valueOf(KEY_THREE_HUNDRED));
+        srcMsg.set(KEY_FOUR_HUNDRED, Null.valueOf(KEY_FOUR_HUNDRED));
+        assertThat(srcMsg.contains(KEY_ZERO)).isTrue();
+        
+        final byte[] bytes = this.bytesMsgSerializer.serializeToBytes(srcMsg);
+        this.bytesMsgSerializer.deserializeFromBytes(bytes, 0, bytes.length, destMsg);
+
+        assertThat(destMsg.contains(KEY_ZERO)).isEqualTo(true);
+        assertThat(destMsg.getAsNull(KEY_ZERO)).isEqualTo(NULL_TEST);
+        assertThat(destMsg.getType(KEY_ZERO)).isEqualTo(Type.NULL);
+        assertThat(destMsg.getAsNullableBoolean(KEY_ONE)).isEqualTo(BOOLEAN_TEST);
+        assertThat(destMsg.getType(KEY_TWO)).isEqualTo(Type.NULL);
+        assertThat(destMsg.getAsNull(KEY_TWO)).isEqualTo(NULL_TEST2);
+        assertThat(destMsg.getType(KEY_THREE)).isEqualTo(Type.INTEGER);
+        assertThat(destMsg.getType(KEY_NINETY)).isEqualTo(Type.NULL);
+        assertThat(destMsg.getType(KEY_THREE_HUNDRED)).isEqualTo(Type.NULL);
+        assertThat(destMsg.getType(KEY_FOUR_HUNDRED)).isEqualTo(Type.NULL);
+        assertThat(destMsg.getAsNull(KEY_THREE_HUNDRED)).isEqualTo(Null.valueOf(KEY_THREE_HUNDRED));
+        assertThat(destMsg.getAsNull(KEY_FOUR_HUNDRED)).isEqualTo(Null.valueOf(KEY_FOUR_HUNDRED));
+        
     }
 
     /**
@@ -174,6 +253,7 @@ public abstract class AbstractMsgTest {
      */
     @Test
     public void testSetGetAsBoolean() {
+        
         srcMsg.set(KEY_ZERO, BOOLEAN_TEST);
         srcMsg.set(KEY_ONE, BOOLEAN_TEST);
         srcMsg.set(KEY_TWO, Boolean.valueOf(BOOLEAN_TEST));
@@ -290,6 +370,8 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_THREE, (short) BYTE_TEST);
         srcMsg.set(KEY_FOUR, Short.valueOf(SHORT_TEST));
         srcMsg.set(KEY_FIVE, (Short) null);
+        srcMsg.set(KEY_SIX, Short.valueOf(BYTE_TEST), false);
+        
         srcMsg.set(KEY_NINETY, SHORT_TEST);
         srcMsg.set(KEY_THREE_HUNDRED, SHORT_TEST);
         srcMsg.set(KEY_FOUR_HUNDRED, (Short) null);
@@ -304,6 +386,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsShort(KEY_TWO)).isEqualTo(BYTE_TEST);
         assertThat(destMsg.getAsShort(KEY_THREE)).isEqualTo(BYTE_TEST);
         assertThat(destMsg.getAsNullableShort(KEY_FIVE)).isNull();
+        assertThat(destMsg.getAsShort(KEY_SIX)).isEqualTo(BYTE_TEST);
         assertThat(destMsg.getAsNullableShort(KEY_FOUR_HUNDRED)).isNull();
         assertThat(destMsg.getAsNullableShort(KEY_FOUR)).isEqualTo(Short.valueOf(SHORT_TEST));
         assertThat(destMsg.contains(KEY_ZERO)).isFalse();
@@ -538,8 +621,9 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_FIVE, DOUBLE_TEST2, 5);
         srcMsg.set(KEY_SIX, Double.valueOf(DOUBLE_TEST2));
         srcMsg.set(KEY_SEVEN, (Double) null);
-
-        for (int i = 0; i < 9; i++) {
+        srcMsg.set(KEY_EIGHT, DOUBLE_TEST3, 10);
+        
+        for (int i = 0; i <= 8; i++) {
             srcMsg.set(KEY_TEN + i, DOUBLE_TEST1, i);
         }
         
@@ -561,6 +645,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsNullableDouble(KEY_FIVE)).isEqualTo(DOUBLE_TEST2);
         assertThat(destMsg.getAsNullableDouble(KEY_SIX)).isEqualTo(Double.valueOf(DOUBLE_TEST2));
         assertThat(destMsg.getAsNullableDouble(KEY_SEVEN)).isNull();
+        assertThat(destMsg.getAsDouble(KEY_EIGHT)).isEqualTo(DOUBLE_TEST3);
 
         for (int i = 0; i < 9; i++) {
             assertThat(destMsg.getAsDouble(KEY_TEN + i)).isEqualTo(DOUBLE_TEST1);
@@ -712,7 +797,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsMsg(KEY_FOUR)).isNull();
         assertThat(destMsg.contains(KEY_ZERO)).isFalse();
 
-        final Msg msg = newMsg();
+        final Msg msg = create();
         destMsg.getAsMsg(KEY_NINETY, msg);
 
         // assertThat(this.msgTest.getAsByte(KEY_ONE)).isEqualTo(msg.getAsMsg(KEY_ONE).getAsByte(KEY_ONE));
@@ -768,6 +853,20 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsBooleans(KEY_THREE_HUNDRED)).isEqualTo(BOOLEANS_TEST);
         assertThat(destMsg.getAsBooleans(KEY_MINUS_ONE)).isNull();
         assertThat(destMsg.getAsNullableBooleans(KEY_FOUR_HUNDRED)).isNull();
+    }
+
+    /**
+     * testSetGetAsBytes2.
+     *
+     */
+    @Test
+    public void testSetGetAsBytesSimple() {
+        srcMsg.set(KEY_ONE, BYTES_TEST);
+
+        final byte[] bytes = this.bytesMsgSerializer.serializeToBytes(srcMsg);
+        this.bytesMsgSerializer.deserializeFromBytes(bytes, 0, bytes.length, destMsg);
+
+        assertThat(destMsg.getAsBytes(KEY_ONE)).isEqualTo(BYTES_TEST);
     }
 
     
@@ -836,6 +935,7 @@ public abstract class AbstractMsgTest {
      * testSetGetAsLongs.
      * 
      */
+    
     @Test
     public void testSetGetAsInts() {
         srcMsg.set(KEY_ONE, INTS_TEST);
@@ -956,6 +1056,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsNullableDoubles(KEY_FOUR_HUNDRED)).isNull();
     }
 
+    
     /**
      * testSetGetAsStrings.
      * 
@@ -1223,7 +1324,7 @@ public abstract class AbstractMsgTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testSerializeToBytesWithIllegalArgument() {
-        final Msg srcMsg = newMsg();
+        final Msg srcMsg = create();
         srcMsg.set(KEY_ONE, BYTE_TEST);
         final byte[] bytes = new byte[0];
         this.bytesMsgSerializer.serializeToBytes(srcMsg, bytes, 0);
@@ -1235,7 +1336,7 @@ public abstract class AbstractMsgTest {
      */
     @Test
     public void testToString() {
-        final Msg srcMsg = newMsg();
+        final Msg srcMsg = create();
         srcMsg.set(KEY_ONE, BYTE_TEST);
         srcMsg.set(KEY_TWO, DOUBLE_TEST);
         srcMsg.set(KEY_THREE, (Integer) null);
@@ -1272,7 +1373,7 @@ public abstract class AbstractMsgTest {
         final String jsonMap = gson.toJson(map);
         assertThat(destMsg.toString()).isEqualTo(jsonMap);
 
-        final Msg srcMsg2 = newMsg();
+        final Msg srcMsg2 = create();
         final String jsonMap2 = gson.toJson(new HashMap<String, Object>());
         assertThat(srcMsg2.toString()).isEqualTo(jsonMap2);
 
@@ -1284,7 +1385,7 @@ public abstract class AbstractMsgTest {
      */
     @Test
     public void testEqualsHashcode() {
-        final Msg srcMsg = newMsg();
+        final Msg srcMsg = create();
         srcMsg.set(KEY_ONE, BYTE_TEST);
         srcMsg.set(KEY_TWO, DOUBLE_TEST);
 
