@@ -84,13 +84,21 @@ public abstract class AbstractMsgTest {
     protected static final int KEY_ELEVEN = 11;
     protected static final int KEY_TWELVE = 12;
     protected static final int KEY_THIRTEEN = 13;
+    protected static final int KEY_FOURTEEN = 14;
+    protected static final int KEY_FIFTEEN = 15;
+    protected static final int KEY_SIXTEEN = 16;
+    protected static final int KEY_SEVENTEEN = 17;
+    protected static final int KEY_EIGHTEEN = 18;
+    protected static final int KEY_TWENTY = 20;
+    protected static final int KEY_FORTY = 40;
     protected static final int KEY_NINETY = 90;
     protected static final int KEY_NINETYTWO = 92;
     protected static final int KEY_NINETYNINE = 99;
+    protected static final int KEY_TWO_HUNDRED = 200;
     protected static final int KEY_THREE_HUNDRED = 300;
-    protected static final int KEY_FOUR_HUNDRED = 400;
-    protected static final int KEY_NINE_HUNDRED = 900;
-
+    protected static final int KEY_SIX_HUNDRED = 600;
+    protected static final int KEY_ONE_THOUSAND_ONE_HUNDRED = 1100;
+    protected static final int KEY_THREE_THOUSANDS = 3000;
     
     protected static final double PRECISION = 0.00001;
 
@@ -309,7 +317,7 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_FOUR, (Null) null);
         srcMsg.set(KEY_NINETY, Null.valueOf(KEY_NINETY));
         srcMsg.set(KEY_THREE_HUNDRED, Null.valueOf(KEY_THREE_HUNDRED));
-        srcMsg.set(KEY_FOUR_HUNDRED, Null.valueOf(KEY_FOUR_HUNDRED));
+        srcMsg.set(KEY_SIX_HUNDRED, Null.valueOf(KEY_SIX_HUNDRED));
         assertThat(srcMsg.contains(KEY_ZERO)).isTrue();
         
         serializeFromSrcMsgDeserializeToDestMsg();
@@ -324,10 +332,10 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsNull(KEY_FOUR)).isNull();
         assertThat(destMsg.getType(KEY_NINETY)).isEqualTo(Type.NULL);
         assertThat(destMsg.getType(KEY_THREE_HUNDRED)).isEqualTo(Type.NULL);
-        assertThat(destMsg.getType(KEY_FOUR_HUNDRED)).isEqualTo(Type.NULL);
+        assertThat(destMsg.getType(KEY_SIX_HUNDRED)).isEqualTo(Type.NULL);
         assertThat(destMsg.getAsNull(KEY_THREE_HUNDRED)).isEqualTo(Null.valueOf(KEY_THREE_HUNDRED));
-        assertThat(destMsg.getAsNull(KEY_FOUR_HUNDRED)).isEqualTo(Null.valueOf(KEY_FOUR_HUNDRED));
-        assertThat(destMsg.getAsNull(KEY_NINE_HUNDRED)).isNull();
+        assertThat(destMsg.getAsNull(KEY_SIX_HUNDRED)).isEqualTo(Null.valueOf(KEY_SIX_HUNDRED));
+        assertThat(destMsg.getAsNull(KEY_ONE_THOUSAND_ONE_HUNDRED)).isNull();
         
     }
 
@@ -337,24 +345,30 @@ public abstract class AbstractMsgTest {
      */
     @Test
     public void testSetGetAsBoolean() {
-        
         srcMsg.set(KEY_ZERO, BOOLEAN_TEST);
         srcMsg.set(KEY_ONE, BOOLEAN_TEST);
         srcMsg.set(KEY_TWO, Boolean.valueOf(BOOLEAN_TEST));
         srcMsg.set(KEY_THREE, (Boolean) null);
+        srcMsg.set(KEY_FOUR, Boolean.valueOf(BOOLEAN_TEST), true);
+        srcMsg.set(KEY_FIVE, (Boolean) null, false);
         srcMsg.set(KEY_NINETY, !BOOLEAN_TEST);
         srcMsg.set(KEY_THREE_HUNDRED, !BOOLEAN_TEST);
-        srcMsg.set(KEY_FOUR_HUNDRED, (Boolean) null);
-
+        srcMsg.set(KEY_SIX_HUNDRED, (Boolean) null);
+        srcMsg.set(KEY_ONE_THOUSAND_ONE_HUNDRED, (Boolean) null);
+        
+        
         serializeFromSrcMsgDeserializeToDestMsg();
 
         assertThat(destMsg.getAsBoolean(KEY_ONE)).isEqualTo(BOOLEAN_TEST);
         assertThat(destMsg.getAsNullableBoolean(KEY_ONE)).isEqualTo(BOOLEAN_TEST);
         assertThat(destMsg.getAsNullableBoolean(KEY_TWO)).isEqualTo(Boolean.valueOf(BOOLEAN_TEST));
         assertThat(destMsg.getAsNullableBoolean(KEY_THREE)).isNull();
+        assertThat(destMsg.getAsNullableBoolean(KEY_FOUR)).isEqualTo(Boolean.valueOf(BOOLEAN_TEST));
+        assertThat(destMsg.getAsNullableBoolean(KEY_FIVE)).isNull();
         assertThat(destMsg.getAsBoolean(KEY_NINETY)).isEqualTo(!BOOLEAN_TEST);
         assertThat(destMsg.getAsBoolean(KEY_THREE_HUNDRED)).isEqualTo(!BOOLEAN_TEST);
-        assertThat(destMsg.getAsNullableBoolean(KEY_FOUR_HUNDRED)).isNull();
+        assertThat(destMsg.getAsNullableBoolean(KEY_SIX_HUNDRED)).isNull();
+        assertThat(destMsg.getAsNullableBoolean(KEY_ONE_THOUSAND_ONE_HUNDRED)).isNull();
         assertThat(destMsg.contains(KEY_ZERO)).isTrue();
 
         try {
@@ -392,9 +406,12 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_ONE, BYTE_TEST);
         srcMsg.set(KEY_TWO, Byte.valueOf(BYTE_TEST));
         srcMsg.set(KEY_THREE, (Byte) null);
+        srcMsg.set(KEY_FOUR, Byte.valueOf(BYTE_TEST), true);
+        srcMsg.set(KEY_FIVE, (Byte) null, false);
         srcMsg.set(KEY_NINETY, BYTE_TEST);
         srcMsg.set(KEY_THREE_HUNDRED, BYTE_TEST);
-        srcMsg.set(KEY_FOUR_HUNDRED, (Byte) null);
+        srcMsg.set(KEY_SIX_HUNDRED, (Byte) null);
+        srcMsg.set(KEY_ONE_THOUSAND_ONE_HUNDRED, (Byte) null);
 
         serializeFromSrcMsgDeserializeToDestMsg();
 
@@ -402,11 +419,15 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsNullableByte(KEY_ONE)).isEqualTo(BYTE_TEST);
         assertThat(destMsg.getAsNullableByte(KEY_TWO)).isEqualTo(Byte.valueOf(BYTE_TEST));
         assertThat(destMsg.getAsNullableByte(KEY_THREE)).isNull();
+        assertThat(destMsg.getAsNullableByte(KEY_FOUR)).isEqualTo(Byte.valueOf(BYTE_TEST));
+        assertThat(destMsg.getAsNullableByte(KEY_FIVE)).isNull();
         assertThat(destMsg.getAsByte(KEY_NINETY)).isEqualTo(BYTE_TEST);
         assertThat(destMsg.getAsByte(KEY_THREE_HUNDRED)).isEqualTo(BYTE_TEST);
-        assertThat(destMsg.getAsNullableByte(KEY_FOUR_HUNDRED)).isNull();
+        assertThat(destMsg.getAsNullableByte(KEY_SIX_HUNDRED)).isNull();
+        assertThat(destMsg.getAsNullableByte(KEY_ONE_THOUSAND_ONE_HUNDRED)).isNull();
         assertThat(destMsg.contains(KEY_ZERO)).isTrue();
 
+        
         try {
             assertThat(destMsg.getAsByte(KEY_NINETYNINE));
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -451,25 +472,39 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_FOUR, Short.valueOf(SHORT_TEST));
         srcMsg.set(KEY_FIVE, (Short) null);
         srcMsg.set(KEY_SIX, Short.valueOf(BYTE_TEST), false);
-        
-        srcMsg.set(KEY_NINETY, SHORT_TEST);
+        srcMsg.set(KEY_SEVEN, Short.valueOf(SHORT_TEST), true);
+        srcMsg.set(KEY_EIGHT, (Short) null, false);
+        srcMsg.set(KEY_NINE, SHORT_TEST, true);
+        srcMsg.set(KEY_TEN, SHORT_TEST, false);
+        srcMsg.set(KEY_FORTY, (Short) null);
+        srcMsg.set(KEY_NINETY, Short.valueOf(SHORT_TEST));
+        srcMsg.set(KEY_TWO_HUNDRED, (Short) null, false);
         srcMsg.set(KEY_THREE_HUNDRED, SHORT_TEST);
-        srcMsg.set(KEY_FOUR_HUNDRED, (Short) null);
+        srcMsg.set(KEY_SIX_HUNDRED, SHORT_TEST, false);
+        srcMsg.set(KEY_ONE_THOUSAND_ONE_HUNDRED, Short.valueOf(SHORT_TEST), false);
         
         serializeFromSrcMsgDeserializeToDestMsg();
-
+        
+        assertThat(destMsg.contains(KEY_ZERO)).isFalse();
         assertThat(destMsg.getAsShort(KEY_ONE)).isEqualTo(SHORT_TEST);
         assertThat(destMsg.getAsNullableShort(KEY_ONE)).isEqualTo(SHORT_TEST);
-        assertThat(destMsg.getAsShort(KEY_NINETY)).isEqualTo(SHORT_TEST);
-        assertThat(destMsg.getAsShort(KEY_THREE_HUNDRED)).isEqualTo(SHORT_TEST);
         assertThat(destMsg.getAsShort(KEY_TWO)).isEqualTo(BYTE_TEST);
         assertThat(destMsg.getAsShort(KEY_THREE)).isEqualTo(BYTE_TEST);
+        assertThat(destMsg.getAsNullableShort(KEY_FOUR)).isEqualTo(Short.valueOf(SHORT_TEST));
         assertThat(destMsg.getAsNullableShort(KEY_FIVE)).isNull();
         assertThat(destMsg.getAsShort(KEY_SIX)).isEqualTo(BYTE_TEST);
-        assertThat(destMsg.getAsNullableShort(KEY_FOUR_HUNDRED)).isNull();
-        assertThat(destMsg.getAsNullableShort(KEY_FOUR)).isEqualTo(Short.valueOf(SHORT_TEST));
-        assertThat(destMsg.contains(KEY_ZERO)).isFalse();
+        assertThat(destMsg.getAsShort(KEY_SEVEN)).isEqualTo(SHORT_TEST);
+        assertThat(destMsg.getAsNull(KEY_EIGHT)).isEqualTo(Null.valueOf(2));
+        assertThat(destMsg.getAsShort(KEY_NINE)).isEqualTo(SHORT_TEST);
+        assertThat(destMsg.getAsShort(KEY_TEN)).isEqualTo(SHORT_TEST);
+        assertThat(destMsg.getAsNullableShort(KEY_FORTY)).isNull();
+        assertThat(destMsg.getAsShort(KEY_NINETY)).isEqualTo(SHORT_TEST);
+        assertThat(destMsg.getAsNullableShort(KEY_TWO_HUNDRED)).isNull();
+        assertThat(destMsg.getAsShort(KEY_THREE_HUNDRED)).isEqualTo(SHORT_TEST);
+        assertThat(destMsg.getAsNullableShort(KEY_SIX_HUNDRED)).isEqualTo(SHORT_TEST);
+        assertThat(destMsg.getAsNullableShort(KEY_ONE_THOUSAND_ONE_HUNDRED)).isEqualTo(SHORT_TEST);
 
+        
         try {
             destMsg.getAsShort(KEY_NINETYNINE);
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -513,12 +548,23 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_FIVE, (int) SHORT_TEST);
         srcMsg.set(KEY_SIX, Integer.valueOf(INT_TEST));
         srcMsg.set(KEY_SEVEN, (Integer) null);
+        srcMsg.set(KEY_EIGHT, (Integer) null, false);
+        srcMsg.set(KEY_NINE, Integer.valueOf(INT_TEST), false);
+        srcMsg.set(KEY_TEN, INT_TEST, false);
+        srcMsg.set(KEY_ELEVEN, INT_TEST, true);
+        srcMsg.set(KEY_TWELVE, Integer.valueOf(INT_TEST), true);
+        
+        srcMsg.set(KEY_FORTY, (Integer) null, false);
         srcMsg.set(KEY_NINETY, INT_TEST);
+        srcMsg.set(KEY_TWO_HUNDRED, INT_TEST, false);
         srcMsg.set(KEY_THREE_HUNDRED, INT_TEST);
-        srcMsg.set(KEY_FOUR_HUNDRED, (Integer) null);
+        srcMsg.set(KEY_SIX_HUNDRED, (Integer) null);
+        srcMsg.set(KEY_ONE_THOUSAND_ONE_HUNDRED, (Integer) null, false);
+        srcMsg.set(KEY_THREE_THOUSANDS, Integer.valueOf(INT_TEST), false);
         
         serializeFromSrcMsgDeserializeToDestMsg();
 
+        assertThat(destMsg.contains(KEY_ZERO)).isFalse();
         assertThat(destMsg.getAsInt(KEY_ONE)).isEqualTo(INT_TEST);
         assertThat(destMsg.getAsNullableInteger(KEY_ONE)).isEqualTo(INT_TEST);
         assertThat(destMsg.getAsInt(KEY_TWO)).isEqualTo(SHORT_TEST);
@@ -527,10 +573,18 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsInt(KEY_FIVE)).isEqualTo(SHORT_TEST);
         assertThat(destMsg.getAsInt(KEY_SIX)).isEqualTo(Integer.valueOf(INT_TEST));
         assertThat(destMsg.getAsNullableInteger(KEY_SEVEN)).isNull();
+        assertThat(destMsg.getAsNullableInteger(KEY_EIGHT)).isNull();
+        assertThat(destMsg.getAsNullableInteger(KEY_NINE)).isEqualTo(Integer.valueOf(INT_TEST));
+        assertThat(destMsg.getAsInt(KEY_TEN)).isEqualTo(INT_TEST);
+        assertThat(destMsg.getAsInt(KEY_ELEVEN)).isEqualTo(INT_TEST);
+        assertThat(destMsg.getAsNullableInteger(KEY_FORTY)).isNull();
         assertThat(destMsg.getAsInt(KEY_NINETY)).isEqualTo(INT_TEST);
+        assertThat(destMsg.getAsInt(KEY_TWO_HUNDRED)).isEqualTo(INT_TEST);
         assertThat(destMsg.getAsInt(KEY_THREE_HUNDRED)).isEqualTo(INT_TEST);
-        assertThat(destMsg.getAsNullableInteger(KEY_FOUR_HUNDRED)).isNull();
-        assertThat(destMsg.contains(KEY_ZERO)).isFalse();
+        assertThat(destMsg.getAsNullableInteger(KEY_SIX_HUNDRED)).isNull();
+        assertThat(destMsg.getAsNullableInteger(KEY_ONE_THOUSAND_ONE_HUNDRED)).isNull();
+        assertThat(destMsg.getAsNullableInteger(KEY_THREE_THOUSANDS)).isEqualTo(INT_TEST);
+        
 
         try {
             destMsg.getAsInt(KEY_NINETYNINE);
@@ -577,12 +631,20 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_SEVEN, (long) INT_TEST);
         srcMsg.set(KEY_EIGHT, Long.valueOf(LONG_TEST));
         srcMsg.set(KEY_NINE, (Long) null);
+        srcMsg.set(KEY_TEN, LONG_TEST, true);
+        srcMsg.set(KEY_ELEVEN, LONG_TEST, false);
+        srcMsg.set(KEY_TWELVE, Long.valueOf(LONG_TEST), true);
+        srcMsg.set(KEY_THIRTEEN, Long.valueOf(LONG_TEST), false);
+        srcMsg.set(KEY_FORTY, (Long) null, false);
         srcMsg.set(KEY_NINETY, LONG_TEST);
         srcMsg.set(KEY_THREE_HUNDRED, LONG_TEST);
-        srcMsg.set(KEY_FOUR_HUNDRED, (Long) null);
-
+        srcMsg.set(KEY_SIX_HUNDRED, (Long) null);
+        srcMsg.set(KEY_ONE_THOUSAND_ONE_HUNDRED, Long.valueOf(LONG_TEST), false);
+        srcMsg.set(KEY_THREE_THOUSANDS, LONG_TEST, false);
+        
         serializeFromSrcMsgDeserializeToDestMsg();
         
+        assertThat(destMsg.contains(KEY_ZERO)).isFalse();
         assertThat(destMsg.getAsLong(KEY_ONE)).isEqualTo(LONG_TEST);
         assertThat(destMsg.getAsNullableLong(KEY_ONE)).isEqualTo(LONG_TEST);
         assertThat(destMsg.getAsLong(KEY_TWO)).isEqualTo(INT_TEST);
@@ -591,12 +653,17 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsLong(KEY_FIVE)).isEqualTo(BYTE_TEST);
         assertThat(destMsg.getAsLong(KEY_SIX)).isEqualTo(SHORT_TEST);
         assertThat(destMsg.getAsLong(KEY_SEVEN)).isEqualTo(INT_TEST);
-        assertThat(destMsg.getAsLong(KEY_SEVEN)).isEqualTo(INT_TEST);
         assertThat(destMsg.getAsLong(KEY_EIGHT)).isEqualTo(Long.valueOf(LONG_TEST));
         assertThat(destMsg.getAsNullableLong(KEY_NINE)).isNull();
+        assertThat(destMsg.getAsLong(KEY_TEN)).isEqualTo(Long.valueOf(LONG_TEST));
+        assertThat(destMsg.getAsLong(KEY_ELEVEN)).isEqualTo(Long.valueOf(LONG_TEST));
+        assertThat(destMsg.getAsLong(KEY_TWELVE)).isEqualTo(Long.valueOf(LONG_TEST));
+        assertThat(destMsg.getAsLong(KEY_THIRTEEN)).isEqualTo(Long.valueOf(LONG_TEST));
+        assertThat(destMsg.getAsNullableLong(KEY_FORTY)).isNull();
         assertThat(destMsg.getAsLong(KEY_THREE_HUNDRED)).isEqualTo(LONG_TEST);
-        // assertThat(destMsg.getAsNullableLong(KEY_FOUR_HUNDRED)).isNull();
-        assertThat(destMsg.contains(KEY_ZERO)).isFalse();
+        assertThat(destMsg.getAsNullableLong(KEY_SIX_HUNDRED)).isNull();
+        assertThat(destMsg.getAsLong(KEY_ONE_THOUSAND_ONE_HUNDRED)).isEqualTo(LONG_TEST);
+        assertThat(destMsg.getAsLong(KEY_THREE_THOUSANDS)).isEqualTo(LONG_TEST);
 
         try {
             destMsg.getAsLong(KEY_NINETYNINE);
@@ -637,22 +704,35 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_ONE, FLOAT_TEST);
         srcMsg.set(KEY_TWO, Float.valueOf(FLOAT_TEST));
         srcMsg.set(KEY_THREE, (Float) null);
+        srcMsg.set(KEY_FOUR, Float.valueOf(FLOAT_TEST), false);
+        srcMsg.set(KEY_FIVE, FLOAT_TEST, true);
+        srcMsg.set(KEY_SIX, Float.valueOf(FLOAT_TEST), false);
+        srcMsg.set(KEY_SEVEN, Float.valueOf(FLOAT_TEST), true);
+        srcMsg.set(KEY_EIGHT, (Float) null, false);
         srcMsg.set(KEY_NINETY, FLOAT_TEST);
+        srcMsg.set(KEY_TWO_HUNDRED, Float.valueOf(FLOAT_TEST), false);
         srcMsg.set(KEY_THREE_HUNDRED, FLOAT_TEST);
-        srcMsg.set(KEY_FOUR_HUNDRED, (Float) null);
+        srcMsg.set(KEY_SIX_HUNDRED, (Float) null);
         
         serializeFromSrcMsgDeserializeToDestMsg();
 
+        assertThat(destMsg.contains(KEY_ZERO)).isFalse();
         assertThat(destMsg.getAsFloat(KEY_ONE)).isEqualTo(FLOAT_TEST);
         assertThat(destMsg.getAsNullableFloat(KEY_ONE)).isEqualTo(FLOAT_TEST);
         assertThat(destMsg.getAsFloat(KEY_ONE)).isEqualTo(FLOAT_TEST);
         assertThat(destMsg.getAsNullableFloat(KEY_TWO)).isEqualTo(Float.valueOf(FLOAT_TEST));
         assertThat(destMsg.getAsNullableFloat(KEY_THREE)).isNull();
+        assertThat(destMsg.getAsFloat(KEY_FOUR)).isEqualTo(FLOAT_TEST);
+        assertThat(destMsg.getAsNullableFloat(KEY_FIVE)).isEqualTo(Float.valueOf(FLOAT_TEST));
+        assertThat(destMsg.getAsNullableFloat(KEY_SIX)).isEqualTo(Float.valueOf(FLOAT_TEST));
+        assertThat(destMsg.getAsNullableFloat(KEY_SEVEN)).isEqualTo(Float.valueOf(FLOAT_TEST));
+        assertThat(destMsg.getAsNullableFloat(KEY_EIGHT)).isNull();
         assertThat(destMsg.getAsDouble(KEY_NINETY)).isEqualTo(FLOAT_TEST);
+        assertThat(destMsg.getAsNullableFloat(KEY_TWO_HUNDRED)).isEqualTo(Float.valueOf(FLOAT_TEST));
         assertThat(destMsg.getAsDouble(KEY_THREE_HUNDRED)).isEqualTo(FLOAT_TEST);
-        assertThat(destMsg.getAsNullableFloat(KEY_FOUR_HUNDRED)).isNull();
-        assertThat(destMsg.contains(KEY_ZERO)).isFalse();
-
+        assertThat(destMsg.getAsNullableFloat(KEY_SIX_HUNDRED)).isNull();
+                
+        
         try {
             destMsg.getAsFloat(KEY_NINETYNINE);
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -698,38 +778,65 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_SIX, Double.valueOf(DOUBLE_TEST2));
         srcMsg.set(KEY_SEVEN, (Double) null);
         srcMsg.set(KEY_EIGHT, DOUBLE_TEST3, 10);
+        srcMsg.set(KEY_NINE, DOUBLE_TEST, true);
+        srcMsg.set(KEY_TEN, DOUBLE_TEST, false);
+        srcMsg.set(KEY_ELEVEN, (Double) null, false);
+        srcMsg.set(KEY_TWELVE, Double.valueOf(DOUBLE_TEST), true);
+        srcMsg.set(KEY_THIRTEEN, Double.valueOf(DOUBLE_TEST), false);
+        srcMsg.set(KEY_FOURTEEN, Double.valueOf(DOUBLE_TEST2), 5, false);
+        srcMsg.set(KEY_FIFTEEN, Double.valueOf(DOUBLE_TEST2), 5, true);
+        srcMsg.set(KEY_SIXTEEN, (Double) null, 5);
+        srcMsg.set(KEY_SEVENTEEN, DOUBLE_TEST2, 5);
+        srcMsg.set(KEY_EIGHTEEN, (Double) null, 5, false);
         
         for (int i = 0; i <= 8; i++) {
-            srcMsg.set(KEY_TEN + i, DOUBLE_TEST1, i);
+            srcMsg.set(KEY_TWENTY + i, DOUBLE_TEST1, i);
         }
         
-
+        srcMsg.set(KEY_FORTY, (Double) DOUBLE_TEST, false);
         srcMsg.set(KEY_NINETY, DOUBLE_TEST);
         srcMsg.set(KEY_NINETYTWO, DOUBLE_TEST, 5);
+        srcMsg.set(KEY_TWO_HUNDRED, DOUBLE_TEST, 5);
         srcMsg.set(KEY_THREE_HUNDRED, DOUBLE_TEST);
-        srcMsg.set(KEY_FOUR_HUNDRED, (Double) null);
-
+        srcMsg.set(KEY_SIX_HUNDRED, (Double) null);
+        srcMsg.set(KEY_ONE_THOUSAND_ONE_HUNDRED, DOUBLE_TEST, false);
+        srcMsg.set(KEY_THREE_THOUSANDS, (Double) null, 5);
+        
         serializeFromSrcMsgDeserializeToDestMsg();
 
+        assertThat(destMsg.contains(KEY_ZERO)).isFalse();
         assertThat(destMsg.getAsFloat(KEY_ONE)).isEqualTo(FLOAT_TEST);
         assertThat(destMsg.getAsDouble(KEY_TWO)).isEqualTo(DOUBLE_TEST);
-        //assertThat(msg2.getAsDouble(KEY_THREE)).isEqualTo(DOUBLE_TEST);
+        //assertThat(destMsg.getAsDouble(KEY_THREE)).isEqualTo(DOUBLE_TEST);
         assertThat(destMsg.getAsDouble(KEY_FOUR)).isEqualTo(FLOAT_TEST);
         assertThat(destMsg.getAsDouble(KEY_FIVE)).isEqualTo(DOUBLE_TEST2);
         assertThat(destMsg.getAsNullableDouble(KEY_FIVE)).isEqualTo(DOUBLE_TEST2);
         assertThat(destMsg.getAsNullableDouble(KEY_SIX)).isEqualTo(Double.valueOf(DOUBLE_TEST2));
         assertThat(destMsg.getAsNullableDouble(KEY_SEVEN)).isNull();
         assertThat(destMsg.getAsDouble(KEY_EIGHT)).isEqualTo(DOUBLE_TEST3);
-
+        assertThat(destMsg.getAsDouble(KEY_NINE)).isEqualTo(DOUBLE_TEST);
+        assertThat(destMsg.getAsDouble(KEY_TEN)).isEqualTo(DOUBLE_TEST);
+        assertThat(destMsg.getAsNull(KEY_ELEVEN)).isEqualTo(Null.valueOf(8));
+        assertThat(destMsg.getAsDouble(KEY_TWELVE)).isEqualTo(DOUBLE_TEST);
+        assertThat(destMsg.getAsDouble(KEY_THIRTEEN)).isEqualTo(DOUBLE_TEST);
+        assertThat(destMsg.getAsDouble(KEY_FOURTEEN)).isEqualTo(DOUBLE_TEST2);
+        assertThat(destMsg.getAsDouble(KEY_FIFTEEN)).isEqualTo(DOUBLE_TEST2);
+        assertThat(destMsg.getAsNullableDouble(KEY_SIXTEEN)).isNull();
+        assertThat(destMsg.getAsDouble(KEY_SEVENTEEN)).isEqualTo(DOUBLE_TEST2);
+        assertThat(destMsg.getAsNullableDouble(KEY_EIGHTEEN)).isNull();
+        
         for (int i = 0; i < 9; i++) {
-            assertThat(destMsg.getAsDouble(KEY_TEN + i)).isEqualTo(DOUBLE_TEST1);
-            assertThat(destMsg.getAsNullableDouble(KEY_TEN + i)).isEqualTo(DOUBLE_TEST1);
+            assertThat(destMsg.getAsDouble(KEY_TWENTY + i)).isEqualTo(DOUBLE_TEST1);
+            assertThat(destMsg.getAsNullableDouble(KEY_TWENTY + i)).isEqualTo(DOUBLE_TEST1);
             // Assert.assertEquals(DOUBLE_TEST1, msg2.getAsDouble(KEY_TEN + i), (i == 0) ? 1 : (1 / (10 * i)));
         }
 
-        assertThat(destMsg.getAsNullableDouble(KEY_FOUR_HUNDRED)).isNull();
-        assertThat(destMsg.contains(KEY_ZERO)).isFalse();
-
+        assertThat(destMsg.getAsNullableDouble(KEY_ONE_THOUSAND_ONE_HUNDRED)).isEqualTo(DOUBLE_TEST);
+        assertThat(destMsg.getAsNullableDouble(KEY_THREE_HUNDRED)).isEqualTo(DOUBLE_TEST);
+        assertThat(destMsg.getAsNullableDouble(KEY_SIX_HUNDRED)).isNull();
+        assertThat(destMsg.getAsNullableDouble(KEY_ONE_THOUSAND_ONE_HUNDRED)).isEqualTo(DOUBLE_TEST);
+        assertThat(destMsg.getAsNullableDouble(KEY_THREE_THOUSANDS)).isNull();
+        
         try {
             destMsg.getAsDouble(KEY_NINETYNINE);
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
@@ -787,7 +894,7 @@ public abstract class AbstractMsgTest {
         
         srcMsg.set(KEY_NINETY, STRING_TEST);
         srcMsg.set(KEY_THREE_HUNDRED, STRING_TEST);
-        srcMsg.set(KEY_FOUR_HUNDRED, (String) null);
+        srcMsg.set(KEY_SIX_HUNDRED, (String) null);
 
         serializeFromSrcMsgDeserializeToDestMsg();
 
@@ -799,7 +906,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsString(KEY_SEVEN)).isEqualTo(STRING_TEST);
         assertThat(destMsg.getAsString(KEY_NINETY)).isEqualTo(STRING_TEST);
         assertThat(destMsg.getAsString(KEY_THREE_HUNDRED)).isEqualTo(STRING_TEST);
-        assertThat(destMsg.getAsString(KEY_FOUR_HUNDRED)).isNull();
+        assertThat(destMsg.getAsString(KEY_SIX_HUNDRED)).isNull();
         assertThat(destMsg.contains(KEY_ZERO)).isFalse();
         assertThat(destMsg.getAsString(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsString(KEY_ZERO)).isNull();
@@ -818,7 +925,7 @@ public abstract class AbstractMsgTest {
         
         srcMsg.set(KEY_NINETY, STRING_TEST);
         srcMsg.set(KEY_THREE_HUNDRED, STRING_TEST);
-        srcMsg.set(KEY_FOUR_HUNDRED, (String) null);
+        srcMsg.set(KEY_SIX_HUNDRED, (String) null);
 
         serializeFromSrcMsgDeserializeToDestMsg();
 
@@ -831,7 +938,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsString(KEY_SEVEN)).isEqualTo(STRING_TEST);
         assertThat(destMsg.getAsString(KEY_NINETY)).isEqualTo(STRING_TEST);
         assertThat(destMsg.getAsString(KEY_THREE_HUNDRED)).isEqualTo(STRING_TEST);
-        assertThat(destMsg.getAsString(KEY_FOUR_HUNDRED)).isNull();
+        assertThat(destMsg.getAsString(KEY_SIX_HUNDRED)).isNull();
         assertThat(destMsg.contains(KEY_ZERO)).isFalse();
         assertThat(destMsg.getAsString(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsString(KEY_ZERO)).isNull();
@@ -921,7 +1028,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsNullableBooleans(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsBooleans(KEY_THREE_HUNDRED)).isEqualTo(BOOLEANS_TEST);
         assertThat(destMsg.getAsBooleans(KEY_MINUS_ONE)).isNull();
-        assertThat(destMsg.getAsNullableBooleans(KEY_FOUR_HUNDRED)).isNull();
+        assertThat(destMsg.getAsNullableBooleans(KEY_SIX_HUNDRED)).isNull();
     }
 
     /**
@@ -964,7 +1071,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsNullableBytes(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsBytes(KEY_THREE_HUNDRED)).isEqualTo(BYTES_TEST);
         assertThat(destMsg.getAsBytes(KEY_MINUS_ONE)).isNull();
-        assertThat(destMsg.getAsNullableBytes(KEY_FOUR_HUNDRED)).isNull();
+        assertThat(destMsg.getAsNullableBytes(KEY_SIX_HUNDRED)).isNull();
     }
 
 
@@ -997,7 +1104,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsNullableShorts(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsShorts(KEY_THREE_HUNDRED)).isEqualTo(SHORTS_TEST);
         assertThat(destMsg.getAsShorts(KEY_MINUS_ONE)).isNull();
-        assertThat(destMsg.getAsNullableShorts(KEY_FOUR_HUNDRED)).isNull();
+        assertThat(destMsg.getAsNullableShorts(KEY_SIX_HUNDRED)).isNull();
     }
 
     /**
@@ -1028,7 +1135,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsNullableIntegers(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsInts(KEY_THREE_HUNDRED)).isEqualTo(INTS_TEST);
         assertThat(destMsg.getAsInts(KEY_MINUS_ONE)).isNull();
-        assertThat(destMsg.getAsNullableIntegers(KEY_FOUR_HUNDRED)).isNull();
+        assertThat(destMsg.getAsNullableIntegers(KEY_SIX_HUNDRED)).isNull();
     }
 
     /**
@@ -1058,7 +1165,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsNullableLongs(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsLongs(KEY_THREE_HUNDRED)).isEqualTo(LONGS_TEST);
         assertThat(destMsg.getAsLongs(KEY_MINUS_ONE)).isNull();
-        assertThat(destMsg.getAsNullableLongs(KEY_FOUR_HUNDRED)).isNull();
+        assertThat(destMsg.getAsNullableLongs(KEY_SIX_HUNDRED)).isNull();
     }
 
     /**
@@ -1087,7 +1194,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsNullableFloats(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsFloats(KEY_THREE_HUNDRED)).isEqualTo(FLOATS_TEST);
         assertThat(destMsg.getAsFloats(KEY_MINUS_ONE)).isNull();
-        assertThat(destMsg.getAsNullableFloats(KEY_FOUR_HUNDRED)).isNull();
+        assertThat(destMsg.getAsNullableFloats(KEY_SIX_HUNDRED)).isNull();
     }
     
 
@@ -1117,7 +1224,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsNullableDoubles(KEY_NINETYNINE)).isNull();
         assertThat(destMsg.getAsDoubles(KEY_THREE_HUNDRED)).isEqualTo(DOUBLES_TEST);
         assertThat(destMsg.getAsDoubles(KEY_MINUS_ONE)).isNull();
-        assertThat(destMsg.getAsNullableDoubles(KEY_FOUR_HUNDRED)).isNull();
+        assertThat(destMsg.getAsNullableDoubles(KEY_SIX_HUNDRED)).isNull();
     }
 
     
@@ -1408,6 +1515,7 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_ELEVEN, (float[]) null);
         srcMsg.set(KEY_TWELVE, STRING_TEST_UTF16);
         srcMsg.set(KEY_THIRTEEN, LONGS_TEST_EMPTY);
+        srcMsg.set(KEY_NINETY, Null.valueOf(1));
 
         serializeFromSrcMsgDeserializeToDestMsg();
 
@@ -1425,6 +1533,7 @@ public abstract class AbstractMsgTest {
         map.put(KEY_ELEVEN, null);
         map.put(KEY_TWELVE, STRING_TEST_UTF16);
         map.put(KEY_THIRTEEN, LONGS_TEST_EMPTY);
+        map.put(KEY_NINETY, null);
 
         final Gson gson = new GsonBuilder().serializeNulls().create();
         final String jsonMap = gson.toJson(map);
@@ -1436,6 +1545,7 @@ public abstract class AbstractMsgTest {
 
     }
 
+    
     /**
      * testEqualsHashcode.
      * 

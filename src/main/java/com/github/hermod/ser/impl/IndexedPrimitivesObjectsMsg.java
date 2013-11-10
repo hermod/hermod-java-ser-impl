@@ -1282,7 +1282,10 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
     @Override
     public final Object[] getAllAsObjects() {
         final Object[] anObjects = new Object[this.getKeyMax() + 1];
-        this.getAllAsObjects(anObjects);
+        final int[] keys = this.getKeysArray();
+        for (final int key : keys) {
+            anObjects[key] = this.get(key);
+        }
         return anObjects;
     }
 
@@ -1428,9 +1431,9 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      */
     @Override
     public final void set(final int aKey, final Boolean aBoolean, final boolean optimizeLength) {
-        if (optimizeLength) {
+        if (optimizeLength || aBoolean != null) {
             set(aKey, aBoolean);
-        } else {
+        } else { 
             set(aKey, Null.valueOf(ONE));
         }
     }
@@ -1477,7 +1480,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      */
     @Override
     public final void set(final int aKey, final Byte aByte, final boolean optimizeLength) {
-        if (optimizeLength) {
+        if (optimizeLength || aByte != null) {
             set(aKey, aByte);
         } else {
             set(aKey, Null.valueOf(ONE));
@@ -1547,7 +1550,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      */
     @Override
     public final void set(final int aKey, final Short aShort, final boolean optimizeLength) {
-        if (optimizeLength) {
+        if (optimizeLength && aShort != null) {
             set(aKey, aShort);
         } else if (aShort == null) {
             set(aKey, Null.valueOf(TWO));
@@ -1776,7 +1779,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      */
     @Override
     public final void set(final int aKey, final Float aFloat, final boolean optimizeLength) {
-        if (optimizeLength) {
+        if (optimizeLength && aFloat != null) {
             set(aKey, aFloat);
         } else if (aFloat == null) {
             set(aKey, Null.valueOf(FOUR));
@@ -1881,6 +1884,39 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         if (scale == aScale) {
             // TODO to bench, maybe add some common value before this
             final double d = aDouble * DOZENS_TENTHS[(XFF & scale)];
+//            switch (scale) {
+//            case ZERO:
+//                d = aDouble;
+//                break;
+//            case ONE:
+//                d = aDouble * 0.1;
+//                break;
+//            case TWO:
+//                d = aDouble * 0.01;
+//                break;
+//            case THREE:
+//                d = aDouble * 0.001;
+//                break;
+//            case FOUR:
+//                d = aDouble * 0.0001;
+//                break;
+//            case FIVE:
+//                d = aDouble * 0.00001;
+//                break;
+//            case SIX:
+//                d = aDouble * 0.000001;
+//                break;
+//            case SEVEN:
+//                d = aDouble * 0.0000001;
+//                break;
+//            case EIGHT:
+//                d = aDouble * 0.00000001;
+//                break;
+//            default:
+//                d = aDouble * DOZENS_TENTHS[(XFF & scale)];
+//                break;
+//            }
+            
             if (d >= Integer.MIN_VALUE && d <= Integer.MAX_VALUE) {
                 try {
                     this.primitiveValues[aKey] = (aScale) | (((long) (d)) << EIGHT);
@@ -1923,83 +1959,12 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      */
     @Override
     public final void set(final int aKey, final Double aDouble, final int aScale, final boolean optimizeLength) {
-        if (aDouble == null) {
+        if (aDouble == null && !optimizeLength) {
             set(aKey, Null.valueOf(FIVE));
         } else {
             set(aKey, aDouble, aScale);
         }
     }
-
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#set(int, double, com.github.hermod.ser.Scale)
-     */
-    // @Override
-    // public final void set(final int aKey, final double aDouble, final Precision aPrecision) {
-    // final double mantissa = aPrecision.calculateIntegerMantissa(aDouble);
-    // if (!Double.isNaN(mantissa)) {
-    // try {
-    // this.primitiveValues[aKey] = (aPrecision.getNbDigit()) | (((long) (mantissa)) << EIGHT);
-    // this.types[aKey] = FIVE_BITS_DECIMAL_TYPE;
-    // } catch (final ArrayIndexOutOfBoundsException e) {
-    // increaseKeyMax(aKey);
-    // set(aKey, aDouble, aPrecision.getNbDigit());
-    // }
-    // } else {
-    // this.set(aKey, aDouble);
-    // }
-    // }
-
-    // @Override
-    // public final void set(final int aKey, final double aDouble, final Scale aPrecision) {
-    // try {
-    // final int nbDigit = aPrecision.getScale();
-    // final double d = (aDouble * DOZENS[nbDigit]) + HALF;
-    //
-    // // precision.HUNDREDTHS.calculateIntegerMantissa(aValue);
-    // // if (d >= Short.MIN_VALUE && d <= Short.MAX_VALUE)
-    // // {
-    // // this.primitiveValues[aKey] = (nbDigit) | (((short) (d)) << EIGHT);
-    // // this.types[aKey] = TYPE_3BITS_DECIMAL;
-    // // }
-    // // else
-    // {
-    // if (d >= Integer.MIN_VALUE && d <= Integer.MAX_VALUE) {
-    // try {
-    // this.primitiveValues[aKey] = (nbDigit) | (((long) (d)) << EIGHT);
-    // this.types[aKey] = FIVE_BITS_DECIMAL_TYPE;
-    // } catch (final ArrayIndexOutOfBoundsException e) {
-    // increaseKeyMax(aKey);
-    // set(aKey, aDouble, nbDigit);
-    // }
-    // } else {
-    // this.set(aKey, aDouble);
-    // }
-    // }
-    // } catch (final ArrayIndexOutOfBoundsException e) {
-    // throw new IllegalArgumentException("NbDigit must be between 0 and " + (DOZENS.length - 1), e);
-    // }
-    // }
-
-    /**
-     * (non-Javadoc)
-     * 
-     * @see com.github.hermod.ser.Msg#set(int, java.lang.Byte)
-     */
-    // @Override
-    // public final void set(final int aKey, final Double aDouble, final Scale aPrecision) {
-    // if (aDouble != null) {
-    // this.set(aKey, aDouble.doubleValue(), aPrecision);
-    // } else {
-    // try {
-    // this.types[aKey] = DECIMAL_TYPE;
-    // } catch (final ArrayIndexOutOfBoundsException e) {
-    // increaseKeyMax(aKey);
-    // set(aKey, aDouble, aPrecision);
-    // }
-    // }
-    // }
 
     /*
      * (non-Javadoc)

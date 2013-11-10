@@ -20,7 +20,6 @@ public final class Msgs {
      * 
      */
     private Msgs() {
-        super();
     }
 
     /**
