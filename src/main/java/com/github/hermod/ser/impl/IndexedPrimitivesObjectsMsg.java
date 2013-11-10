@@ -1371,16 +1371,18 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
     public final void set(final int aKey, final Null aNull) {
         if (aNull != null) {
             if (aNull.getLength() != 0) {
-            try {
-                this.objectValues[aKey] = aNull;
-                this.types[aKey] = (byte) ((aNull.getLength() < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? aNull.getLength() : (aNull.getLength() > MAX_VALUE_FOR_UNSIGNED_BYTE) ? LENGTH_ENCODED_IN_AN_INT : LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE);
-            } catch (final ArrayIndexOutOfBoundsException e) {
-                increaseKeyMax(aKey);
-                set(aKey, aNull);
-            }
+                try {
+                    this.objectValues[aKey] = aNull;
+                    this.types[aKey] = (byte) ((aNull.getLength() < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? aNull.getLength() : (aNull.getLength() > MAX_VALUE_FOR_UNSIGNED_BYTE) ? LENGTH_ENCODED_IN_AN_INT : LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE);
+                } catch (final ArrayIndexOutOfBoundsException e) {
+                    increaseKeyMax(aKey);
+                    set(aKey, aNull);
+                }
             } else {
                 throw new IllegalArgumentException("You must set a Null with a length > 0, use (Integer) null or any Types.* if you want to have length = 0.");
             }
+        } else {
+            this.remove(aKey);
         }
     }
 
@@ -1426,10 +1428,10 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      */
     @Override
     public final void set(final int aKey, final Boolean aBoolean, final boolean optimizeLength) {
-        if (aBoolean == null) {
-            set(aKey, Null.valueOf(ONE));
-        } else {
+        if (optimizeLength) {
             set(aKey, aBoolean);
+        } else {
+            set(aKey, Null.valueOf(ONE));
         }
     }
 
@@ -1475,12 +1477,13 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      */
     @Override
     public final void set(final int aKey, final Byte aByte, final boolean optimizeLength) {
-        if (aByte == null) {
-            set(aKey, Null.valueOf(ONE));
-        } else {
+        if (optimizeLength) {
             set(aKey, aByte);
+        } else {
+            set(aKey, Null.valueOf(ONE));
         }
     }
+    
 
     /*
      * (non-Javadoc)
@@ -2498,12 +2501,12 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         for (int key = 0; key < this.types.length; key++) {
             if (this.types[key] != NULL_TYPE) {
                 if (consecutiveNullKey != 0) {
-//                    if (consecutiveNullKey == 1) {
-//                        bytes[pos++] = NULL_TYPE;
-//                    } else {
+                    if (consecutiveNullKey == 1) {
+                        bytes[pos++] = NULL_TYPE;
+                    } else {
                         bytes[pos] = SKIPPED_KEYS_TYPE;
                         pos = writeVariableLength(bytes, pos, consecutiveNullKey - 1, ONE);
-//                    }
+                    }
                     consecutiveNullKey = 0;
                 }
 

@@ -75,7 +75,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
      */
     @Override
     public void deserializeFromBytes(final byte[] bytes, final int offset, final int length, Msg aDestMsg) {
-        if (aDestMsg instanceof BytesSerializable) {
+        if (aDestMsg.isBytesSerializable()) {
             ((BytesSerializable) aDestMsg).deserializeFromBytes(bytes, offset, length);
         } else {
             int pos = offset;
@@ -259,7 +259,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
      */
     @Override
     public int serializeToBytes(final Msg aSrcMsg, byte[] aDestBytes, int aDestOffset) {
-        if (aSrcMsg instanceof BytesSerializable) {
+        if (aSrcMsg.isBytesSerializable()) {
             return ((BytesSerializable) aSrcMsg).serializeToBytes(aDestBytes, aDestOffset);
         } else {
             // Calculate length
@@ -385,7 +385,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
      */
     @Override
     public int getLength(final Msg aMsg) {
-        if (aMsg instanceof BytesSerializable) {
+        if (aMsg.isBytesSerializable()) {
             return ((BytesSerializable) aMsg).getLength();
         } else {
             int length = 0;
@@ -465,6 +465,11 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
         deserializeFromBytes(bytes, 0, bytes.length, aDestMsg);
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @see com.github.hermod.ser.ByteBufferMsgSerializer#serializeToByteBuffer(com.github.hermod.ser.Msg)
+     */
     @Override
     public ByteBuffer serializeToByteBuffer(Msg aSrcMsg)
     {
