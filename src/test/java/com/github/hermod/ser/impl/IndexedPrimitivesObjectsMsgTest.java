@@ -1,14 +1,5 @@
 package com.github.hermod.ser.impl;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import org.junit.Test;
-
-import com.github.hermod.ser.ByteBufferMsgSerializer;
-import com.github.hermod.ser.BytesMsgSerializer;
 import com.github.hermod.ser.Msg;
 
 /**
@@ -17,7 +8,8 @@ import com.github.hermod.ser.Msg;
  * @author anavarro - Jan 20, 2013
  * 
  */
-public final class IndexedPrimitivesObjectsMsgTest extends AbstractMsgTest {
+public final class IndexedPrimitivesObjectsMsgTest extends AbstractMsgTest 
+{
 
     /**
      * Constructor.
@@ -38,6 +30,5 @@ public final class IndexedPrimitivesObjectsMsgTest extends AbstractMsgTest {
     }
 
 
-    
 
 }

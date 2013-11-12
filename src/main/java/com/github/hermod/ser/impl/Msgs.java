@@ -66,6 +66,11 @@ public final class Msgs {
      * EIGHT
      */
     static final int EIGHT = 8;
+    
+    /**
+     * NINE
+     */
+    static final int NINE = 9;
 
     /**
      * SIXTEEN
@@ -102,32 +107,32 @@ public final class Msgs {
      */
     static final int SIXTY_FOUR = 64;
 
-    // byte / boolean
-    static final byte BYTE_TYPE = (byte) (Types.INTEGER_TYPE | ONE);
-
-    // short
-    static final byte SHORT_TYPE = (byte) (Types.INTEGER_TYPE | TWO);
-
-    // int
-    static final byte INT_TYPE = (byte) (Types.INTEGER_TYPE | FOUR);
-
-    // long
-    static final byte LONG_TYPE = (byte) (Types.INTEGER_TYPE | EIGHT);
-
-    // float / double or double encoded on 5 bits
-    static final byte TYPE_DECIMAL = Type.DECIMAL.getId();
-
-    // float
-    static final byte FLOAT_TYPE = (byte) (Types.DECIMAL_TYPE | FOUR);
-
-    // double
-    static final byte DOUBLE_TYPE = (byte) (Types.DECIMAL_TYPE | EIGHT);
-
-    // double (encoded on 3 bits)
-    static final byte THREE_BITS_DECIMAL_TYPE = (byte) (Types.DECIMAL_TYPE | THREE);
-
-    // double (encoded on 5 bits)
-    static final byte FIVE_BITS_DECIMAL_TYPE = (byte) (Types.DECIMAL_TYPE | FIVE);
+//    // byte / boolean
+//    static final byte BYTE_TYPE = (byte) (Types.INTEGER_TYPE | ONE);
+//
+//    // short
+//    static final byte SHORT_TYPE = (byte) (Types.INTEGER_TYPE | TWO);
+//
+//    // int
+//    static final byte INT_TYPE = (byte) (Types.INTEGER_TYPE | FOUR);
+//
+//    // long
+//    static final byte LONG_TYPE = (byte) (Types.INTEGER_TYPE | EIGHT);
+//
+//    // float / double or double encoded on 5 bits
+//    static final byte TYPE_DECIMAL = Type.DECIMAL.getId();
+//
+//    // float
+//    static final byte FLOAT_TYPE = (byte) (Types.DECIMAL_TYPE | FOUR);
+//
+//    // double
+//    static final byte DOUBLE_TYPE = (byte) (Types.DECIMAL_TYPE | EIGHT);
+//
+//    // double (encoded on 3 bits)
+//    static final byte THREE_BITS_DECIMAL_TYPE = (byte) (Types.DECIMAL_TYPE | THREE);
+//
+//    // double (encoded on 5 bits)
+//    static final byte FIVE_BITS_DECIMAL_TYPE = (byte) (Types.DECIMAL_TYPE | FIVE);
 
     // Length is implemented as
     // 1-29, the length is in the last 5 bits of the type
@@ -311,9 +316,17 @@ public final class Msgs {
                 } else {
                     sb.append("null");
                 }
-            } else if (typeAsByte == Types.INTEGER_TYPE) {
+            } else if (typeAsByte == Types.BYTE_TYPE) {
+                sb.append(aMsg.getAsNullableByte(key));
+            } else if (typeAsByte == Types.SHORT_TYPE) {
+                sb.append(aMsg.getAsNullableShort(key));
+            } else if (typeAsByte == Types.INT_TYPE) {
+                sb.append(aMsg.getAsNullableInteger(key));
+            } else if (typeAsByte == Types.INTEGER_TYPE || typeAsByte == Types.LONG_TYPE) {
                 sb.append(aMsg.getAsNullableLong(key));
-            } else if (typeAsByte == Types.DECIMAL_TYPE) {
+            } else if (typeAsByte == Types.FLOAT_TYPE) {
+                sb.append(aMsg.getAsNullableFloat(key));
+            } else if (typeAsByte == Types.DECIMAL_TYPE || typeAsByte == Types.DOUBLE_TYPE || typeAsByte == Types.FIVE_BITS_DECIMAL_TYPE) {
                 sb.append(aMsg.getAsNullableDouble(key));
             } else if (typeAsByte == Types.STRING_UTF_8_TYPE) {
                 final String s = aMsg.getAsString(key);

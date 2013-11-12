@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>com.github.hermod</groupId>
 			<artifactId>hermod-java-ser-api</artifactId>
-			<version>0.0.4-SNAPSHOT</version>
+			<version>0.0.5-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
