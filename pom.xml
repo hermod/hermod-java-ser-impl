@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.github.hermod</groupId>
 		<artifactId>hermod-java-parent</artifactId>
-		<version>0.0.4-SNAPSHOT</version>
+		<version>0.0.4</version>
 	</parent>
 	<artifactId>hermod-java-ser-impl</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>com.github.hermod</groupId>
 			<artifactId>hermod-java-ser-api</artifactId>
-			<version>0.0.5-SNAPSHOT</version>
+			<version>0.0.5</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
