@@ -271,7 +271,8 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final Type getType(final int aKey) {
         try {
-            return Type.valueOf(this.objectValues[aKey].getClass());
+            return (this.objectValues[aKey].getClass().equals(Null.class)) ? ((Null) this.objectValues[aKey]).getType() : Type
+                    .valueOf(this.objectValues[aKey].getClass());
         } catch (ArrayIndexOutOfBoundsException e) {
             return Type.NULL;
         } catch (NullPointerException e) {
@@ -287,11 +288,23 @@ public class IndexedObjectsMsg implements Msg {
      */
     @Override
     public final byte getTypeAsByte(final int aKey) {
+        // return getType(aKey).getId();
+
         try {
             return Type.valueOf(this.objectValues[aKey].getClass()).getId();
         } catch (ArrayIndexOutOfBoundsException e) {
             return Type.NULL.getId();
         }
+
+        // try {
+        // return (this.objectValues[aKey].getClass().equals(Null.class)) ? ((Null) this.objectValues[aKey]).getType().getId() :
+        // Type.valueOf(this.objectValues[aKey].getClass()).getId();
+        // } catch (ArrayIndexOutOfBoundsException e) {
+        // return Type.NULL.getId();
+        // } catch (NullPointerException e) {
+        // return Type.NULL.getId();
+        // }
+
     }
 
     /**
@@ -312,7 +325,24 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final int getArrayLength(final int aKey) {
         try {
-            return (this.objectValues[aKey] instanceof Object[]) ? ((Object[]) this.objectValues[aKey]).length : 0;
+            if ((this.objectValues[aKey] instanceof Object[])) {
+                return ((Object[]) this.objectValues[aKey]).length;
+            } else if ((this.objectValues[aKey] instanceof byte[])) {
+                return ((byte[]) this.objectValues[aKey]).length;
+            } else if ((this.objectValues[aKey] instanceof short[])) {
+                return ((short[]) this.objectValues[aKey]).length;
+            } else if ((this.objectValues[aKey] instanceof int[])) {
+                return ((int[]) this.objectValues[aKey]).length;
+            } else if ((this.objectValues[aKey] instanceof long[])) {
+                return ((long[]) this.objectValues[aKey]).length;
+            } else if ((this.objectValues[aKey] instanceof float[])) {
+                return ((float[]) this.objectValues[aKey]).length;
+            } else if ((this.objectValues[aKey] instanceof double[])) {
+                return ((double[]) this.objectValues[aKey]).length;
+            } else {
+                // Should not occur
+                return 0;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             return 0;
         }
@@ -693,6 +723,20 @@ public class IndexedObjectsMsg implements Msg {
                 return aClazz.cast(getAsMsg(aKey));
 
             case ARRAY_FIXED_VALUE_TYPE:
+                if (this.objectValues[aKey] instanceof byte[]) {
+                    return aClazz.cast(getAsBytes(aKey));
+                } else if (this.objectValues[aKey] instanceof short[]) {
+                    return aClazz.cast(getAsShorts(aKey));
+                } else if (this.objectValues[aKey] instanceof int[]) {
+                    return aClazz.cast(getAsInts(aKey));
+                } else if (this.objectValues[aKey] instanceof long[]) {
+                    return aClazz.cast(getAsLongs(aKey));
+                } else if (this.objectValues[aKey] instanceof float[]) {
+                    return aClazz.cast(getAsFloats(aKey));
+                } else if (this.objectValues[aKey] instanceof double[]) {
+                    return aClazz.cast(getAsDoubles(aKey));
+                }
+
             case ARRAY_VARIABLE_VALUE_TYPE:
                 return aClazz.cast(getAsObjects(aKey));
 
@@ -1320,7 +1364,11 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final Null aNull) {
         try {
-            this.objectValues[aKey] = aNull;
+            if (!Null.NULL.equals(aNull)) {
+                this.objectValues[aKey] = aNull;
+            } else {
+                throw new IllegalArgumentException(Msgs.ERROR_WHEN_YOU_SET_NULL_WITH_LENGTH_0);
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aNull);
@@ -1350,7 +1398,8 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final Boolean aBoolean) {
         try {
-            this.objectValues[aKey] = (aBoolean != null) ? (aBoolean.booleanValue()) ? Byte.valueOf((byte) ONE) : Byte.valueOf((byte) 0) : (Byte) null;
+            this.objectValues[aKey] = (aBoolean != null) ? ((aBoolean.booleanValue()) ? Byte.valueOf((byte) ONE) : Byte.valueOf((byte) 0)) : Null
+                    .valueOf(Type.INTEGER);
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aBoolean);
@@ -1364,7 +1413,9 @@ public class IndexedObjectsMsg implements Msg {
      */
     @Override
     public final void set(final int aKey, final Boolean aBoolean, final boolean optimizeLength) {
-        if (aBoolean == null) {
+        if (optimizeLength) {
+            set(aKey, aBoolean);
+        } else if (aBoolean == null) {
             set(aKey, Null.valueOf(ONE));
         } else {
             set(aKey, aBoolean);
@@ -1394,7 +1445,7 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final Byte aByte) {
         try {
-            this.objectValues[aKey] = aByte;
+            this.objectValues[aKey] = (aByte != null) ? aByte : Null.INTEGER_NULL;
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aByte);
@@ -1408,7 +1459,9 @@ public class IndexedObjectsMsg implements Msg {
      */
     @Override
     public final void set(final int aKey, final Byte aByte, final boolean optimizeLength) {
-        if (aByte == null) {
+        if (optimizeLength) {
+            set(aKey, aByte);
+        } else if (aByte == null) {
             set(aKey, Null.valueOf(ONE));
         } else {
             set(aKey, aByte);
@@ -1439,7 +1492,7 @@ public class IndexedObjectsMsg implements Msg {
     public final void set(final int aKey, final Short aShort1) {
         try {
             if (aShort1 == null) {
-                this.objectValues[aKey] = aShort1;
+                this.objectValues[aKey] = Null.INTEGER_NULL;
             } else {
                 final short aShort = aShort1.shortValue();
                 this.objectValues[aKey] = (aShort == (byte) aShort) ? Byte.valueOf((byte) aShort) : aShort;
@@ -1515,7 +1568,7 @@ public class IndexedObjectsMsg implements Msg {
     public final void set(final int aKey, final Integer aInteger) {
         try {
             if (aInteger == null) {
-                this.objectValues[aKey] = aInteger;
+                this.objectValues[aKey] = Null.INTEGER_NULL;
             } else {
                 final int aInt = aInteger.intValue();
                 this.objectValues[aKey] = (aInt == (byte) aInt) ? Byte.valueOf((byte) aInt) : (aInt == (short) aInt) ? Short.valueOf((short) aInt)
@@ -1592,11 +1645,23 @@ public class IndexedObjectsMsg implements Msg {
     public final void set(final int aKey, final Long aLong1) {
         try {
             if (aLong1 == null) {
-                this.objectValues[aKey] = aLong1;
+                this.objectValues[aKey] = Null.INTEGER_NULL;
             } else {
                 final long aLong = aLong1.longValue();
-                this.objectValues[aKey] = (aLong == (byte) aLong) ? Byte.valueOf((byte) aLong) : (aLong == (short) aLong) ? Short
-                        .valueOf((short) aLong) : (aLong == (short) aLong) ? Integer.valueOf((int) aLong) : Long.valueOf(aLong);
+
+                if (aLong == (byte) aLong) {
+                    this.objectValues[aKey] = Byte.valueOf((byte) aLong);
+                } else if (aLong == (short) aLong) {
+                    this.objectValues[aKey] = Short.valueOf((short) aLong);
+                } else if (aLong == (int) aLong) {
+                    this.objectValues[aKey] = Integer.valueOf((int) aLong);
+                } else {
+                    this.objectValues[aKey] = Long.valueOf(aLong);
+                }
+
+                // Does not work, don't know why
+                // this.objectValues[aKey] = (aLong == (byte) aLong) ? Byte.valueOf((byte) aLong) : (aLong == (short) aLong) ? Short
+                // .valueOf((short) aLong) : (aLong == (int) aLong) ? Integer.valueOf((int) aLong) : Long.valueOf(aLong);
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
@@ -1667,7 +1732,7 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final Float aFloat) {
         try {
-            this.objectValues[aKey] = aFloat;
+            this.objectValues[aKey] = (aFloat != null) ? aFloat : Null.DECIMAL_NULL;
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aFloat);
@@ -1720,7 +1785,7 @@ public class IndexedObjectsMsg implements Msg {
     public final void set(final int aKey, final Double aDouble) {
         try {
             if (aDouble == null) {
-                this.objectValues[aKey] = aDouble;
+                this.objectValues[aKey] = Null.DECIMAL_NULL;
             } else {
                 final boolean isEncodeableInAFloat = (aDouble == aDouble.floatValue()) ? true : false;
                 this.objectValues[aKey] = (isEncodeableInAFloat) ? aDouble.floatValue() : aDouble;
@@ -1801,7 +1866,7 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final Double aDouble, final int aScale, final boolean optimizeLength) {
         if (aDouble == null) {
-            set(aKey, Null.valueOf(FIVE));
+            set(aKey, Null.DECIMAL_NULL);
         } else {
             set(aKey, aDouble, aScale);
         }
@@ -1815,7 +1880,11 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final String aString) {
         try {
-            this.objectValues[aKey] = aString;
+            if (aString == null) {
+                this.objectValues[aKey] = Null.STRING_UTF8_NULL;
+            } else {
+                this.objectValues[aKey] = aString;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aString);
@@ -1840,7 +1909,11 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final Msg aMsg) {
         try {
-            this.objectValues[aKey] = aMsg;
+            if (aMsg == null) {
+                this.objectValues[aKey] = Null.MSG_NULL;
+            } else {
+                this.objectValues[aKey] = aMsg;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aMsg);
@@ -1862,7 +1935,7 @@ public class IndexedObjectsMsg implements Msg {
                 }
                 this.objectValues[aKey] = bytes;
             } else {
-                this.objectValues[aKey] = null;
+                this.objectValues[aKey] = Null.ARRAY_FIXED_VALUE_NULL;
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
@@ -1885,7 +1958,7 @@ public class IndexedObjectsMsg implements Msg {
                 }
                 this.objectValues[aKey] = bytes;
             } else {
-                this.objectValues[aKey] = null;
+                this.objectValues[aKey] = Null.ARRAY_VARIABLE_VALUE_NULL;
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
@@ -1901,7 +1974,11 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final byte... aBytes) {
         try {
-            this.objectValues[aKey] = aBytes;
+            if (aBytes != null) {
+                this.objectValues[aKey] = aBytes;
+            } else {
+                this.objectValues[aKey] = Null.ARRAY_FIXED_VALUE_NULL;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aBytes);
@@ -1916,7 +1993,11 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final Byte... aBytes) {
         try {
-            this.objectValues[aKey] = aBytes;
+            if (aBytes != null) {
+                this.objectValues[aKey] = aBytes;
+            } else {
+                this.objectValues[aKey] = Null.ARRAY_VARIABLE_VALUE_NULL;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aBytes);
@@ -1931,7 +2012,11 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final short... aShorts) {
         try {
-            this.objectValues[aKey] = aShorts;
+            if (aShorts != null) {
+                this.objectValues[aKey] = aShorts;
+            } else {
+                this.objectValues[aKey] = Null.ARRAY_FIXED_VALUE_NULL;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aShorts);
@@ -1946,7 +2031,11 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final Short... aShorts) {
         try {
-            this.objectValues[aKey] = aShorts;
+            if (aShorts != null) {
+                this.objectValues[aKey] = aShorts;
+            } else {
+                this.objectValues[aKey] = Null.ARRAY_VARIABLE_VALUE_NULL;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aShorts);
@@ -1961,7 +2050,11 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final int... aInts) {
         try {
-            this.objectValues[aKey] = aInts;
+            if (aInts != null) {
+                this.objectValues[aKey] = aInts;
+            } else {
+                this.objectValues[aKey] = Null.ARRAY_FIXED_VALUE_NULL;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aInts);
@@ -1976,7 +2069,11 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final Integer... aInts) {
         try {
-            this.objectValues[aKey] = aInts;
+            if (aInts != null) {
+                this.objectValues[aKey] = aInts;
+            } else {
+                this.objectValues[aKey] = Null.ARRAY_VARIABLE_VALUE_NULL;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aInts);
@@ -1991,7 +2088,11 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final long... aLongs) {
         try {
-            this.objectValues[aKey] = aLongs;
+            if (aLongs != null) {
+                this.objectValues[aKey] = aLongs;
+            } else {
+                this.objectValues[aKey] = Null.ARRAY_FIXED_VALUE_NULL;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aLongs);
@@ -2006,7 +2107,11 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final Long... aLongs) {
         try {
-            this.objectValues[aKey] = aLongs;
+            if (aLongs != null) {
+                this.objectValues[aKey] = aLongs;
+            } else {
+                this.objectValues[aKey] = Null.ARRAY_VARIABLE_VALUE_NULL;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aLongs);
@@ -2021,14 +2126,11 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final float... aFloats) {
         try {
-            this.objectValues[aKey] = aFloats;
-        } catch (final ArrayIndexOutOfBoundsException e) {
-            increaseKeyMax(aKey);
-            set(aKey, aFloats);
-        }
-
-        try {
-            this.objectValues[aKey] = aFloats;
+            if (aFloats != null) {
+                this.objectValues[aKey] = aFloats;
+            } else {
+                this.objectValues[aKey] = Null.ARRAY_FIXED_VALUE_NULL;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aFloats);
@@ -2043,7 +2145,11 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final Float... aFloats) {
         try {
-            this.objectValues[aKey] = aFloats;
+            if (aFloats != null) {
+                this.objectValues[aKey] = aFloats;
+            } else {
+                this.objectValues[aKey] = Null.ARRAY_VARIABLE_VALUE_NULL;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aFloats);
@@ -2058,7 +2164,11 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final double... aDoubles) {
         try {
-            this.objectValues[aKey] = aDoubles;
+            if (aDoubles != null) {
+                this.objectValues[aKey] = aDoubles;
+            } else {
+                this.objectValues[aKey] = Null.ARRAY_FIXED_VALUE_NULL;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aDoubles);
@@ -2073,7 +2183,11 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final Double... aDoubles) {
         try {
-            this.objectValues[aKey] = aDoubles;
+            if (aDoubles != null) {
+                this.objectValues[aKey] = aDoubles;
+            } else {
+                this.objectValues[aKey] = Null.ARRAY_VARIABLE_VALUE_NULL;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aDoubles);
@@ -2088,7 +2202,11 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final String... aStrings) {
         try {
-            this.objectValues[aKey] = aStrings;
+            if (aStrings != null) {
+                this.objectValues[aKey] = aStrings;
+            } else {
+                this.objectValues[aKey] = Null.ARRAY_VARIABLE_VALUE_NULL;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aStrings);
@@ -2113,17 +2231,24 @@ public class IndexedObjectsMsg implements Msg {
     @Override
     public final void set(final int aKey, final Msg... aMsgs) {
         try {
-            this.objectValues[aKey] = aMsgs;
+            if (aMsgs != null) {
+                this.objectValues[aKey] = aMsgs;
+            } else {
+                this.objectValues[aKey] = Null.ARRAY_VARIABLE_VALUE_NULL;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aMsgs);
         }
     }
-    
-    
+
     public final void set(final int aKey, final Object[] aObjectArray) {
         try {
-            this.objectValues[aKey] = aObjectArray;
+            if (aObjectArray != null) {
+                this.objectValues[aKey] = aObjectArray;
+            } else {
+                this.objectValues[aKey] = Null.ARRAY_VARIABLE_VALUE_NULL;
+            }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aObjectArray);

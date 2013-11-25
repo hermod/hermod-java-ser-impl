@@ -349,6 +349,20 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsNull(KEY_ONE_THOUSAND_ONE_HUNDRED)).isNull();
 
     }
+    
+    
+    /**
+     * testSetGetAsNull1.
+     *
+     */
+    @Test
+    public void testSetGetAsNullSimple() {
+        srcMsg.set(KEY_ZERO, (Boolean) null);
+        srcMsg.set(KEY_ONE, (Float) null, false);
+        serializeFromSrcMsgDeserializeToDestMsg();
+        assertThat(destMsg.getType(KEY_ZERO)).isEqualTo(Type.INTEGER);
+        assertThat(destMsg.getAsNullableFloat(KEY_ONE)).isNull();
+    }
 
     /**
      * testGetAsByte.
@@ -1528,7 +1542,7 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_TWO, DOUBLE_TEST);
         srcMsg.set(KEY_THREE, (Integer) null);
         srcMsg.set(KEY_FOUR, STRING_TEST);
-        srcMsg.set(KEY_FIVE, msgTest);
+//        srcMsg.set(KEY_FIVE, msgTest);
         srcMsg.set(KEY_SIX, LONGS_TEST2);
         srcMsg.set(KEY_SEVEN, DOUBLES_TEST);
         srcMsg.set(KEY_EIGHT, (String) null);
@@ -1546,7 +1560,7 @@ public abstract class AbstractMsgTest {
         map.put(KEY_TWO, DOUBLE_TEST);
         map.put(KEY_THREE, null);
         map.put(KEY_FOUR, STRING_TEST);
-        map.put(KEY_FIVE, ((IndexedPrimitivesObjectsMsg) msgTest).getAllAsMap());
+//        map.put(KEY_FIVE, ((IndexedPrimitivesObjectsMsg) msgTest).getAllAsMap());
         map.put(KEY_SIX, LONGS_TEST2);
         map.put(KEY_SEVEN, DOUBLES_TEST);
         map.put(KEY_EIGHT, null);
@@ -1566,7 +1580,8 @@ public abstract class AbstractMsgTest {
         assertThat(srcMsg2.toString()).isEqualTo(jsonMap2);
 
     }
-
+    
+ 
     /**
      * testEqualsHashcode.
      * 

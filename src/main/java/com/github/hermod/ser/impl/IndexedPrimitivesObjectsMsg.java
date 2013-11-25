@@ -1386,7 +1386,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
     @Override
     public final void set(final int aKey, final Null aNull) {
         if (aNull != null) {
-            if (aNull.getLength() != 0) {
+            if (!Null.NULL.equals(aNull)) {
                 try {
                     this.objectValues[aKey] = aNull;
                     this.types[aKey] = (byte) ((aNull.getLength() < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? aNull.getLength()
@@ -1396,8 +1396,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                     set(aKey, aNull);
                 }
             } else {
-                throw new IllegalArgumentException(
-                        "You must set a Null with a length > 0, use (Integer) null or any Types.* if you want to have length = 0.");
+                throw new IllegalArgumentException(Msgs.ERROR_WHEN_YOU_SET_NULL_WITH_LENGTH_0);
             }
         } else {
             this.remove(aKey);
@@ -2789,7 +2788,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                     this.primitiveValues[key] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
                             | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
                     break;
-
+                    
                 case DOUBLE_TYPE:
                     this.primitiveValues[key] = (((long) bytes[pos++] & XFF) | (((long) bytes[pos++] & XFF) << EIGHT)
                             | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
@@ -2814,6 +2813,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                             | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
                             | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX);
 
+                    
                 case NULL_TYPE:
                     // do nothing
                     break;

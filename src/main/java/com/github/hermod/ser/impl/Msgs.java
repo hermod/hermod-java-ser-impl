@@ -200,6 +200,9 @@ public final class Msgs {
      */
     static final String ERROR_WHEN_KEY_NOT_PRESENT = "The key=%s is not present for type asked.";
 
+    static final String ERROR_WHEN_YOU_SET_NULL_WITH_LENGTH_0 = "You must set a Null with type Null with a length > 0, use (Integer) null or Null.INTEGER_NULL or Null.valueOf(Type.INTEGER) any Types.* except Null.NULL or Null.valueOf(0) if you want to have length = 0.";
+    
+    
     static final double HALF = 0.5;
 
     private static final int[] POW_2 = new int[Integer.SIZE];

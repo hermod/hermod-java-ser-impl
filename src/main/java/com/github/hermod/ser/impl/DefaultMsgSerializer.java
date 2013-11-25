@@ -8,6 +8,8 @@ import static com.github.hermod.ser.Types.FIVE_BITS_DECIMAL_TYPE;
 import static com.github.hermod.ser.Types.FLOAT_TYPE;
 import static com.github.hermod.ser.Types.INT_TYPE;
 import static com.github.hermod.ser.Types.LONG_TYPE;
+import static com.github.hermod.ser.Types.INTEGER_TYPE;
+import static com.github.hermod.ser.Types.DECIMAL_TYPE;
 import static com.github.hermod.ser.Types.MSG_TYPE;
 import static com.github.hermod.ser.Types.NULL_TYPE;
 import static com.github.hermod.ser.Types.SHORT_TYPE;
@@ -140,6 +142,10 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
                         aDestMsg.set(key, (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
                                 | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++]) << TWENTY_FOUR));
                         break;
+                        
+                    case INTEGER_TYPE:
+                        aDestMsg.set(key, Null.valueOf(Type.INTEGER));
+                        break;
 
                     case DOUBLE_TYPE:
                         aDestMsg.set(
@@ -171,7 +177,27 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
                                 | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
                                 | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++]) << FIFTY_SIX)));
                         break;
-
+                        
+                    case DECIMAL_TYPE:
+                        aDestMsg.set(key, Null.valueOf(Type.DECIMAL));
+                        break;
+                        
+                    case STRING_UTF_8_TYPE:
+                        aDestMsg.set(key, Null.valueOf(Type.STRING_UTF8));
+                        break;
+                        
+                    case MSG_TYPE:
+                        aDestMsg.set(key, Null.valueOf(Type.MSG));
+                        break;
+                        
+                    case ARRAY_FIXED_VALUE_TYPE:
+                        aDestMsg.set(key, Null.valueOf(Type.ARRAY_FIXED_VALUE));
+                        break;  
+                        
+                    case ARRAY_VARIABLE_VALUE_TYPE:
+                        aDestMsg.set(key, Null.valueOf(Type.ARRAY_VARIABLE_VALUE));
+                        break;
+                        
                     case NULL_TYPE:
                         // do nothing
                         break;
@@ -384,7 +410,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
         } else {
             // Calculate length
             // TODO to optimize with a try catch
-            final int msgLength2 = getLength(aSrcMsg);
+            final int msgLength2 = this.getLength(aSrcMsg);
             if (aDestBytes.length - aDestOffset < msgLength2) {
                 throw new IllegalArgumentException("Bytes array too small from the offset");
             }
@@ -475,7 +501,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
                         if (aMsg != null) {
                             final int msgLength = this.getLength(aMsg);
                             pos = writeVariableLength(aDestBytes, pos - 1, msgLength, (msgLength == 0) ? TWO : ONE);
-                            pos = this.serializeToBytes(aSrcMsg, aDestBytes, pos);
+                            pos = this.serializeToBytes(aMsg, aDestBytes, pos);
                         }
                     } else if (object instanceof byte[]) {
                         aDestBytes[pos++] = ARRAY_FIXED_VALUE_TYPE;
@@ -565,12 +591,16 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
                             pos = this.serializeToBytes(msg, aDestBytes, pos);
                         }
                     } else if (object instanceof Null) {
-                        aDestBytes[pos++] = NULL_TYPE;
-                        final Null nul = (Null) object;
-                        final int nullLength = nul.getLength();
-                        pos = writeVariableLength(aDestBytes, pos - 1, nullLength, ONE);
-                        for (int i = 0; i < nul.getLength(); i++) {
-                            aDestBytes[pos++] = 0;
+                        final Null nul = ((Null) object);
+                        if (nul.getType().equals(Type.NULL)) {
+                            aDestBytes[pos++] = NULL_TYPE;
+                            final int nullLength = nul.getLength();
+                            pos = writeVariableLength(aDestBytes, pos - 1, nullLength, ONE);
+                            for (int i = 0; i < nul.getLength(); i++) {
+                                aDestBytes[pos++] = 0;
+                            }
+                        } else {
+                            aDestBytes[pos++] = nul.getType().getId();
                         }
                     } else {
                         // Should not occured,
