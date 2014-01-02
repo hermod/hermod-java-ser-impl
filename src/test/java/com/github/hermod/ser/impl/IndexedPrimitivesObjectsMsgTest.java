@@ -8,8 +8,7 @@ import com.github.hermod.ser.Msg;
  * @author anavarro - Jan 20, 2013
  * 
  */
-public final class IndexedPrimitivesObjectsMsgTest extends AbstractMsgTest 
-{
+public final class IndexedPrimitivesObjectsMsgTest extends AbstractMsgTest {
 
     /**
      * Constructor.
@@ -28,7 +27,5 @@ public final class IndexedPrimitivesObjectsMsgTest extends AbstractMsgTest
     public Msg createMsg() {
         return IndexedPrimitivesObjectsMsg.create();
     }
-
-
 
 }

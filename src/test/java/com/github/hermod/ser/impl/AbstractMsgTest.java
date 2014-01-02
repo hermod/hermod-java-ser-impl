@@ -32,84 +32,84 @@ import com.google.gson.GsonBuilder;
  */
 public abstract class AbstractMsgTest {
 
-    protected static final Null NULL_TEST = Null.valueOf(4);
-    protected static final Null NULL_TEST2 = Null.valueOf(8);
-    protected static final boolean BOOLEAN_TEST = true;
-    protected static final byte BYTE_TEST = Byte.MIN_VALUE;
-    protected static final short SHORT_TEST = Short.MAX_VALUE;
-    protected static final int INT_TEST = Integer.MIN_VALUE;
-    protected static final long LONG_TEST = Long.MAX_VALUE / 2;
-    protected static final float FLOAT_TEST = 10.10f;
-    protected static final double DOUBLE_TEST = 11.11;
-    protected static final double DOUBLE_TEST1 = 1.0;
-    protected static final double DOUBLE_TEST2 = Double.MAX_VALUE / 2;
-    protected static final double DOUBLE_TEST3 = 0.0000000001;
-    protected static final String STRING_TEST_UTF16 = "€" + new String(Character.toChars(119070));
-    protected static final String STRING_TEST = "string";
-    protected static final String STRING_TEST32 = "12345678901234567890123456789012";
-    protected static final String STRING_TEST132 = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012";
-    protected static final String STRING_TEST260 = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+    protected static final Null       NULL_TEST                    = Null.valueOf(4);
+    protected static final Null       NULL_TEST2                   = Null.valueOf(8);
+    protected static final boolean    BOOLEAN_TEST                 = true;
+    protected static final byte       BYTE_TEST                    = Byte.MIN_VALUE;
+    protected static final short      SHORT_TEST                   = Short.MAX_VALUE;
+    protected static final int        INT_TEST                     = Integer.MIN_VALUE;
+    protected static final long       LONG_TEST                    = Long.MAX_VALUE / 2;
+    protected static final float      FLOAT_TEST                   = 10.10f;
+    protected static final double     DOUBLE_TEST                  = 11.11;
+    protected static final double     DOUBLE_TEST1                 = 1.0;
+    protected static final double     DOUBLE_TEST2                 = Double.MAX_VALUE / 2;
+    protected static final double     DOUBLE_TEST3                 = 0.0000000001;
+    protected static final String     STRING_TEST_UTF16            = "€" + new String(Character.toChars(119070));
+    protected static final String     STRING_TEST                  = "string";
+    protected static final String     STRING_TEST32                = "12345678901234567890123456789012";
+    protected static final String     STRING_TEST132               = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012";
+    protected static final String     STRING_TEST260               = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
 
-    protected static final Object[] OBJECT_ARRAY_TEST = {};
-    protected static final boolean[] BOOLEANS_TEST = { true, false };
-    protected static final Boolean[] BOOLEANS_TEST2 = { true, false };
-    protected static final byte[] BYTES_TEST = { 0, 1, 2, 3, Byte.MAX_VALUE };
-    protected static final Byte[] BYTES_TEST2 = { 0, 1, 2, 3, Byte.MAX_VALUE };
-    protected static final short[] SHORTS_TEST = { 0, 1, 2, 3, Short.MAX_VALUE };
-    protected static final Short[] SHORTS_TEST2 = { 0, 1, 2, 3, Short.MAX_VALUE };
-    protected static final int[] INTS_TEST = { 0, 1, 2, 3, Integer.MAX_VALUE };
-    protected static final Integer[] INTS_TEST2 = { 0, 1, 2, 3, Integer.MAX_VALUE };
-    protected static final long[] LONGS_TEST = { 0, 1, 2, 3, Long.MAX_VALUE };
-    protected static final Long[] LONGS_TEST2 = { 0l, 1l, 2l, 3l, Long.MAX_VALUE };
-    protected static final Long[] LONGS_TEST3 = { null, 1l, 2l, 3l, Long.MAX_VALUE };
-    protected static final long[] LONGS_TEST_EMPTY = {};
-    protected static final float[] FLOATS_TEST = { 0, 1, 2, 3, Float.MAX_VALUE };
-    protected static final Float[] FLOATS_TEST2 = { 0f, 1f, 2f, 3f, Float.MAX_VALUE };
-    protected static final double[] DOUBLES_TEST = { 0, 1, 2, 3, Double.MAX_VALUE };
-    protected static final Double[] DOUBLES_TEST2 = { 0d, 1d, 2d, 3d, Double.MAX_VALUE };
+    protected static final Object[]   OBJECT_ARRAY_TEST            = {};
+    protected static final boolean[]  BOOLEANS_TEST                = { true, false };
+    protected static final Boolean[]  BOOLEANS_TEST2               = { true, false };
+    protected static final byte[]     BYTES_TEST                   = { 0, 1, 2, 3, Byte.MAX_VALUE };
+    protected static final Byte[]     BYTES_TEST2                  = { 0, 1, 2, 3, Byte.MAX_VALUE };
+    protected static final short[]    SHORTS_TEST                  = { 0, 1, 2, 3, Short.MAX_VALUE };
+    protected static final Short[]    SHORTS_TEST2                 = { 0, 1, 2, 3, Short.MAX_VALUE };
+    protected static final int[]      INTS_TEST                    = { 0, 1, 2, 3, Integer.MAX_VALUE };
+    protected static final Integer[]  INTS_TEST2                   = { 0, 1, 2, 3, Integer.MAX_VALUE };
+    protected static final long[]     LONGS_TEST                   = { 0, 1, 2, 3, Long.MAX_VALUE };
+    protected static final Long[]     LONGS_TEST2                  = { 0l, 1l, 2l, 3l, Long.MAX_VALUE };
+    protected static final Long[]     LONGS_TEST3                  = { null, 1l, 2l, 3l, Long.MAX_VALUE };
+    protected static final long[]     LONGS_TEST_EMPTY             = {};
+    protected static final float[]    FLOATS_TEST                  = { 0, 1, 2, 3, Float.MAX_VALUE };
+    protected static final Float[]    FLOATS_TEST2                 = { 0f, 1f, 2f, 3f, Float.MAX_VALUE };
+    protected static final double[]   DOUBLES_TEST                 = { 0, 1, 2, 3, Double.MAX_VALUE };
+    protected static final Double[]   DOUBLES_TEST2                = { 0d, 1d, 2d, 3d, Double.MAX_VALUE };
 
-    protected static final String[] STRINGS_TEST = { "string1", "string2", "string3", "string4" };
+    protected static final String[]   STRINGS_TEST                 = { "string1", "string2", "string3", "string4" };
 
-    protected static final int KEY_MINUS_ONE = -1;
-    protected static final int KEY_ZERO = 0;
-    protected static final int KEY_ONE = 1;
-    protected static final int KEY_TWO = 2;
-    protected static final int KEY_THREE = 3;
-    protected static final int KEY_FOUR = 4;
-    protected static final int KEY_FIVE = 5;
-    protected static final int KEY_SIX = 6;
-    protected static final int KEY_SEVEN = 7;
-    protected static final int KEY_EIGHT = 8;
-    protected static final int KEY_NINE = 9;
-    protected static final int KEY_TEN = 10;
-    protected static final int KEY_ELEVEN = 11;
-    protected static final int KEY_TWELVE = 12;
-    protected static final int KEY_THIRTEEN = 13;
-    protected static final int KEY_FOURTEEN = 14;
-    protected static final int KEY_FIFTEEN = 15;
-    protected static final int KEY_SIXTEEN = 16;
-    protected static final int KEY_SEVENTEEN = 17;
-    protected static final int KEY_EIGHTEEN = 18;
-    protected static final int KEY_TWENTY = 20;
-    protected static final int KEY_FORTY = 40;
-    protected static final int KEY_NINETY = 90;
-    protected static final int KEY_NINETYTWO = 92;
-    protected static final int KEY_NINETYNINE = 99;
-    protected static final int KEY_TWO_HUNDRED = 200;
-    protected static final int KEY_THREE_HUNDRED = 300;
-    protected static final int KEY_SIX_HUNDRED = 600;
-    protected static final int KEY_ONE_THOUSAND_ONE_HUNDRED = 1100;
-    protected static final int KEY_THREE_THOUSANDS = 3000;
+    protected static final int        KEY_MINUS_ONE                = -1;
+    protected static final int        KEY_ZERO                     = 0;
+    protected static final int        KEY_ONE                      = 1;
+    protected static final int        KEY_TWO                      = 2;
+    protected static final int        KEY_THREE                    = 3;
+    protected static final int        KEY_FOUR                     = 4;
+    protected static final int        KEY_FIVE                     = 5;
+    protected static final int        KEY_SIX                      = 6;
+    protected static final int        KEY_SEVEN                    = 7;
+    protected static final int        KEY_EIGHT                    = 8;
+    protected static final int        KEY_NINE                     = 9;
+    protected static final int        KEY_TEN                      = 10;
+    protected static final int        KEY_ELEVEN                   = 11;
+    protected static final int        KEY_TWELVE                   = 12;
+    protected static final int        KEY_THIRTEEN                 = 13;
+    protected static final int        KEY_FOURTEEN                 = 14;
+    protected static final int        KEY_FIFTEEN                  = 15;
+    protected static final int        KEY_SIXTEEN                  = 16;
+    protected static final int        KEY_SEVENTEEN                = 17;
+    protected static final int        KEY_EIGHTEEN                 = 18;
+    protected static final int        KEY_TWENTY                   = 20;
+    protected static final int        KEY_FORTY                    = 40;
+    protected static final int        KEY_NINETY                   = 90;
+    protected static final int        KEY_NINETYTWO                = 92;
+    protected static final int        KEY_NINETYNINE               = 99;
+    protected static final int        KEY_TWO_HUNDRED              = 200;
+    protected static final int        KEY_THREE_HUNDRED            = 300;
+    protected static final int        KEY_SIX_HUNDRED              = 600;
+    protected static final int        KEY_ONE_THOUSAND_ONE_HUNDRED = 1100;
+    protected static final int        KEY_THREE_THOUSANDS          = 3000;
 
-    protected static final double PRECISION = 0.00001;
+    protected static final double     PRECISION                    = 0.00001;
 
-    protected BytesMsgSerializer bytesMsgSerializer;
+    protected BytesMsgSerializer      bytesMsgSerializer;
     protected ByteBufferMsgSerializer byteBufferSerializer;
 
-    protected final Msg msgTest;
+    protected final Msg               msgTest;
 
-    protected Msg srcMsg;
-    protected Msg destMsg;
+    protected Msg                     srcMsg;
+    protected Msg                     destMsg;
 
     /**
      * newMsg.
@@ -176,7 +176,7 @@ public abstract class AbstractMsgTest {
      */
     @Test
     public void testCreateWithKeyMax() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException,
-            InvocationTargetException {
+    InvocationTargetException {
         int keyMax = 10;
         final Method createWithKeyMaxMethod = this.createMsg().getClass().getDeclaredMethod("createWithKeyMax", new Class[] { int.class });
         final Msg msg = (Msg) createWithKeyMaxMethod.invoke(null, keyMax);
@@ -191,7 +191,7 @@ public abstract class AbstractMsgTest {
      */
     @Test
     public void testCreateFromValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException,
-            InvocationTargetException {
+    InvocationTargetException {
         final Method createFromValuesMethod = this.createMsg().getClass().getDeclaredMethod("createFromValues", new Class[] { Object[].class });
         final Msg msg = (Msg) createFromValuesMethod.invoke(null, new Object[] { new Object[] { 0, 1, 2, 3 } });
         // final Msg msg = IndexedPrimitivesObjectsMsg.createFromValues(0, 1, 2, 3);
@@ -206,7 +206,7 @@ public abstract class AbstractMsgTest {
      */
     @Test
     public void testCreateFromMsg() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException,
-            InvocationTargetException {
+    InvocationTargetException {
         final Method createFromValuesMethod = this.createMsg().getClass().getDeclaredMethod("createFromValues", new Class[] { Object[].class });
         final Msg msg1 = (Msg) createFromValuesMethod.invoke(null, new Object[] { new Object[] { 0, 1, 2, 3 } });
         // final Msg msg1 = IndexedPrimitivesObjectsMsg.createFromValues(0, 1, 2, 3);
@@ -349,11 +349,10 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsNull(KEY_ONE_THOUSAND_ONE_HUNDRED)).isNull();
 
     }
-    
-    
+
     /**
      * testSetGetAsNull1.
-     *
+     * 
      */
     @Test
     public void testSetGetAsNullSimple() {
@@ -531,7 +530,7 @@ public abstract class AbstractMsgTest {
         serializeFromSrcMsgDeserializeToDestMsg();
 
         assertThat(destMsg.contains(KEY_ZERO)).isFalse();
-        
+
         assertThat(destMsg.getAsShort(KEY_ONE)).isEqualTo(SHORT_TEST);
         assertThat(destMsg.getAsNullableShort(KEY_ONE)).isEqualTo(SHORT_TEST);
         assertThat(destMsg.getAsShort(KEY_TWO)).isEqualTo(BYTE_TEST);
@@ -767,7 +766,7 @@ public abstract class AbstractMsgTest {
         assertThat(destMsg.getAsNullableFloat(KEY_TWO)).isEqualTo(Float.valueOf(FLOAT_TEST));
         assertThat(destMsg.getAsNullableFloat(KEY_THREE)).isNull();
         assertThat(destMsg.getAsFloat(KEY_FOUR)).isEqualTo(FLOAT_TEST);
-        
+
         assertThat(destMsg.getAsNullableFloat(KEY_FIVE)).isEqualTo(Float.valueOf(FLOAT_TEST));
         assertThat(destMsg.getAsNullableFloat(KEY_SIX)).isEqualTo(Float.valueOf(FLOAT_TEST));
         assertThat(destMsg.getAsNullableFloat(KEY_SEVEN)).isEqualTo(Float.valueOf(FLOAT_TEST));
@@ -1542,7 +1541,7 @@ public abstract class AbstractMsgTest {
         srcMsg.set(KEY_TWO, DOUBLE_TEST);
         srcMsg.set(KEY_THREE, (Integer) null);
         srcMsg.set(KEY_FOUR, STRING_TEST);
-//        srcMsg.set(KEY_FIVE, msgTest);
+        // srcMsg.set(KEY_FIVE, msgTest);
         srcMsg.set(KEY_SIX, LONGS_TEST2);
         srcMsg.set(KEY_SEVEN, DOUBLES_TEST);
         srcMsg.set(KEY_EIGHT, (String) null);
@@ -1560,7 +1559,7 @@ public abstract class AbstractMsgTest {
         map.put(KEY_TWO, DOUBLE_TEST);
         map.put(KEY_THREE, null);
         map.put(KEY_FOUR, STRING_TEST);
-//        map.put(KEY_FIVE, ((IndexedPrimitivesObjectsMsg) msgTest).getAllAsMap());
+        // map.put(KEY_FIVE, ((IndexedPrimitivesObjectsMsg) msgTest).getAllAsMap());
         map.put(KEY_SIX, LONGS_TEST2);
         map.put(KEY_SEVEN, DOUBLES_TEST);
         map.put(KEY_EIGHT, null);
@@ -1580,8 +1579,7 @@ public abstract class AbstractMsgTest {
         assertThat(srcMsg2.toString()).isEqualTo(jsonMap2);
 
     }
-    
- 
+
     /**
      * testEqualsHashcode.
      * 

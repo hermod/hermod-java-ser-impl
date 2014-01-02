@@ -25,114 +25,114 @@ public final class Msgs {
     /**
      * ZERO
      */
-    static final int ZERO = 0;
+    static final int           ZERO                                  = 0;
 
     /**
      * ONE
      */
-    static final int ONE = 1;
+    static final int           ONE                                   = 1;
 
     /**
      * TWO
      */
-    static final int TWO = 2;
+    static final int           TWO                                   = 2;
 
     /**
      * THREE
      */
-    static final int THREE = 3;
+    static final int           THREE                                 = 3;
 
     /**
      * FOUR
      */
-    static final int FOUR = 4;
+    static final int           FOUR                                  = 4;
 
     /**
      * FIVE
      */
-    static final int FIVE = 5;
+    static final int           FIVE                                  = 5;
 
     /**
      * SIX
      */
-    static final int SIX = 6;
+    static final int           SIX                                   = 6;
 
     /**
      * SEVEN
      */
-    static final int SEVEN = 7;
+    static final int           SEVEN                                 = 7;
 
     /**
      * EIGHT
      */
-    static final int EIGHT = 8;
-    
+    static final int           EIGHT                                 = 8;
+
     /**
      * NINE
      */
-    static final int NINE = 9;
+    static final int           NINE                                  = 9;
 
     /**
      * SIXTEEN
      */
-    static final int SIXTEEN = 16;
+    static final int           SIXTEEN                               = 16;
 
     /**
      * TWENTY_FOUR
      */
-    static final int TWENTY_FOUR = 24;
+    static final int           TWENTY_FOUR                           = 24;
 
     /**
      * THIRTY_TWO
      */
-    static final int THIRTY_TWO = 32;
+    static final int           THIRTY_TWO                            = 32;
 
     /**
      * FORTY
      */
-    static final int FORTY = 40;
+    static final int           FORTY                                 = 40;
 
     /**
      * FORTY_EIGHT
      */
-    static final int FORTY_EIGHT = 48;
+    static final int           FORTY_EIGHT                           = 48;
 
     /**
      * FIFTY_SIX
      */
-    static final int FIFTY_SIX = 56;
+    static final int           FIFTY_SIX                             = 56;
 
     /**
      * SIXTY_FOUR
      */
-    static final int SIXTY_FOUR = 64;
+    static final int           SIXTY_FOUR                            = 64;
 
-//    // byte / boolean
-//    static final byte BYTE_TYPE = (byte) (Types.INTEGER_TYPE | ONE);
-//
-//    // short
-//    static final byte SHORT_TYPE = (byte) (Types.INTEGER_TYPE | TWO);
-//
-//    // int
-//    static final byte INT_TYPE = (byte) (Types.INTEGER_TYPE | FOUR);
-//
-//    // long
-//    static final byte LONG_TYPE = (byte) (Types.INTEGER_TYPE | EIGHT);
-//
-//    // float / double or double encoded on 5 bits
-//    static final byte TYPE_DECIMAL = Type.DECIMAL.getId();
-//
-//    // float
-//    static final byte FLOAT_TYPE = (byte) (Types.DECIMAL_TYPE | FOUR);
-//
-//    // double
-//    static final byte DOUBLE_TYPE = (byte) (Types.DECIMAL_TYPE | EIGHT);
-//
-//    // double (encoded on 3 bits)
-//    static final byte THREE_BITS_DECIMAL_TYPE = (byte) (Types.DECIMAL_TYPE | THREE);
-//
-//    // double (encoded on 5 bits)
-//    static final byte FIVE_BITS_DECIMAL_TYPE = (byte) (Types.DECIMAL_TYPE | FIVE);
+    // // byte / boolean
+    // static final byte BYTE_TYPE = (byte) (Types.INTEGER_TYPE | ONE);
+    //
+    // // short
+    // static final byte SHORT_TYPE = (byte) (Types.INTEGER_TYPE | TWO);
+    //
+    // // int
+    // static final byte INT_TYPE = (byte) (Types.INTEGER_TYPE | FOUR);
+    //
+    // // long
+    // static final byte LONG_TYPE = (byte) (Types.INTEGER_TYPE | EIGHT);
+    //
+    // // float / double or double encoded on 5 bits
+    // static final byte TYPE_DECIMAL = Type.DECIMAL.getId();
+    //
+    // // float
+    // static final byte FLOAT_TYPE = (byte) (Types.DECIMAL_TYPE | FOUR);
+    //
+    // // double
+    // static final byte DOUBLE_TYPE = (byte) (Types.DECIMAL_TYPE | EIGHT);
+    //
+    // // double (encoded on 3 bits)
+    // static final byte THREE_BITS_DECIMAL_TYPE = (byte) (Types.DECIMAL_TYPE | THREE);
+    //
+    // // double (encoded on 5 bits)
+    // static final byte FIVE_BITS_DECIMAL_TYPE = (byte) (Types.DECIMAL_TYPE | FIVE);
 
     // Length is implemented as
     // 1-29, the length is in the last 5 bits of the type
@@ -145,46 +145,47 @@ public final class Msgs {
     /**
      * XFF
      */
-    static final int XFF = 0xFF;
+    static final int           XFF                                   = 0xFF;
 
     /**
      * 
      */
-    static final byte LENGTH_MASK = (byte) 0x1F;// (byte) 0b0001_1111;
+    static final byte          LENGTH_MASK                           = (byte) 0x1F;                                                                                                                                                                                                  // (byte)
+                                                                                                                                                                                                                                                                                      // 0b0001_1111;
 
     /**
      * 
      */
-    static final int LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE = LENGTH_MASK - ONE;
+    static final int           LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE    = LENGTH_MASK - ONE;
 
     /**
      * MAX_LENGTH_ENCODED_IN_A_BIT
      */
-    static final int MAX_VALUE_FOR_UNSIGNED_BYTE = 255;
+    static final int           MAX_VALUE_FOR_UNSIGNED_BYTE           = 255;
     /**
      * 
      */
-    static final int LENGTH_ENCODED_IN_AN_INT = LENGTH_MASK;
+    static final int           LENGTH_ENCODED_IN_AN_INT              = LENGTH_MASK;
 
     /**
      * DEFAULT_MSG_SIZE
      */
-    static final int DEFAULT_MSG_LENGTH = SIXTY_FOUR;
+    static final int           DEFAULT_MSG_LENGTH                    = SIXTY_FOUR;
 
     /**
      * DEFAULT_MAX_KEY
      */
-    static final int DEFAULT_MAX_KEY = DEFAULT_MSG_LENGTH / FOUR;
+    static final int           DEFAULT_MAX_KEY                       = DEFAULT_MSG_LENGTH / FOUR;
 
     /**
      * FIRST_KEY
      */
-    static final int FIRST_AUTHORIZED_KEY = ZERO;
+    static final int           FIRST_AUTHORIZED_KEY                  = ZERO;
 
     /**
      * DEFAULT_VALUE
      */
-    static final int DEFAULT_VALUE = ZERO;
+    static final int           DEFAULT_VALUE                         = ZERO;
 
     // static final double[] TENTHS_DOZENS;
     /**
@@ -193,19 +194,18 @@ public final class Msgs {
      * We encode variable size on 2 bits (1 byte in addition of type) instead on 1 byte (in type) to distinct null and Object with 0 size.
      */
     // TODO to remove
-    static final boolean FORCE_ENCODING_ZERO_ON_2BITS = true;
+    static final boolean       FORCE_ENCODING_ZERO_ON_2BITS          = true;
 
     /**
      * ERROR_WHEN_KEY_NOT_PRESENT
      */
-    static final String ERROR_WHEN_KEY_NOT_PRESENT = "The key=%s is not present for type asked.";
+    static final String        ERROR_WHEN_KEY_NOT_PRESENT            = "The key=%s is not present for type asked.";
 
-    static final String ERROR_WHEN_YOU_SET_NULL_WITH_LENGTH_0 = "You must set a Null with type Null with a length > 0, use (Integer) null or Null.INTEGER_NULL or Null.valueOf(Type.INTEGER) any Types.* except Null.NULL or Null.valueOf(0) if you want to have length = 0.";
-    
-    
-    static final double HALF = 0.5;
+    static final String        ERROR_WHEN_YOU_SET_NULL_WITH_LENGTH_0 = "You must set a Null with type Null with a length > 0, use (Integer) null or Null.INTEGER_NULL or Null.valueOf(Type.INTEGER) any Types.* except Null.NULL or Null.valueOf(0) if you want to have length = 0.";
 
-    private static final int[] POW_2 = new int[Integer.SIZE];
+    static final double        HALF                                  = 0.5;
+
+    private static final int[] POW_2                                 = new int[Integer.SIZE];
 
     /**
      * DOZENS
@@ -221,7 +221,7 @@ public final class Msgs {
      * Scale.TEN_MILLIONS.getDecimal(), 1.0 / Scale.HUNDRED_MILLIONS.getDecimal() };
      */
 
-    static final double[] DOZENS_TENTHS;
+    static final double[]      DOZENS_TENTHS;
 
     static {
 

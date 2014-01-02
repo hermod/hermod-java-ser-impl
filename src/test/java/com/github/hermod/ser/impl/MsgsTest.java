@@ -40,8 +40,9 @@ public class MsgsTest {
     public void testIsAsciiString() {
         assertThat(Msgs.isAsciiString("Toto")).isTrue();
         assertThat(
-                Msgs.isAsciiString("Tu va nous manquer Kiki Le Fada, toi qui peut être nous regarde de la haut OhhhhOhhhOhhhh Sache que ta mort nous a tous sécoué OhHéOhHéOhHéOhHéOhHé. Kiki Le Fada nous a quitté malheureusement il n'est plus là la la la la la la la. Et vous mes amis vous êtes là donc qui ne saute pas n'est pas en deuil deuil !  "))
-                .isFalse();
+        Msgs
+        .isAsciiString("Tu va nous manquer Kiki Le Fada, toi qui peut être nous regarde de la haut OhhhhOhhhOhhhh Sache que ta mort nous a tous sécoué OhHéOhHéOhHéOhHéOhHé. Kiki Le Fada nous a quitté malheureusement il n'est plus là la la la la la la la. Et vous mes amis vous êtes là donc qui ne saute pas n'est pas en deuil deuil !  "))
+        .isFalse();
         assertThat(Msgs.isAsciiString("€uro")).isFalse();
     }
 

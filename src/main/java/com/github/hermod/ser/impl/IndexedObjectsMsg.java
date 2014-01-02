@@ -14,11 +14,9 @@ import static com.github.hermod.ser.Types.MSG_TYPE;
 import static com.github.hermod.ser.Types.NULL_TYPE;
 import static com.github.hermod.ser.Types.SHORT_TYPE;
 import static com.github.hermod.ser.Types.STRING_UTF_8_TYPE;
-import static com.github.hermod.ser.Types.TYPE_MASK;
 import static com.github.hermod.ser.impl.Msgs.DEFAULT_MAX_KEY;
 import static com.github.hermod.ser.impl.Msgs.EIGHT;
 import static com.github.hermod.ser.impl.Msgs.ERROR_WHEN_KEY_NOT_PRESENT;
-import static com.github.hermod.ser.impl.Msgs.FIVE;
 import static com.github.hermod.ser.impl.Msgs.FOUR;
 import static com.github.hermod.ser.impl.Msgs.ONE;
 import static com.github.hermod.ser.impl.Msgs.TWO;
@@ -28,7 +26,6 @@ import java.nio.ByteBuffer;
 import com.github.hermod.ser.Msg;
 import com.github.hermod.ser.Null;
 import com.github.hermod.ser.Type;
-import com.github.hermod.ser.Types;
 
 /**
  * <p>IndexedObjectsMsg. </p>
@@ -272,7 +269,7 @@ public class IndexedObjectsMsg implements Msg {
     public final Type getType(final int aKey) {
         try {
             return (this.objectValues[aKey].getClass().equals(Null.class)) ? ((Null) this.objectValues[aKey]).getType() : Type
-                    .valueOf(this.objectValues[aKey].getClass());
+            .valueOf(this.objectValues[aKey].getClass());
         } catch (ArrayIndexOutOfBoundsException e) {
             return Type.NULL;
         } catch (NullPointerException e) {
@@ -691,60 +688,60 @@ public class IndexedObjectsMsg implements Msg {
         try {
             final byte type = getTypeAsByte(aKey);
             switch (type) {
-            case BYTE_TYPE:
-                return aClazz.cast(getAsByte(aKey));
+                case BYTE_TYPE:
+                    return aClazz.cast(getAsByte(aKey));
 
-            case SHORT_TYPE:
-                return aClazz.cast(getAsShort(aKey));
+                case SHORT_TYPE:
+                    return aClazz.cast(getAsShort(aKey));
 
-            case INT_TYPE:
-                return aClazz.cast(getAsInt(aKey));
+                case INT_TYPE:
+                    return aClazz.cast(getAsInt(aKey));
 
-            case LONG_TYPE:
-                return aClazz.cast(getAsLong(aKey));
+                case LONG_TYPE:
+                    return aClazz.cast(getAsLong(aKey));
 
-            case INTEGER_TYPE:
-                return aClazz.cast((Long) null);
+                case INTEGER_TYPE:
+                    return aClazz.cast((Long) null);
 
-            case FLOAT_TYPE:
-                return aClazz.cast(getAsFloat(aKey));
+                case FLOAT_TYPE:
+                    return aClazz.cast(getAsFloat(aKey));
 
-            case FIVE_BITS_DECIMAL_TYPE:
-            case DOUBLE_TYPE:
-                return aClazz.cast(getAsDouble(aKey));
+                case FIVE_BITS_DECIMAL_TYPE:
+                case DOUBLE_TYPE:
+                    return aClazz.cast(getAsDouble(aKey));
 
-            case DECIMAL_TYPE:
-                return aClazz.cast((Double) null);
+                case DECIMAL_TYPE:
+                    return aClazz.cast((Double) null);
 
-            case STRING_UTF_8_TYPE:
-                return aClazz.cast(getAsString(aKey));
+                case STRING_UTF_8_TYPE:
+                    return aClazz.cast(getAsString(aKey));
 
-            case MSG_TYPE:
-                return aClazz.cast(getAsMsg(aKey));
+                case MSG_TYPE:
+                    return aClazz.cast(getAsMsg(aKey));
 
-            case ARRAY_FIXED_VALUE_TYPE:
-                if (this.objectValues[aKey] instanceof byte[]) {
-                    return aClazz.cast(getAsBytes(aKey));
-                } else if (this.objectValues[aKey] instanceof short[]) {
-                    return aClazz.cast(getAsShorts(aKey));
-                } else if (this.objectValues[aKey] instanceof int[]) {
-                    return aClazz.cast(getAsInts(aKey));
-                } else if (this.objectValues[aKey] instanceof long[]) {
-                    return aClazz.cast(getAsLongs(aKey));
-                } else if (this.objectValues[aKey] instanceof float[]) {
-                    return aClazz.cast(getAsFloats(aKey));
-                } else if (this.objectValues[aKey] instanceof double[]) {
-                    return aClazz.cast(getAsDoubles(aKey));
-                }
+                case ARRAY_FIXED_VALUE_TYPE:
+                    if (this.objectValues[aKey] instanceof byte[]) {
+                        return aClazz.cast(getAsBytes(aKey));
+                    } else if (this.objectValues[aKey] instanceof short[]) {
+                        return aClazz.cast(getAsShorts(aKey));
+                    } else if (this.objectValues[aKey] instanceof int[]) {
+                        return aClazz.cast(getAsInts(aKey));
+                    } else if (this.objectValues[aKey] instanceof long[]) {
+                        return aClazz.cast(getAsLongs(aKey));
+                    } else if (this.objectValues[aKey] instanceof float[]) {
+                        return aClazz.cast(getAsFloats(aKey));
+                    } else if (this.objectValues[aKey] instanceof double[]) {
+                        return aClazz.cast(getAsDoubles(aKey));
+                    }
 
-            case ARRAY_VARIABLE_VALUE_TYPE:
-                return aClazz.cast(getAsObjects(aKey));
+                case ARRAY_VARIABLE_VALUE_TYPE:
+                    return aClazz.cast(getAsObjects(aKey));
 
-            case NULL_TYPE:
-                return aClazz.cast(getAsNull(aKey));
+                case NULL_TYPE:
+                    return aClazz.cast(getAsNull(aKey));
 
-            default:
-                return null;
+                default:
+                    return null;
 
             }
 
@@ -1176,7 +1173,7 @@ public class IndexedObjectsMsg implements Msg {
                     }
                 } else {
                     throw new IllegalArgumentException("The destMsgs with length=" + aDestMsgs.length + " must be have the same field array length="
-                            + msgs.length + ". Use getArrayLength() to know the length before call this method.");
+                    + msgs.length + ". Use getArrayLength() to know the length before call this method.");
                 }
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
@@ -1184,7 +1181,7 @@ public class IndexedObjectsMsg implements Msg {
     }
 
     /**
-     * (non-Javadoc)
+     * {@inheritDoc}
      * 
      * @see com.github.hermod.ser.Msg#getAsObjects(int)
      */
@@ -1239,13 +1236,22 @@ public class IndexedObjectsMsg implements Msg {
      */
     @Override
     public Object[] getAllAsObjects() {
-        // TODO to optimize, copy directo the objectsValue
+        // TODO to optimize, copy direct the objectsValue
         final Object[] anObjects = new Object[this.getKeyMax() + 1];
         final int[] keys = this.getKeysArray();
         for (final int key : keys) {
             anObjects[key] = this.get(key);
         }
         return anObjects;
+    }
+
+    /**
+     * <p>getInternalAllAsObjects.</p>
+     * 
+     * @return
+     */
+    Object[] getInternalAllAsObjects() {
+        return this.objectValues;
     }
 
     /**
@@ -1311,10 +1317,10 @@ public class IndexedObjectsMsg implements Msg {
             try {
                 // TODO to refactor
                 if (aObject instanceof Boolean | aObject instanceof Byte | aObject instanceof Short | aObject instanceof Integer
-                        | aObject instanceof Long) {
+                | aObject instanceof Long) {
                     if (aObject != null) {
                         final byte integerType = (aObject instanceof Byte || aObject instanceof Boolean) ? BYTE_TYPE
-                                : (aObject instanceof Short) ? SHORT_TYPE : (aObject instanceof Integer) ? INT_TYPE : LONG_TYPE;
+                        : (aObject instanceof Short) ? SHORT_TYPE : (aObject instanceof Integer) ? INT_TYPE : LONG_TYPE;
                         set(aKey, ((Number) aObject).longValue(), integerType);
                     } else {
                         if (aObject instanceof Boolean | aObject instanceof Byte) {
@@ -1399,7 +1405,7 @@ public class IndexedObjectsMsg implements Msg {
     public final void set(final int aKey, final Boolean aBoolean) {
         try {
             this.objectValues[aKey] = (aBoolean != null) ? ((aBoolean.booleanValue()) ? Byte.valueOf((byte) ONE) : Byte.valueOf((byte) 0)) : Null
-                    .valueOf(Type.INTEGER);
+            .valueOf(Type.INTEGER);
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aBoolean);
@@ -1552,7 +1558,7 @@ public class IndexedObjectsMsg implements Msg {
     public final void set(final int aKey, final int aInt) {
         try {
             this.objectValues[aKey] = (aInt == (byte) aInt) ? Byte.valueOf((byte) aInt) : (aInt == (short) aInt) ? Short.valueOf((short) aInt)
-                    : Integer.valueOf(aInt);
+            : Integer.valueOf(aInt);
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, Integer.valueOf(aInt));
@@ -1572,7 +1578,7 @@ public class IndexedObjectsMsg implements Msg {
             } else {
                 final int aInt = aInteger.intValue();
                 this.objectValues[aKey] = (aInt == (byte) aInt) ? Byte.valueOf((byte) aInt) : (aInt == (short) aInt) ? Short.valueOf((short) aInt)
-                        : Integer.valueOf(aInt);
+                : Integer.valueOf(aInt);
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
@@ -1629,7 +1635,7 @@ public class IndexedObjectsMsg implements Msg {
     public final void set(final int aKey, final long aLong) {
         try {
             this.objectValues[aKey] = (aLong == (byte) aLong) ? Byte.valueOf((byte) aLong) : (aLong == (short) aLong) ? Short.valueOf((short) aLong)
-                    : (aLong == (short) aLong) ? Integer.valueOf((int) aLong) : Long.valueOf(aLong);
+            : (aLong == (short) aLong) ? Integer.valueOf((int) aLong) : Long.valueOf(aLong);
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, Long.valueOf(aLong));

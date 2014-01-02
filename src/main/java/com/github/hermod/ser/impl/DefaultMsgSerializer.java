@@ -96,15 +96,14 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
                 if ((bytes[pos] & TYPE_MASK) == SKIPPED_KEYS_TYPE) {
                     final int lengthMask = bytes[pos++] & LENGTH_MASK;
                     key += (((lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask
-                            : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? (XFF & bytes[pos++]) : (bytes[pos++] & XFF)
-                                    | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR))) + 1;
+                    : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? (XFF & bytes[pos++]) : (bytes[pos++] & XFF)
+                    | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR))) + 1;
                 } else {
                     final int lengthMask = bytes[pos++] & LENGTH_MASK;
                     // TODO to optimize
                     pos += (((lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask
-                            : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF & bytes[pos]
-                                    : ((bytes[pos] & XFF) | ((bytes[pos + ONE] & XFF) << EIGHT) | ((bytes[pos + TWO] & XFF) << SIXTEEN) | ((bytes[pos
-                                            + THREE] & XFF) << TWENTY_FOUR))));
+                    : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF & bytes[pos] : ((bytes[pos] & XFF)
+                    | ((bytes[pos + ONE] & XFF) << EIGHT) | ((bytes[pos + TWO] & XFF) << SIXTEEN) | ((bytes[pos + THREE] & XFF) << TWENTY_FOUR))));
                     pos += (lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? 0 : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? ONE : FOUR;
 
                     key++;
@@ -123,262 +122,264 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
                 if ((type & TYPE_MASK) == SKIPPED_KEYS_TYPE) {
                     final int sizeMask = type & LENGTH_MASK;
                     key += ((sizeMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? sizeMask : (sizeMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF
-                            & bytes[pos++] : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN)
-                            | ((bytes[pos++] & XFF) << TWENTY_FOUR)) + 1;
+                    & bytes[pos++] : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN)
+                    | ((bytes[pos++] & XFF) << TWENTY_FOUR)) + 1;
                 }
                 // Decode values
                 else {
                     switch (type) {
                     //  All fixed type
-                    case BYTE_TYPE:
-                        aDestMsg.set(key, (byte) ((bytes[pos++] & XFF)));
-                        break;
+                        case BYTE_TYPE:
+                            aDestMsg.set(key, (byte) ((bytes[pos++] & XFF)));
+                            break;
 
-                    case SHORT_TYPE:
-                        aDestMsg.set(key, (short) ((((short) bytes[pos++] & XFF)) | (((short) bytes[pos++]) << EIGHT)));
-                        break;
+                        case SHORT_TYPE:
+                            aDestMsg.set(key, (short) ((((short) bytes[pos++] & XFF)) | (((short) bytes[pos++]) << EIGHT)));
+                            break;
 
-                    case INT_TYPE:
-                        aDestMsg.set(key, (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
-                                | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++]) << TWENTY_FOUR));
-                        break;
-                        
-                    case INTEGER_TYPE:
-                        aDestMsg.set(key, Null.valueOf(Type.INTEGER));
-                        break;
+                        case INT_TYPE:
+                            aDestMsg.set(key, (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
+                            | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++]) << TWENTY_FOUR));
+                            break;
 
-                    case DOUBLE_TYPE:
-                        aDestMsg.set(
-                                key,
-                                Double.longBitsToDouble((((long) bytes[pos++] & XFF) | (((long) bytes[pos++] & XFF) << EIGHT)
-                                        | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
-                                        | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
-                                        | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX))));
-                        break;
+                        case INTEGER_TYPE:
+                            aDestMsg.set(key, Null.valueOf(Type.INTEGER));
+                            break;
 
-                    case FIVE_BITS_DECIMAL_TYPE:
-                        aDestMsg.set(
-                                key,
-                                Double.longBitsToDouble((((long) bytes[pos++] & XFF) << EIGHT) | (((long) bytes[pos++] & XFF) << SIXTEEN)
-                                        | (((long) bytes[pos++] & XFF) << TWENTY_FOUR) | (((long) bytes[pos++] & XFF) << THIRTY_TWO)),
-                                ((byte) bytes[pos++] & XFF));
-                        break;
+                        case DOUBLE_TYPE:
+                            aDestMsg.set(
+                            key,
+                            Double.longBitsToDouble((((long) bytes[pos++] & XFF) | (((long) bytes[pos++] & XFF) << EIGHT)
+                            | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
+                            | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
+                            | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX))));
+                            break;
 
-                    case FLOAT_TYPE:
-                        aDestMsg.set(
-                                key,
-                                Float.intBitsToFloat((((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
-                                        | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR)));
-                        break;
+                        case FIVE_BITS_DECIMAL_TYPE:
+                            aDestMsg.set(
+                            key,
+                            Double.longBitsToDouble((((long) bytes[pos++] & XFF) << EIGHT) | (((long) bytes[pos++] & XFF) << SIXTEEN)
+                            | (((long) bytes[pos++] & XFF) << TWENTY_FOUR) | (((long) bytes[pos++] & XFF) << THIRTY_TWO)),
+                            ((byte) bytes[pos++] & XFF));
+                            break;
 
-                    case LONG_TYPE:
-                        aDestMsg.set(key, (long) ((((long) bytes[pos++] & XFF)) | (((long) bytes[pos++] & XFF) << EIGHT)
-                                | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
-                                | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
-                                | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++]) << FIFTY_SIX)));
-                        break;
-                        
-                    case DECIMAL_TYPE:
-                        aDestMsg.set(key, Null.valueOf(Type.DECIMAL));
-                        break;
-                        
-                    case STRING_UTF_8_TYPE:
-                        aDestMsg.set(key, Null.valueOf(Type.STRING_UTF8));
-                        break;
-                        
-                    case MSG_TYPE:
-                        aDestMsg.set(key, Null.valueOf(Type.MSG));
-                        break;
-                        
-                    case ARRAY_FIXED_VALUE_TYPE:
-                        aDestMsg.set(key, Null.valueOf(Type.ARRAY_FIXED_VALUE));
-                        break;  
-                        
-                    case ARRAY_VARIABLE_VALUE_TYPE:
-                        aDestMsg.set(key, Null.valueOf(Type.ARRAY_VARIABLE_VALUE));
-                        break;
-                        
-                    case NULL_TYPE:
-                        // do nothing
-                        break;
+                        case FLOAT_TYPE:
+                            aDestMsg.set(
+                            key,
+                            Float.intBitsToFloat((((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
+                            | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR)));
+                            break;
 
-                    // All non fixed type
-                    default:
-                        final byte typeMask = (byte) (type & TYPE_MASK);
-                        final int lengthMask = (LENGTH_MASK & type);
-                        final int fieldLength = (lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask
-                                : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF & bytes[pos++] : (bytes[pos++] & XFF)
-                                        | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR);
-                        if (lengthMask != 0) {
-                            switch (typeMask) {
+                        case LONG_TYPE:
+                            aDestMsg.set(key, (long) ((((long) bytes[pos++] & XFF)) | (((long) bytes[pos++] & XFF) << EIGHT)
+                            | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
+                            | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
+                            | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++]) << FIFTY_SIX)));
+                            break;
 
-                            case NULL_TYPE:
-                                aDestMsg.set(key, Null.valueOf(fieldLength));
-                                pos += fieldLength;
-                                break;
+                        case DECIMAL_TYPE:
+                            aDestMsg.set(key, Null.valueOf(Type.DECIMAL));
+                            break;
 
-                            case STRING_UTF_8_TYPE:
-                                aDestMsg.set(key, new String(bytes, pos, fieldLength, UTF_8_CHARSET));
-                                pos += fieldLength;
-                                break;
+                        case STRING_UTF_8_TYPE:
+                            aDestMsg.set(key, Null.valueOf(Type.STRING_UTF8));
+                            break;
 
-                            case MSG_TYPE:
-                                final Msg msg = IndexedObjectsMsg.create();
-                                this.deserializeFromBytes(bytes, pos, fieldLength, msg);
-                                pos += fieldLength;
-                                aDestMsg.set(key, msg);
+                        case MSG_TYPE:
+                            aDestMsg.set(key, Null.valueOf(Type.MSG));
+                            break;
 
-                                break;
+                        case ARRAY_FIXED_VALUE_TYPE:
+                            aDestMsg.set(key, Null.valueOf(Type.ARRAY_FIXED_VALUE));
+                            break;
 
-                            case ARRAY_FIXED_VALUE_TYPE:
-                                final byte arrayType = bytes[pos++];
-                                final int fixedArrayLength = fieldLength - ONE;
-                                // For Fixed typed
-                                switch (arrayType) {
-                                case BYTE_TYPE:
-                                    final byte[] byteArray = new byte[fixedArrayLength];
-                                    System.arraycopy(bytes, pos, byteArray, 0, fixedArrayLength);
-                                    pos += fixedArrayLength;
-                                    aDestMsg.set(key, byteArray);
-                                    break;
-                                case SHORT_TYPE:
-                                    final short[] shorts = new short[fixedArrayLength >> ONE];
-                                    for (int i = 0; i < shorts.length; i++) {
-                                        shorts[i] = (short) ((((short) bytes[pos++] & XFF)) | (((short) bytes[pos++] & XFF) << EIGHT));
-                                    }
-                                    aDestMsg.set(key, shorts);
-                                    break;
-                                case INT_TYPE:
-                                    final int[] ints = new int[fixedArrayLength >> TWO];
-                                    for (int i = 0; i < ints.length; i++) {
-                                        ints[i] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
-                                                | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
-                                    }
-                                    aDestMsg.set(key, ints);
-                                    break;
-                                case DOUBLE_TYPE:
-                                    final double[] doubles = new double[fixedArrayLength >> THREE];
-                                    for (int i = 0; i < doubles.length; i++) {
-                                        doubles[i] = Double.longBitsToDouble((((long) bytes[pos++] & XFF) | (((long) bytes[pos++] & XFF) << EIGHT)
-                                                | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
-                                                | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
-                                                | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX)));
-                                    }
-                                    aDestMsg.set(key, doubles);
-                                    break;
-                                case LONG_TYPE:
-                                    final long[] longs = new long[fixedArrayLength >> THREE];
-                                    for (int i = 0; i < longs.length; i++) {
-                                        longs[i] = (((long) bytes[pos++] & XFF)) | (((long) bytes[pos++] & XFF) << EIGHT)
-                                                | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
-                                                | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
-                                                | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX);
-                                    }
-                                    aDestMsg.set(key, longs);
-                                    break;
-                                case FLOAT_TYPE:
-                                    final float[] floats = new float[fixedArrayLength >> TWO];
-                                    for (int i = 0; i < floats.length; i++) {
-                                        floats[i] = Float.intBitsToFloat((((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
-                                                | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR));
-                                    }
-                                    aDestMsg.set(key, floats);
-                                    break;
-                                default:
-                                    break;
-                                }
-                                break;
+                        case ARRAY_VARIABLE_VALUE_TYPE:
+                            aDestMsg.set(key, Null.valueOf(Type.ARRAY_VARIABLE_VALUE));
+                            break;
 
-                            case ARRAY_VARIABLE_VALUE_TYPE:
+                        case NULL_TYPE:
+                            // do nothing
+                            break;
 
-                                // For variable type
-                                // TODO
-                                if (lengthMask != 0) {
-                                    final IndexedObjectsMsg arrayAsMsg = IndexedObjectsMsg.create();
-                                    this.deserializeFromBytes(bytes, pos, fieldLength, arrayAsMsg);
-                                    pos += fieldLength;
-                                    final int variableArrayLength = arrayAsMsg.getKeysLength();
-                                    // TODO fix, check if the the first key not null (here we consider the first one is always not null)
-                                    final Type arraytype = arrayAsMsg.getType(0);
-                                    switch (arraytype) {
+                        // All non fixed type
+                        default:
+                            final byte typeMask = (byte) (type & TYPE_MASK);
+                            final int lengthMask = (LENGTH_MASK & type);
+                            final int fieldLength = (lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask
+                            : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF & bytes[pos++] : (bytes[pos++] & XFF)
+                            | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR);
+                            if (lengthMask != 0) {
+                                switch (typeMask) {
 
-                                    case BYTE:
-                                        final Byte[] byteArray = new Byte[variableArrayLength];
-                                        for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
-                                            byteArray[arrayKey] = arrayAsMsg.getAsNullableByte(arrayKey);
-                                        }
-                                        aDestMsg.set(key, byteArray);
-                                        break;
-                                        
-                                    case SHORT:
-                                        final Short[] shorts = new Short[variableArrayLength];
-                                        for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
-                                            shorts[arrayKey] = arrayAsMsg.getAsNullableShort(arrayKey);
-                                        }
-                                        aDestMsg.set(key, shorts);
-                                        break;
-                                        
-                                    case INT:
-                                        final Integer[] integers = new Integer[variableArrayLength];
-                                        for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
-                                            integers[arrayKey] = arrayAsMsg.getAsNullableInteger(arrayKey);
-                                        }
-                                        aDestMsg.set(key, integers);
-                                        break;
-                                        
-                                    case LONG:
-                                        final Long[] longs = new Long[variableArrayLength];
-                                        for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
-                                            longs[arrayKey] = arrayAsMsg.getAsNullableLong(arrayKey);
-                                        }
-                                        aDestMsg.set(key, longs);
+                                    case NULL_TYPE:
+                                        aDestMsg.set(key, Null.valueOf(fieldLength));
+                                        pos += fieldLength;
                                         break;
 
-                                    case FIVE_BITS_DECIMAL:
-                                    case DOUBLE:
-                                        final Double[] doubles = new Double[variableArrayLength];
-                                        for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
-                                            doubles[arrayKey] = arrayAsMsg.getAsNullableDouble(arrayKey);
-                                        }
-                                        aDestMsg.set(key, doubles);
+                                    case STRING_UTF_8_TYPE:
+                                        aDestMsg.set(key, new String(bytes, pos, fieldLength, UTF_8_CHARSET));
+                                        pos += fieldLength;
                                         break;
 
-                                    case FLOAT:
-                                        final Float[] floats = new Float[variableArrayLength];
-                                        for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
-                                            floats[arrayKey] = arrayAsMsg.getAsNullableFloat(arrayKey);
-                                        }
-                                        aDestMsg.set(key, floats);
+                                    case MSG_TYPE:
+                                        final Msg msg = IndexedObjectsMsg.create();
+                                        this.deserializeFromBytes(bytes, pos, fieldLength, msg);
+                                        pos += fieldLength;
+                                        aDestMsg.set(key, msg);
+
                                         break;
 
-                                    case STRING_UTF8:
-                                        final String[] strings = new String[variableArrayLength];
-                                        for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
-                                            strings[arrayKey] = arrayAsMsg.getAsString(arrayKey);
+                                    case ARRAY_FIXED_VALUE_TYPE:
+                                        final byte arrayType = bytes[pos++];
+                                        final int fixedArrayLength = fieldLength - ONE;
+                                        // For Fixed typed
+                                        switch (arrayType) {
+                                            case BYTE_TYPE:
+                                                final byte[] byteArray = new byte[fixedArrayLength];
+                                                System.arraycopy(bytes, pos, byteArray, 0, fixedArrayLength);
+                                                pos += fixedArrayLength;
+                                                aDestMsg.set(key, byteArray);
+                                                break;
+                                            case SHORT_TYPE:
+                                                final short[] shorts = new short[fixedArrayLength >> ONE];
+                                                for (int i = 0; i < shorts.length; i++) {
+                                                    shorts[i] = (short) ((((short) bytes[pos++] & XFF)) | (((short) bytes[pos++] & XFF) << EIGHT));
+                                                }
+                                                aDestMsg.set(key, shorts);
+                                                break;
+                                            case INT_TYPE:
+                                                final int[] ints = new int[fixedArrayLength >> TWO];
+                                                for (int i = 0; i < ints.length; i++) {
+                                                    ints[i] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
+                                                    | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
+                                                }
+                                                aDestMsg.set(key, ints);
+                                                break;
+                                            case DOUBLE_TYPE:
+                                                final double[] doubles = new double[fixedArrayLength >> THREE];
+                                                for (int i = 0; i < doubles.length; i++) {
+                                                    doubles[i] = Double
+                                                    .longBitsToDouble((((long) bytes[pos++] & XFF) | (((long) bytes[pos++] & XFF) << EIGHT)
+                                                    | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
+                                                    | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
+                                                    | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX)));
+                                                }
+                                                aDestMsg.set(key, doubles);
+                                                break;
+                                            case LONG_TYPE:
+                                                final long[] longs = new long[fixedArrayLength >> THREE];
+                                                for (int i = 0; i < longs.length; i++) {
+                                                    longs[i] = (((long) bytes[pos++] & XFF)) | (((long) bytes[pos++] & XFF) << EIGHT)
+                                                    | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
+                                                    | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
+                                                    | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX);
+                                                }
+                                                aDestMsg.set(key, longs);
+                                                break;
+                                            case FLOAT_TYPE:
+                                                final float[] floats = new float[fixedArrayLength >> TWO];
+                                                for (int i = 0; i < floats.length; i++) {
+                                                    floats[i] = Float.intBitsToFloat((((int) bytes[pos++] & XFF))
+                                                    | (((int) bytes[pos++] & XFF) << EIGHT) | (((int) bytes[pos++] & XFF) << SIXTEEN)
+                                                    | (((int) bytes[pos++] & XFF) << TWENTY_FOUR));
+                                                }
+                                                aDestMsg.set(key, floats);
+                                                break;
+                                            default:
+                                                break;
                                         }
-                                        aDestMsg.set(key, strings);
                                         break;
 
-                                    case MSG:
-                                        final Msg[] msgs = new IndexedPrimitivesObjectsMsg[variableArrayLength];
-                                        for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
-                                            msgs[arrayKey] = arrayAsMsg.getAsMsg(arrayKey);
+                                    case ARRAY_VARIABLE_VALUE_TYPE:
+
+                                        // For variable type
+                                        // TODO
+                                        if (lengthMask != 0) {
+                                            final IndexedObjectsMsg arrayAsMsg = IndexedObjectsMsg.create();
+                                            this.deserializeFromBytes(bytes, pos, fieldLength, arrayAsMsg);
+                                            pos += fieldLength;
+                                            final int variableArrayLength = arrayAsMsg.getKeysLength();
+                                            // TODO fix, check if the the first key not null (here we consider the first one is always not null)
+                                            final Type arraytype = arrayAsMsg.getType(0);
+                                            switch (arraytype) {
+
+                                                case BYTE:
+                                                    final Byte[] byteArray = new Byte[variableArrayLength];
+                                                    for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
+                                                        byteArray[arrayKey] = arrayAsMsg.getAsNullableByte(arrayKey);
+                                                    }
+                                                    aDestMsg.set(key, byteArray);
+                                                    break;
+
+                                                case SHORT:
+                                                    final Short[] shorts = new Short[variableArrayLength];
+                                                    for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
+                                                        shorts[arrayKey] = arrayAsMsg.getAsNullableShort(arrayKey);
+                                                    }
+                                                    aDestMsg.set(key, shorts);
+                                                    break;
+
+                                                case INT:
+                                                    final Integer[] integers = new Integer[variableArrayLength];
+                                                    for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
+                                                        integers[arrayKey] = arrayAsMsg.getAsNullableInteger(arrayKey);
+                                                    }
+                                                    aDestMsg.set(key, integers);
+                                                    break;
+
+                                                case LONG:
+                                                    final Long[] longs = new Long[variableArrayLength];
+                                                    for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
+                                                        longs[arrayKey] = arrayAsMsg.getAsNullableLong(arrayKey);
+                                                    }
+                                                    aDestMsg.set(key, longs);
+                                                    break;
+
+                                                case FIVE_BITS_DECIMAL:
+                                                case DOUBLE:
+                                                    final Double[] doubles = new Double[variableArrayLength];
+                                                    for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
+                                                        doubles[arrayKey] = arrayAsMsg.getAsNullableDouble(arrayKey);
+                                                    }
+                                                    aDestMsg.set(key, doubles);
+                                                    break;
+
+                                                case FLOAT:
+                                                    final Float[] floats = new Float[variableArrayLength];
+                                                    for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
+                                                        floats[arrayKey] = arrayAsMsg.getAsNullableFloat(arrayKey);
+                                                    }
+                                                    aDestMsg.set(key, floats);
+                                                    break;
+
+                                                case STRING_UTF8:
+                                                    final String[] strings = new String[variableArrayLength];
+                                                    for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
+                                                        strings[arrayKey] = arrayAsMsg.getAsString(arrayKey);
+                                                    }
+                                                    aDestMsg.set(key, strings);
+                                                    break;
+
+                                                case MSG:
+                                                    final Msg[] msgs = new IndexedPrimitivesObjectsMsg[variableArrayLength];
+                                                    for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
+                                                        msgs[arrayKey] = arrayAsMsg.getAsMsg(arrayKey);
+                                                    }
+                                                    aDestMsg.set(key, msgs);
+                                                    break;
+
+                                                default:
+                                                    // TODO manage the other types like ARRAY_FIXED_VALUE_TYPE or ARRAY_VARIABLE_VALUE_TYPE
+                                                    break;
+                                            }
                                         }
-                                        aDestMsg.set(key, msgs);
-                                        break;
 
                                     default:
-                                        // TODO manage the other types like ARRAY_FIXED_VALUE_TYPE or ARRAY_VARIABLE_VALUE_TYPE
                                         break;
-                                    }
                                 }
-
-                            default:
-                                break;
                             }
-                        }
 
-                        break;
+                            break;
                     }
                     key++;
                 }
@@ -675,7 +676,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
      */
     private int getVariableLength(final int length, final int forceEncodingAtLeastOn) {
         return (length < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE && (forceEncodingAtLeastOn == ONE)) ? ONE
-                : (length > MAX_VALUE_FOR_UNSIGNED_BYTE || forceEncodingAtLeastOn == FIVE) ? FIVE : TWO;
+        : (length > MAX_VALUE_FOR_UNSIGNED_BYTE || forceEncodingAtLeastOn == FIVE) ? FIVE : TWO;
     }
 
     /**
@@ -726,7 +727,7 @@ public final class DefaultMsgSerializer implements BytesMsgSerializer, ByteBuffe
                 final Msg arrayVariableValueAsMsg = serializeArrayVariableValueAsMsg(objects);
                 final int arrayVariableValueAsMsgLength = this.getLength(arrayVariableValueAsMsg);
                 arrayVariableValueLength = getVariableLength(arrayVariableValueAsMsgLength, (arrayVariableValueAsMsgLength == 0) ? TWO : ONE)
-                        + arrayVariableValueAsMsgLength;
+                + arrayVariableValueAsMsgLength;
             }
             return arrayVariableValueLength;
         } else if (object instanceof Null) {

@@ -62,8 +62,8 @@ import com.github.hermod.ser.Types;
  */
 public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, ByteBufferSerializable {
 
-    private byte[] types;
-    private long[] primitiveValues;
+    private byte[]   types;
+    private long[]   primitiveValues;
     private Object[] objectValues;
 
     /**
@@ -321,8 +321,8 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
     public final Type getType(final int aKey) {
         try {
             return (this.types[aKey] == BYTE_TYPE || this.types[aKey] == SHORT_TYPE || this.types[aKey] == INT_TYPE || this.types[aKey] == LONG_TYPE
-                    || this.types[aKey] == FLOAT_TYPE || this.types[aKey] == DOUBLE_TYPE || this.types[aKey] == FIVE_BITS_DECIMAL_TYPE) ? Type
-                    .valueOf((byte) (this.types[aKey])) : Type.valueOf((byte) (this.types[aKey] & TYPE_MASK));
+            || this.types[aKey] == FLOAT_TYPE || this.types[aKey] == DOUBLE_TYPE || this.types[aKey] == FIVE_BITS_DECIMAL_TYPE) ? Type
+            .valueOf((byte) (this.types[aKey])) : Type.valueOf((byte) (this.types[aKey] & TYPE_MASK));
 
         } catch (ArrayIndexOutOfBoundsException e) {
             return Type.NULL;
@@ -338,14 +338,12 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
     public final byte getTypeAsByte(final int aKey) {
         try {
             return (this.types[aKey] == BYTE_TYPE || this.types[aKey] == SHORT_TYPE || this.types[aKey] == INT_TYPE || this.types[aKey] == LONG_TYPE
-                    || this.types[aKey] == FLOAT_TYPE || this.types[aKey] == DOUBLE_TYPE || this.types[aKey] == FIVE_BITS_DECIMAL_TYPE) ? (byte) (this.types[aKey])
-                    : (byte) (this.types[aKey] & TYPE_MASK);
+            || this.types[aKey] == FLOAT_TYPE || this.types[aKey] == DOUBLE_TYPE || this.types[aKey] == FIVE_BITS_DECIMAL_TYPE) ? (byte) (this.types[aKey])
+            : (byte) (this.types[aKey] & TYPE_MASK);
         } catch (ArrayIndexOutOfBoundsException e) {
             return Types.NULL_TYPE;
         }
     }
-
-
 
     /**
      * (non-Javadoc)
@@ -356,7 +354,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
     public final boolean isArray(final int aKey) {
         try {
             return (((this.types[aKey] & TYPE_MASK) == ARRAY_FIXED_VALUE_TYPE) || ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE)) ? true
-                    : false;
+            : false;
         } catch (final ArrayIndexOutOfBoundsException e) {
             return false;
         }
@@ -431,47 +429,47 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         try {
             final byte type = this.types[aKey];
             switch (type) {
-            case BYTE_TYPE:
-                return aClazz.cast(getAsByte(aKey));
+                case BYTE_TYPE:
+                    return aClazz.cast(getAsByte(aKey));
 
-            case SHORT_TYPE:
-                return aClazz.cast(getAsShort(aKey));
+                case SHORT_TYPE:
+                    return aClazz.cast(getAsShort(aKey));
 
-            case INT_TYPE:
-                return aClazz.cast(getAsInt(aKey));
+                case INT_TYPE:
+                    return aClazz.cast(getAsInt(aKey));
 
-            case LONG_TYPE:
-                return aClazz.cast(getAsLong(aKey));
+                case LONG_TYPE:
+                    return aClazz.cast(getAsLong(aKey));
 
-            case INTEGER_TYPE:
-                return aClazz.cast((Integer) null);
+                case INTEGER_TYPE:
+                    return aClazz.cast((Integer) null);
 
-            case FLOAT_TYPE:
-                return aClazz.cast(getAsFloat(aKey));
+                case FLOAT_TYPE:
+                    return aClazz.cast(getAsFloat(aKey));
 
-            case FIVE_BITS_DECIMAL_TYPE:
-            case DOUBLE_TYPE:
-                return aClazz.cast(getAsDouble(aKey));
+                case FIVE_BITS_DECIMAL_TYPE:
+                case DOUBLE_TYPE:
+                    return aClazz.cast(getAsDouble(aKey));
 
-            case DECIMAL_TYPE:
-                return aClazz.cast((Double) null);
+                case DECIMAL_TYPE:
+                    return aClazz.cast((Double) null);
 
-            case STRING_UTF_8_TYPE:
-                return aClazz.cast(getAsString(aKey));
+                case STRING_UTF_8_TYPE:
+                    return aClazz.cast(getAsString(aKey));
 
-            case MSG_TYPE:
-                return aClazz.cast(getAsMsg(aKey));
+                case MSG_TYPE:
+                    return aClazz.cast(getAsMsg(aKey));
 
-            case ARRAY_FIXED_VALUE_TYPE:
-            case ARRAY_VARIABLE_VALUE_TYPE:
-                return aClazz.cast(getAsObjects(aKey));
+                case ARRAY_FIXED_VALUE_TYPE:
+                case ARRAY_VARIABLE_VALUE_TYPE:
+                    return aClazz.cast(getAsObjects(aKey));
 
-            case NULL_TYPE:
-                return null;
+                case NULL_TYPE:
+                    return null;
 
-            default:
-                // TODO not correct, must manage NULL with length > 0
-                return null;
+                default:
+                    // TODO not correct, must manage NULL with length > 0
+                    return null;
             }
 
         } catch (final ArrayIndexOutOfBoundsException e) {
@@ -688,15 +686,15 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
     public final double getAsDouble(final int aKey) {
         try {
             switch (this.types[aKey]) {
-            case FIVE_BITS_DECIMAL_TYPE:
-                // return Precisions.fromNbDigit((int) (XFF & this.primitiveValues[aKey])).calculateDouble((this.primitiveValues[aKey] >> 8));
-                return getAs5BitsDecimal(aKey);
-                // return (this.primitiveValues[aKey] >> 8) / DOZENS[(int) (XFF & this.primitiveValues[aKey])];
-            case DOUBLE_TYPE:
-                return Double.longBitsToDouble(this.primitiveValues[aKey]);
-            case FLOAT_TYPE:
-                return Float.intBitsToFloat((int) this.primitiveValues[aKey]);
-            default:
+                case FIVE_BITS_DECIMAL_TYPE:
+                    // return Precisions.fromNbDigit((int) (XFF & this.primitiveValues[aKey])).calculateDouble((this.primitiveValues[aKey] >> 8));
+                    return getAs5BitsDecimal(aKey);
+                    // return (this.primitiveValues[aKey] >> 8) / DOZENS[(int) (XFF & this.primitiveValues[aKey])];
+                case DOUBLE_TYPE:
+                    return Double.longBitsToDouble(this.primitiveValues[aKey]);
+                case FLOAT_TYPE:
+                    return Float.intBitsToFloat((int) this.primitiveValues[aKey]);
+                default:
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
         }
@@ -732,27 +730,27 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         // return Precisions.fromNbDigit((int) (XFF & this.primitiveValues[aKey])).calculateDouble((this.primitiveValues[aKey] >> EIGHT));
 
         switch (scale) {
-        case ZERO:
-            return unscaledValue;
-        case ONE:
-            return unscaledValue * 0.1;
-        case TWO:
-            return unscaledValue * 0.01;
-        case THREE:
-            return unscaledValue * 0.001;
-        case FOUR:
-            return unscaledValue * 0.0001;
-        case FIVE:
-            return unscaledValue * 0.00001;
-        case SIX:
-            return unscaledValue * 0.000001;
-        case SEVEN:
-            return unscaledValue * 0.0000001;
-        case EIGHT:
-            return unscaledValue * 0.00000001;
-        default:
-            // return Scale.valueOf(scale).calculateUnscaledValue(unscaledValue);
-            return unscaledValue / DOZENS_TENTHS[(int) (XFF & scale)];
+            case ZERO:
+                return unscaledValue;
+            case ONE:
+                return unscaledValue * 0.1;
+            case TWO:
+                return unscaledValue * 0.01;
+            case THREE:
+                return unscaledValue * 0.001;
+            case FOUR:
+                return unscaledValue * 0.0001;
+            case FIVE:
+                return unscaledValue * 0.00001;
+            case SIX:
+                return unscaledValue * 0.000001;
+            case SEVEN:
+                return unscaledValue * 0.0000001;
+            case EIGHT:
+                return unscaledValue * 0.00000001;
+            default:
+                // return Scale.valueOf(scale).calculateUnscaledValue(unscaledValue);
+                return unscaledValue / DOZENS_TENTHS[(int) (XFF & scale)];
         }
     }
 
@@ -779,7 +777,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
     public final Msg getAsMsg(final int aKey) {
         try {
             return ((this.types[aKey] & TYPE_MASK) == MSG_TYPE && this.objectValues[aKey] != null) ? new IndexedPrimitivesObjectsMsg(
-                    (Msg) this.objectValues[aKey]) : null;
+            (Msg) this.objectValues[aKey]) : null;
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
         }
@@ -1201,7 +1199,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                 return results;
             }
             return ((this.types[aKey] & TYPE_MASK) == ARRAY_VARIABLE_VALUE_TYPE && (this.objectValues[aKey] instanceof Msg[])) ? (Msg[]) this.objectValues[aKey]
-                    : null;
+            : null;
         } catch (final ArrayIndexOutOfBoundsException e) {
             return null;
         }
@@ -1223,7 +1221,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                     }
                 } else {
                     throw new IllegalArgumentException("The destMsgs with length=" + aDestMsgs.length + " must be have the same field array length="
-                            + msgs.length + ". Use getArrayLength() to know the length before call this method.");
+                    + msgs.length + ". Use getArrayLength() to know the length before call this method.");
                 }
             }
         } catch (final ArrayIndexOutOfBoundsException e) {
@@ -1312,7 +1310,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         final int keyMax = this.getKeyMax();
         if (keyMax > anObjects.length) {
             throw new IllegalArgumentException("You must pass anObjects with a length=" + anObjects.length + " equals or superior than keyMax="
-                    + keyMax);
+            + keyMax);
         }
         final int[] keys = this.getKeysArray();
         for (int i = 0; i < keys.length; i++) {
@@ -1366,7 +1364,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                 set(aKey, (Boolean) aObject);
             } else if (aObject instanceof Null) {
                 set(aKey, (Null) aObject);
-                //TODO add other type of array
+                // TODO add other type of array
             } else if (aObject instanceof Object[]) {
                 set(aKey, (Object[]) aObject);
             } else {
@@ -1390,7 +1388,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                 try {
                     this.objectValues[aKey] = aNull;
                     this.types[aKey] = (byte) ((aNull.getLength() < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? aNull.getLength()
-                            : (aNull.getLength() > MAX_VALUE_FOR_UNSIGNED_BYTE) ? LENGTH_ENCODED_IN_AN_INT : LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE);
+                    : (aNull.getLength() > MAX_VALUE_FOR_UNSIGNED_BYTE) ? LENGTH_ENCODED_IN_AN_INT : LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE);
                 } catch (final ArrayIndexOutOfBoundsException e) {
                     increaseKeyMax(aKey);
                     set(aKey, aNull);
@@ -1665,7 +1663,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         try {
             this.primitiveValues[aKey] = aLong;
             this.types[aKey] = (aLong == (byte) aLong) ? BYTE_TYPE : (aLong == (short) aLong) ? SHORT_TYPE : (aLong == (int) aLong) ? INT_TYPE
-                    : LONG_TYPE;
+            : LONG_TYPE;
         } catch (final ArrayIndexOutOfBoundsException e) {
             increaseKeyMax(aKey);
             set(aKey, aLong);
@@ -2050,10 +2048,10 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             try {
 
                 if (aObject instanceof Boolean | aObject instanceof Byte | aObject instanceof Short | aObject instanceof Integer
-                        | aObject instanceof Long) {
+                | aObject instanceof Long) {
                     if (aObject != null) {
                         final byte integerType = (aObject instanceof Byte || aObject instanceof Boolean) ? BYTE_TYPE
-                                : (aObject instanceof Short) ? SHORT_TYPE : (aObject instanceof Integer) ? INT_TYPE : LONG_TYPE;
+                        : (aObject instanceof Short) ? SHORT_TYPE : (aObject instanceof Integer) ? INT_TYPE : LONG_TYPE;
                         set(aKey, ((Number) aObject).longValue(), integerType);
                     } else {
                         this.types[aKey] = INTEGER_TYPE;
@@ -2497,199 +2495,199 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
                 bytes[pos++] = type;
                 switch (type) {
                 //  all fixed type
-                case BYTE_TYPE:
-                    bytes[pos++] = (byte) this.primitiveValues[key];
-                    break;
+                    case BYTE_TYPE:
+                        bytes[pos++] = (byte) this.primitiveValues[key];
+                        break;
 
-                case SHORT_TYPE:
-                    final int aShort = (short) this.primitiveValues[key];
-                    bytes[pos++] = (byte) (aShort);
-                    bytes[pos++] = (byte) (aShort >> EIGHT);
-                    break;
+                    case SHORT_TYPE:
+                        final int aShort = (short) this.primitiveValues[key];
+                        bytes[pos++] = (byte) (aShort);
+                        bytes[pos++] = (byte) (aShort >> EIGHT);
+                        break;
 
-                case INT_TYPE:
-                    final int aInt = (int) this.primitiveValues[key];
-                    bytes[pos++] = (byte) (aInt);
-                    bytes[pos++] = (byte) (aInt >> EIGHT);
-                    bytes[pos++] = (byte) (aInt >> SIXTEEN);
-                    bytes[pos++] = (byte) (aInt >> TWENTY_FOUR);
-                    break;
+                    case INT_TYPE:
+                        final int aInt = (int) this.primitiveValues[key];
+                        bytes[pos++] = (byte) (aInt);
+                        bytes[pos++] = (byte) (aInt >> EIGHT);
+                        bytes[pos++] = (byte) (aInt >> SIXTEEN);
+                        bytes[pos++] = (byte) (aInt >> TWENTY_FOUR);
+                        break;
 
-                case DOUBLE_TYPE:
-                    final long longBits = this.primitiveValues[key];
-                    bytes[pos++] = (byte) (longBits);
-                    bytes[pos++] = (byte) (longBits >> EIGHT);
-                    bytes[pos++] = (byte) (longBits >> SIXTEEN);
-                    bytes[pos++] = (byte) (longBits >> TWENTY_FOUR);
-                    bytes[pos++] = (byte) (longBits >> THIRTY_TWO);
-                    bytes[pos++] = (byte) (longBits >> FORTY);
-                    bytes[pos++] = (byte) (longBits >> FORTY_EIGHT);
-                    bytes[pos++] = (byte) (longBits >> FIFTY_SIX);
-                    break;
+                    case DOUBLE_TYPE:
+                        final long longBits = this.primitiveValues[key];
+                        bytes[pos++] = (byte) (longBits);
+                        bytes[pos++] = (byte) (longBits >> EIGHT);
+                        bytes[pos++] = (byte) (longBits >> SIXTEEN);
+                        bytes[pos++] = (byte) (longBits >> TWENTY_FOUR);
+                        bytes[pos++] = (byte) (longBits >> THIRTY_TWO);
+                        bytes[pos++] = (byte) (longBits >> FORTY);
+                        bytes[pos++] = (byte) (longBits >> FORTY_EIGHT);
+                        bytes[pos++] = (byte) (longBits >> FIFTY_SIX);
+                        break;
 
-                case FIVE_BITS_DECIMAL_TYPE:
-                    final int anInt = (int) (this.primitiveValues[key] >> EIGHT);
-                    bytes[pos++] = (byte) (anInt);
-                    bytes[pos++] = (byte) (anInt >> EIGHT);
-                    bytes[pos++] = (byte) (anInt >> SIXTEEN);
-                    bytes[pos++] = (byte) (anInt >> TWENTY_FOUR);
-                    bytes[pos++] = (byte) (this.primitiveValues[key]);
-                    break;
+                    case FIVE_BITS_DECIMAL_TYPE:
+                        final int anInt = (int) (this.primitiveValues[key] >> EIGHT);
+                        bytes[pos++] = (byte) (anInt);
+                        bytes[pos++] = (byte) (anInt >> EIGHT);
+                        bytes[pos++] = (byte) (anInt >> SIXTEEN);
+                        bytes[pos++] = (byte) (anInt >> TWENTY_FOUR);
+                        bytes[pos++] = (byte) (this.primitiveValues[key]);
+                        break;
 
-                case FLOAT_TYPE:
-                    final int intBits = (int) (this.primitiveValues[key]);
-                    bytes[pos++] = (byte) (intBits);
-                    bytes[pos++] = (byte) (intBits >> EIGHT);
-                    bytes[pos++] = (byte) (intBits >> SIXTEEN);
-                    bytes[pos++] = (byte) (intBits >> TWENTY_FOUR);
-                    break;
+                    case FLOAT_TYPE:
+                        final int intBits = (int) (this.primitiveValues[key]);
+                        bytes[pos++] = (byte) (intBits);
+                        bytes[pos++] = (byte) (intBits >> EIGHT);
+                        bytes[pos++] = (byte) (intBits >> SIXTEEN);
+                        bytes[pos++] = (byte) (intBits >> TWENTY_FOUR);
+                        break;
 
-                case LONG_TYPE:
-                    final long aLong = this.primitiveValues[key];
-                    bytes[pos++] = (byte) (aLong);
-                    bytes[pos++] = (byte) (aLong >> EIGHT);
-                    bytes[pos++] = (byte) (aLong >> SIXTEEN);
-                    bytes[pos++] = (byte) (aLong >> TWENTY_FOUR);
-                    bytes[pos++] = (byte) (aLong >> THIRTY_TWO);
-                    bytes[pos++] = (byte) (aLong >> FORTY);
-                    bytes[pos++] = (byte) (aLong >> FORTY_EIGHT);
-                    bytes[pos++] = (byte) (aLong >> FIFTY_SIX);
-                    break;
+                    case LONG_TYPE:
+                        final long aLong = this.primitiveValues[key];
+                        bytes[pos++] = (byte) (aLong);
+                        bytes[pos++] = (byte) (aLong >> EIGHT);
+                        bytes[pos++] = (byte) (aLong >> SIXTEEN);
+                        bytes[pos++] = (byte) (aLong >> TWENTY_FOUR);
+                        bytes[pos++] = (byte) (aLong >> THIRTY_TWO);
+                        bytes[pos++] = (byte) (aLong >> FORTY);
+                        bytes[pos++] = (byte) (aLong >> FORTY_EIGHT);
+                        bytes[pos++] = (byte) (aLong >> FIFTY_SIX);
+                        break;
 
-                case STRING_UTF_8_TYPE:
-                    final String aString = (String) this.objectValues[key];
-                    if (aString != null) {
-                        if (Msgs.isAsciiString(aString)) {
-                            final int stringLength = aString.length();
-                            pos = writeVariableLength(bytes, pos - 1, stringLength, (stringLength == 0) ? TWO : ONE);
-                            for (int j = 0; j < stringLength; j++) {
-                                bytes[pos++] = (byte) aString.charAt(j);
+                    case STRING_UTF_8_TYPE:
+                        final String aString = (String) this.objectValues[key];
+                        if (aString != null) {
+                            if (Msgs.isAsciiString(aString)) {
+                                final int stringLength = aString.length();
+                                pos = writeVariableLength(bytes, pos - 1, stringLength, (stringLength == 0) ? TWO : ONE);
+                                for (int j = 0; j < stringLength; j++) {
+                                    bytes[pos++] = (byte) aString.charAt(j);
+                                }
+                            } else {
+                                final byte[] stringBytes = aString.getBytes(UTF_8_CHARSET);
+                                final int stringLength = stringBytes.length;
+                                pos = writeVariableLength(bytes, pos - 1, stringLength, (stringLength == 0) ? TWO : ONE);
+                                System.arraycopy(stringBytes, 0, bytes, pos, stringLength);
+                                pos += stringBytes.length;
                             }
-                        } else {
-                            final byte[] stringBytes = aString.getBytes(UTF_8_CHARSET);
-                            final int stringLength = stringBytes.length;
-                            pos = writeVariableLength(bytes, pos - 1, stringLength, (stringLength == 0) ? TWO : ONE);
-                            System.arraycopy(stringBytes, 0, bytes, pos, stringLength);
-                            pos += stringBytes.length;
+
                         }
+                        break;
 
-                    }
-                    break;
-
-                case MSG_TYPE:
-                    final Msg aMsg = (Msg) this.objectValues[key];
-                    if (aMsg != null) {
-                        final int msgLength = ((BytesSerializable) aMsg).getLength();
-                        pos = writeVariableLength(bytes, pos - 1, msgLength, (msgLength == 0) ? TWO : ONE);
-                        pos = ((BytesSerializable) aMsg).serializeToBytes(bytes, pos);
-                    }
-                    break;
-
-                case ARRAY_FIXED_VALUE_TYPE:
-                    if ((this.objectValues[key] != null)) {
-                        if (this.objectValues[key] instanceof byte[]) {
-                            final byte[] fieldBytes = (byte[]) this.objectValues[key];
-                            final int bytesLength = fieldBytes.length + 1;
-                            pos = writeVariableLength(bytes, pos - 1, bytesLength, (bytesLength == 0) ? TWO : ONE);
-                            bytes[pos++] = BYTE_TYPE;
-                            System.arraycopy(fieldBytes, 0, bytes, pos, fieldBytes.length);
-                            pos += fieldBytes.length;
-                        } else if (this.objectValues[key] instanceof short[]) {
-                            final short[] shorts = (short[]) this.objectValues[key];
-                            final int shortsLength = (shorts.length << 1) + 1;
-                            pos = writeVariableLength(bytes, pos - 1, shortsLength, (shortsLength == 0) ? TWO : ONE);
-                            bytes[pos++] = SHORT_TYPE;
-                            for (final short currentShort : shorts) {
-                                bytes[pos++] = (byte) (currentShort);
-                                bytes[pos++] = (byte) (currentShort >> EIGHT);
-                            }
-                        } else if (this.objectValues[key] instanceof int[]) {
-                            final int[] ints = (int[]) this.objectValues[key];
-                            final int intsLength = (ints.length << TWO) + 1;
-                            pos = writeVariableLength(bytes, pos - 1, intsLength, (intsLength == 0) ? TWO : ONE);
-                            bytes[pos++] = INT_TYPE;
-                            for (final int currentInt : ints) {
-                                bytes[pos++] = (byte) (currentInt);
-                                bytes[pos++] = (byte) (currentInt >> EIGHT);
-                                bytes[pos++] = (byte) (currentInt >> SIXTEEN);
-                                bytes[pos++] = (byte) (currentInt >> TWENTY_FOUR);
-                            }
-                        } else if (this.objectValues[key] instanceof long[]) {
-                            final long[] longs = (long[]) this.objectValues[key];
-                            final int longsLength = (longs.length << THREE) + 1;
-                            pos = writeVariableLength(bytes, pos - 1, longsLength, (longsLength == 0) ? TWO : ONE);
-                            bytes[pos++] = LONG_TYPE;
-                            for (final long currentLong : longs) {
-                                bytes[pos++] = (byte) (currentLong);
-                                bytes[pos++] = (byte) (currentLong >> EIGHT);
-                                bytes[pos++] = (byte) (currentLong >> SIXTEEN);
-                                bytes[pos++] = (byte) (currentLong >> TWENTY_FOUR);
-                                bytes[pos++] = (byte) (currentLong >> THIRTY_TWO);
-                                bytes[pos++] = (byte) (currentLong >> FORTY);
-                                bytes[pos++] = (byte) (currentLong >> FORTY_EIGHT);
-                                bytes[pos++] = (byte) (currentLong >> FIFTY_SIX);
-                            }
-                        } else if (this.objectValues[key] instanceof double[]) {
-                            final double[] doubles = (double[]) this.objectValues[key];
-                            final int doublesLength = (doubles.length << THREE) + 1;
-                            pos = writeVariableLength(bytes, pos - 1, doublesLength, (doublesLength == 0) ? TWO : ONE);
-                            bytes[pos++] = DOUBLE_TYPE;
-                            for (final double currentDouble : doubles) {
-                                final long currentLong = Double.doubleToLongBits(currentDouble);
-                                bytes[pos++] = (byte) (currentLong);
-                                bytes[pos++] = (byte) (currentLong >> EIGHT);
-                                bytes[pos++] = (byte) (currentLong >> SIXTEEN);
-                                bytes[pos++] = (byte) (currentLong >> TWENTY_FOUR);
-                                bytes[pos++] = (byte) (currentLong >> THIRTY_TWO);
-                                bytes[pos++] = (byte) (currentLong >> FORTY);
-                                bytes[pos++] = (byte) (currentLong >> FORTY_EIGHT);
-                                bytes[pos++] = (byte) (currentLong >> FIFTY_SIX);
-                            }
-                        } else if (this.objectValues[key] instanceof float[]) {
-                            final float[] floats = (float[]) this.objectValues[key];
-                            final int floatsLength = (floats.length << TWO) + 1;
-                            pos = writeVariableLength(bytes, pos - 1, floatsLength, (floatsLength == 0) ? TWO : ONE);
-                            bytes[pos++] = FLOAT_TYPE;
-                            for (final float currentFloat : floats) {
-                                final int currentInt = Float.floatToIntBits(currentFloat);
-                                bytes[pos++] = (byte) (currentInt);
-                                bytes[pos++] = (byte) (currentInt >> EIGHT);
-                                bytes[pos++] = (byte) (currentInt >> SIXTEEN);
-                                bytes[pos++] = (byte) (currentInt >> TWENTY_FOUR);
-                            }
-                        } else {
-                            // TODO should not occur, just log
+                    case MSG_TYPE:
+                        final Msg aMsg = (Msg) this.objectValues[key];
+                        if (aMsg != null) {
+                            final int msgLength = ((BytesSerializable) aMsg).getLength();
+                            pos = writeVariableLength(bytes, pos - 1, msgLength, (msgLength == 0) ? TWO : ONE);
+                            pos = ((BytesSerializable) aMsg).serializeToBytes(bytes, pos);
                         }
-                    }
-                    break;
+                        break;
 
-                case ARRAY_VARIABLE_VALUE_TYPE:
-                    int arrayVariableValueLength = 0;
-                    if (this.objectValues[key] != null && this.objectValues[key] instanceof Object[]) {
-                        final Object[] objects = ((Object[]) this.objectValues[key]);
-                        // TODO fix, check if the the first key not null (here we consider the first one is always not null)
-                        final BytesSerializable msg = serializeArrayVariableValueAsMsg(objects);
-                        arrayVariableValueLength = msg.getLength();
-                        pos = writeVariableLength(bytes, pos - 1, arrayVariableValueLength, (arrayVariableValueLength == 0) ? TWO : ONE);
-                        pos = msg.serializeToBytes(bytes, pos);
-                    }
-                    break;
-
-                case NULL_TYPE:
-                    // Do nothing
-                    break;
-
-                default:
-                    // NULL_TYPE with length > 0
-                    if ((type & TYPE_MASK) == NULL_TYPE) {
-                        final Null nul = (Null) this.objectValues[key];
-                        final int nullLength = nul.getLength();
-                        pos = writeVariableLength(bytes, pos - 1, nullLength, ONE);
-                        for (int i = 0; i < nul.getLength(); i++) {
-                            bytes[pos++] = 0;
+                    case ARRAY_FIXED_VALUE_TYPE:
+                        if ((this.objectValues[key] != null)) {
+                            if (this.objectValues[key] instanceof byte[]) {
+                                final byte[] fieldBytes = (byte[]) this.objectValues[key];
+                                final int bytesLength = fieldBytes.length + 1;
+                                pos = writeVariableLength(bytes, pos - 1, bytesLength, (bytesLength == 0) ? TWO : ONE);
+                                bytes[pos++] = BYTE_TYPE;
+                                System.arraycopy(fieldBytes, 0, bytes, pos, fieldBytes.length);
+                                pos += fieldBytes.length;
+                            } else if (this.objectValues[key] instanceof short[]) {
+                                final short[] shorts = (short[]) this.objectValues[key];
+                                final int shortsLength = (shorts.length << 1) + 1;
+                                pos = writeVariableLength(bytes, pos - 1, shortsLength, (shortsLength == 0) ? TWO : ONE);
+                                bytes[pos++] = SHORT_TYPE;
+                                for (final short currentShort : shorts) {
+                                    bytes[pos++] = (byte) (currentShort);
+                                    bytes[pos++] = (byte) (currentShort >> EIGHT);
+                                }
+                            } else if (this.objectValues[key] instanceof int[]) {
+                                final int[] ints = (int[]) this.objectValues[key];
+                                final int intsLength = (ints.length << TWO) + 1;
+                                pos = writeVariableLength(bytes, pos - 1, intsLength, (intsLength == 0) ? TWO : ONE);
+                                bytes[pos++] = INT_TYPE;
+                                for (final int currentInt : ints) {
+                                    bytes[pos++] = (byte) (currentInt);
+                                    bytes[pos++] = (byte) (currentInt >> EIGHT);
+                                    bytes[pos++] = (byte) (currentInt >> SIXTEEN);
+                                    bytes[pos++] = (byte) (currentInt >> TWENTY_FOUR);
+                                }
+                            } else if (this.objectValues[key] instanceof long[]) {
+                                final long[] longs = (long[]) this.objectValues[key];
+                                final int longsLength = (longs.length << THREE) + 1;
+                                pos = writeVariableLength(bytes, pos - 1, longsLength, (longsLength == 0) ? TWO : ONE);
+                                bytes[pos++] = LONG_TYPE;
+                                for (final long currentLong : longs) {
+                                    bytes[pos++] = (byte) (currentLong);
+                                    bytes[pos++] = (byte) (currentLong >> EIGHT);
+                                    bytes[pos++] = (byte) (currentLong >> SIXTEEN);
+                                    bytes[pos++] = (byte) (currentLong >> TWENTY_FOUR);
+                                    bytes[pos++] = (byte) (currentLong >> THIRTY_TWO);
+                                    bytes[pos++] = (byte) (currentLong >> FORTY);
+                                    bytes[pos++] = (byte) (currentLong >> FORTY_EIGHT);
+                                    bytes[pos++] = (byte) (currentLong >> FIFTY_SIX);
+                                }
+                            } else if (this.objectValues[key] instanceof double[]) {
+                                final double[] doubles = (double[]) this.objectValues[key];
+                                final int doublesLength = (doubles.length << THREE) + 1;
+                                pos = writeVariableLength(bytes, pos - 1, doublesLength, (doublesLength == 0) ? TWO : ONE);
+                                bytes[pos++] = DOUBLE_TYPE;
+                                for (final double currentDouble : doubles) {
+                                    final long currentLong = Double.doubleToLongBits(currentDouble);
+                                    bytes[pos++] = (byte) (currentLong);
+                                    bytes[pos++] = (byte) (currentLong >> EIGHT);
+                                    bytes[pos++] = (byte) (currentLong >> SIXTEEN);
+                                    bytes[pos++] = (byte) (currentLong >> TWENTY_FOUR);
+                                    bytes[pos++] = (byte) (currentLong >> THIRTY_TWO);
+                                    bytes[pos++] = (byte) (currentLong >> FORTY);
+                                    bytes[pos++] = (byte) (currentLong >> FORTY_EIGHT);
+                                    bytes[pos++] = (byte) (currentLong >> FIFTY_SIX);
+                                }
+                            } else if (this.objectValues[key] instanceof float[]) {
+                                final float[] floats = (float[]) this.objectValues[key];
+                                final int floatsLength = (floats.length << TWO) + 1;
+                                pos = writeVariableLength(bytes, pos - 1, floatsLength, (floatsLength == 0) ? TWO : ONE);
+                                bytes[pos++] = FLOAT_TYPE;
+                                for (final float currentFloat : floats) {
+                                    final int currentInt = Float.floatToIntBits(currentFloat);
+                                    bytes[pos++] = (byte) (currentInt);
+                                    bytes[pos++] = (byte) (currentInt >> EIGHT);
+                                    bytes[pos++] = (byte) (currentInt >> SIXTEEN);
+                                    bytes[pos++] = (byte) (currentInt >> TWENTY_FOUR);
+                                }
+                            } else {
+                                // TODO should not occur, just log
+                            }
                         }
-                    }
-                    break;
+                        break;
+
+                    case ARRAY_VARIABLE_VALUE_TYPE:
+                        int arrayVariableValueLength = 0;
+                        if (this.objectValues[key] != null && this.objectValues[key] instanceof Object[]) {
+                            final Object[] objects = ((Object[]) this.objectValues[key]);
+                            // TODO fix, check if the the first key not null (here we consider the first one is always not null)
+                            final BytesSerializable msg = serializeArrayVariableValueAsMsg(objects);
+                            arrayVariableValueLength = msg.getLength();
+                            pos = writeVariableLength(bytes, pos - 1, arrayVariableValueLength, (arrayVariableValueLength == 0) ? TWO : ONE);
+                            pos = msg.serializeToBytes(bytes, pos);
+                        }
+                        break;
+
+                    case NULL_TYPE:
+                        // Do nothing
+                        break;
+
+                    default:
+                        // NULL_TYPE with length > 0
+                        if ((type & TYPE_MASK) == NULL_TYPE) {
+                            final Null nul = (Null) this.objectValues[key];
+                            final int nullLength = nul.getLength();
+                            pos = writeVariableLength(bytes, pos - 1, nullLength, ONE);
+                            for (int i = 0; i < nul.getLength(); i++) {
+                                bytes[pos++] = 0;
+                            }
+                        }
+                        break;
                 }
             } else {
                 consecutiveNullKey++;
@@ -2741,15 +2739,14 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             if ((bytes[pos] & TYPE_MASK) == SKIPPED_KEYS_TYPE) {
                 final int lengthMask = bytes[pos++] & LENGTH_MASK;
                 key += (((lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask
-                        : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? (XFF & bytes[pos++]) : (bytes[pos++] & XFF)
-                                | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR))) + 1;
+                : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? (XFF & bytes[pos++]) : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT)
+                | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR))) + 1;
             } else {
                 final int lengthMask = bytes[pos++] & LENGTH_MASK;
                 // TODO to optimize
-                pos += (((lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask
-                        : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF & bytes[pos]
-                                : ((bytes[pos] & XFF) | ((bytes[pos + ONE] & XFF) << EIGHT) | ((bytes[pos + TWO] & XFF) << SIXTEEN) | ((bytes[pos
-                                        + THREE] & XFF) << TWENTY_FOUR))));
+                pos += (((lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF
+                & bytes[pos] : ((bytes[pos] & XFF) | ((bytes[pos + ONE] & XFF) << EIGHT) | ((bytes[pos + TWO] & XFF) << SIXTEEN) | ((bytes[pos
+                + THREE] & XFF) << TWENTY_FOUR))));
                 pos += (lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? 0 : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? ONE : FOUR;
 
                 key++;
@@ -2767,8 +2764,8 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
             if ((type & TYPE_MASK) == SKIPPED_KEYS_TYPE) {
                 final int sizeMask = type & LENGTH_MASK;
                 key += ((sizeMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? sizeMask : (sizeMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF
-                        & bytes[pos++] : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN)
-                        | ((bytes[pos++] & XFF) << TWENTY_FOUR)) + 1;
+                & bytes[pos++] : (bytes[pos++] & XFF) | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN)
+                | ((bytes[pos++] & XFF) << TWENTY_FOUR)) + 1;
             }
             // Decode values
             else {
@@ -2776,223 +2773,222 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
 
                 switch (type) {
                 //  All fixed type
-                case BYTE_TYPE:
-                    this.primitiveValues[key] = (byte) ((bytes[pos++] & XFF));
-                    break;
+                    case BYTE_TYPE:
+                        this.primitiveValues[key] = (byte) ((bytes[pos++] & XFF));
+                        break;
 
-                case SHORT_TYPE:
-                    this.primitiveValues[key] = (((short) bytes[pos++] & XFF)) | (((short) bytes[pos++] & XFF) << EIGHT);
-                    break;
+                    case SHORT_TYPE:
+                        this.primitiveValues[key] = (((short) bytes[pos++] & XFF)) | (((short) bytes[pos++] & XFF) << EIGHT);
+                        break;
 
-                case INT_TYPE:
-                    this.primitiveValues[key] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
-                            | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
-                    break;
-                    
-                case DOUBLE_TYPE:
-                    this.primitiveValues[key] = (((long) bytes[pos++] & XFF) | (((long) bytes[pos++] & XFF) << EIGHT)
-                            | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
-                            | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
-                            | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX));
-                    break;
+                    case INT_TYPE:
+                        this.primitiveValues[key] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
+                        | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
+                        break;
 
-                case FIVE_BITS_DECIMAL_TYPE:
-                    this.primitiveValues[key] = (((long) bytes[pos++] & XFF) << EIGHT) | (((long) bytes[pos++] & XFF) << SIXTEEN)
-                            | (((long) bytes[pos++] & XFF) << TWENTY_FOUR) | (((long) bytes[pos++] & XFF) << THIRTY_TWO)
-                            | ((byte) bytes[pos++] & XFF);
-                    break;
+                    case DOUBLE_TYPE:
+                        this.primitiveValues[key] = (((long) bytes[pos++] & XFF) | (((long) bytes[pos++] & XFF) << EIGHT)
+                        | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
+                        | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
+                        | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX));
+                        break;
 
-                case FLOAT_TYPE:
-                    this.primitiveValues[key] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
-                            | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
-                    break;
+                    case FIVE_BITS_DECIMAL_TYPE:
+                        this.primitiveValues[key] = (((long) bytes[pos++] & XFF) << EIGHT) | (((long) bytes[pos++] & XFF) << SIXTEEN)
+                        | (((long) bytes[pos++] & XFF) << TWENTY_FOUR) | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | ((byte) bytes[pos++] & XFF);
+                        break;
 
-                case LONG_TYPE:
-                    this.primitiveValues[key] = (((long) bytes[pos++] & XFF)) | (((long) bytes[pos++] & XFF) << EIGHT)
-                            | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
-                            | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
-                            | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX);
+                    case FLOAT_TYPE:
+                        this.primitiveValues[key] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
+                        | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
+                        break;
 
-                    
-                case NULL_TYPE:
-                    // do nothing
-                    break;
+                    case LONG_TYPE:
+                        this.primitiveValues[key] = (((long) bytes[pos++] & XFF)) | (((long) bytes[pos++] & XFF) << EIGHT)
+                        | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
+                        | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
+                        | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX);
 
-                // All non fixed type
-                default:
-                    final byte typeMask = (byte) (type & TYPE_MASK);
-                    this.types[key] = typeMask;
-                    final int lengthMask = (LENGTH_MASK & type);
-                    final int fieldLength = (lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask
-                            : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF & bytes[pos++] : (bytes[pos++] & XFF)
-                                    | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR);
+                    case NULL_TYPE:
+                        // do nothing
+                        break;
 
-                    if (lengthMask != 0) {
-                        switch (typeMask) {
+                    // All non fixed type
+                    default:
+                        final byte typeMask = (byte) (type & TYPE_MASK);
+                        this.types[key] = typeMask;
+                        final int lengthMask = (LENGTH_MASK & type);
+                        final int fieldLength = (lengthMask < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? lengthMask
+                        : (lengthMask == LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE) ? XFF & bytes[pos++] : (bytes[pos++] & XFF)
+                        | ((bytes[pos++] & XFF) << EIGHT) | ((bytes[pos++] & XFF) << SIXTEEN) | ((bytes[pos++] & XFF) << TWENTY_FOUR);
 
-                        case NULL_TYPE:
-                            this.objectValues[key] = Null.valueOf(fieldLength);
-                            this.types[key] = (byte) lengthMask;
-                            pos += fieldLength;
-                            break;
+                        if (lengthMask != 0) {
+                            switch (typeMask) {
 
-                        case STRING_UTF_8_TYPE:
-                            this.objectValues[key] = new String(bytes, pos, fieldLength, UTF_8_CHARSET);
-                            pos += fieldLength;
-                            break;
-
-                        case MSG_TYPE:
-                            final IndexedPrimitivesObjectsMsg msg = new IndexedPrimitivesObjectsMsg();
-                            msg.deserializeFromBytes(bytes, pos, fieldLength);
-                            pos += fieldLength;
-                            this.objectValues[key] = msg;
-                            break;
-
-                        case ARRAY_FIXED_VALUE_TYPE:
-                            final byte arrayType = bytes[pos++];
-                            final int fixedArrayLength = fieldLength - ONE;
-                            // For Fixed typed
-                            switch (arrayType) {
-                            case BYTE_TYPE:
-                                final byte[] byteArray = new byte[fixedArrayLength];
-                                System.arraycopy(bytes, pos, byteArray, 0, fixedArrayLength);
-                                pos += fixedArrayLength;
-                                this.set(key, byteArray);
-                                break;
-                            case SHORT_TYPE:
-                                final short[] shorts = new short[fixedArrayLength >> ONE];
-                                for (int i = 0; i < shorts.length; i++) {
-                                    shorts[i] = (short) ((((short) bytes[pos++] & XFF)) | (((short) bytes[pos++] & XFF) << EIGHT));
-                                }
-                                this.set(key, shorts);
-                                break;
-                            case INT_TYPE:
-                                final int[] ints = new int[fixedArrayLength >> TWO];
-                                for (int i = 0; i < ints.length; i++) {
-                                    ints[i] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
-                                            | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
-                                }
-                                this.set(key, ints);
-                                break;
-                            case DOUBLE_TYPE:
-                                final double[] doubles = new double[fixedArrayLength >> THREE];
-                                for (int i = 0; i < doubles.length; i++) {
-                                    doubles[i] = Double.longBitsToDouble((((long) bytes[pos++] & XFF) | (((long) bytes[pos++] & XFF) << EIGHT)
-                                            | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
-                                            | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
-                                            | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX)));
-                                }
-                                this.set(key, doubles);
-                                break;
-                            case LONG_TYPE:
-                                final long[] longs = new long[fixedArrayLength >> THREE];
-                                for (int i = 0; i < longs.length; i++) {
-                                    longs[i] = (((long) bytes[pos++] & XFF)) | (((long) bytes[pos++] & XFF) << EIGHT)
-                                            | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
-                                            | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
-                                            | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX);
-                                }
-                                this.set(key, longs);
-                                break;
-                            case FLOAT_TYPE:
-                                final float[] floats = new float[fixedArrayLength >> TWO];
-                                for (int i = 0; i < floats.length; i++) {
-                                    floats[i] = Float.intBitsToFloat((((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
-                                            | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR));
-                                }
-                                this.set(key, floats);
-                                break;
-                            default:
-                                break;
-                            }
-                            break;
-
-                        case ARRAY_VARIABLE_VALUE_TYPE:
-
-                            // For variable type
-                            // TODO
-                            if (lengthMask != 0) {
-                                final IndexedPrimitivesObjectsMsg arrayAsMsg = new IndexedPrimitivesObjectsMsg();
-                                arrayAsMsg.deserializeFromBytes(bytes, pos, fieldLength);
-                                pos += fieldLength;
-                                final int variableArrayLength = arrayAsMsg.getKeysLength();
-                                // TODO fix, check if the the first key not null (here we consider the first one is always not null)
-                                final Type arraytype = arrayAsMsg.getType(0);
-                                switch (arraytype) {
-                                case BYTE:
-                                    final Byte[] byteArray = new Byte[variableArrayLength];
-                                    for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
-                                        byteArray[arrayKey] = arrayAsMsg.getAsNullableByte(arrayKey);
-                                    }
-                                    this.objectValues[key] = byteArray;
-                                    break;
-                                case SHORT:
-                                    final Short[] shorts = new Short[variableArrayLength];
-                                    for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
-                                        shorts[arrayKey] = arrayAsMsg.getAsNullableShort(arrayKey);
-                                    }
-                                    this.objectValues[key] = shorts;
-                                    break;
-                                case INT:
-                                    final Integer[] integers = new Integer[variableArrayLength];
-                                    for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
-                                        integers[arrayKey] = arrayAsMsg.getAsNullableInteger(arrayKey);
-                                    }
-                                    this.objectValues[key] = integers;
-                                    break;
-                                case LONG:
-                                    final Long[] longs = new Long[variableArrayLength];
-                                    for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
-                                        longs[arrayKey] = arrayAsMsg.getAsNullableLong(arrayKey);
-                                    }
-                                    this.objectValues[key] = longs;
+                                case NULL_TYPE:
+                                    this.objectValues[key] = Null.valueOf(fieldLength);
+                                    this.types[key] = (byte) lengthMask;
+                                    pos += fieldLength;
                                     break;
 
-                                case FIVE_BITS_DECIMAL:
-                                case DOUBLE:
-                                    final Double[] doubles = new Double[variableArrayLength];
-                                    for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
-                                        doubles[arrayKey] = arrayAsMsg.getAsNullableDouble(arrayKey);
-                                    }
-                                    this.objectValues[key] = doubles;
+                                case STRING_UTF_8_TYPE:
+                                    this.objectValues[key] = new String(bytes, pos, fieldLength, UTF_8_CHARSET);
+                                    pos += fieldLength;
                                     break;
 
-                                case FLOAT:
-                                    final Float[] floats = new Float[variableArrayLength];
-                                    for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
-                                        floats[arrayKey] = arrayAsMsg.getAsNullableFloat(arrayKey);
-                                    }
-                                    this.objectValues[key] = floats;
+                                case MSG_TYPE:
+                                    final IndexedPrimitivesObjectsMsg msg = new IndexedPrimitivesObjectsMsg();
+                                    msg.deserializeFromBytes(bytes, pos, fieldLength);
+                                    pos += fieldLength;
+                                    this.objectValues[key] = msg;
                                     break;
 
-                                case STRING_UTF8:
-                                    final String[] strings = new String[variableArrayLength];
-                                    for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
-                                        strings[arrayKey] = arrayAsMsg.getAsString(arrayKey);
+                                case ARRAY_FIXED_VALUE_TYPE:
+                                    final byte arrayType = bytes[pos++];
+                                    final int fixedArrayLength = fieldLength - ONE;
+                                    // For Fixed typed
+                                    switch (arrayType) {
+                                        case BYTE_TYPE:
+                                            final byte[] byteArray = new byte[fixedArrayLength];
+                                            System.arraycopy(bytes, pos, byteArray, 0, fixedArrayLength);
+                                            pos += fixedArrayLength;
+                                            this.set(key, byteArray);
+                                            break;
+                                        case SHORT_TYPE:
+                                            final short[] shorts = new short[fixedArrayLength >> ONE];
+                                            for (int i = 0; i < shorts.length; i++) {
+                                                shorts[i] = (short) ((((short) bytes[pos++] & XFF)) | (((short) bytes[pos++] & XFF) << EIGHT));
+                                            }
+                                            this.set(key, shorts);
+                                            break;
+                                        case INT_TYPE:
+                                            final int[] ints = new int[fixedArrayLength >> TWO];
+                                            for (int i = 0; i < ints.length; i++) {
+                                                ints[i] = (((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
+                                                | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR);
+                                            }
+                                            this.set(key, ints);
+                                            break;
+                                        case DOUBLE_TYPE:
+                                            final double[] doubles = new double[fixedArrayLength >> THREE];
+                                            for (int i = 0; i < doubles.length; i++) {
+                                                doubles[i] = Double
+                                                .longBitsToDouble((((long) bytes[pos++] & XFF) | (((long) bytes[pos++] & XFF) << EIGHT)
+                                                | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
+                                                | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
+                                                | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX)));
+                                            }
+                                            this.set(key, doubles);
+                                            break;
+                                        case LONG_TYPE:
+                                            final long[] longs = new long[fixedArrayLength >> THREE];
+                                            for (int i = 0; i < longs.length; i++) {
+                                                longs[i] = (((long) bytes[pos++] & XFF)) | (((long) bytes[pos++] & XFF) << EIGHT)
+                                                | (((long) bytes[pos++] & XFF) << SIXTEEN) | (((long) bytes[pos++] & XFF) << TWENTY_FOUR)
+                                                | (((long) bytes[pos++] & XFF) << THIRTY_TWO) | (((long) bytes[pos++] & XFF) << FORTY)
+                                                | (((long) bytes[pos++] & XFF) << FORTY_EIGHT) | (((long) bytes[pos++] & XFF) << FIFTY_SIX);
+                                            }
+                                            this.set(key, longs);
+                                            break;
+                                        case FLOAT_TYPE:
+                                            final float[] floats = new float[fixedArrayLength >> TWO];
+                                            for (int i = 0; i < floats.length; i++) {
+                                                floats[i] = Float.intBitsToFloat((((int) bytes[pos++] & XFF)) | (((int) bytes[pos++] & XFF) << EIGHT)
+                                                | (((int) bytes[pos++] & XFF) << SIXTEEN) | (((int) bytes[pos++] & XFF) << TWENTY_FOUR));
+                                            }
+                                            this.set(key, floats);
+                                            break;
+                                        default:
+                                            break;
                                     }
-                                    this.objectValues[key] = strings;
                                     break;
 
-                                case MSG:
-                                    final Msg[] msgs = new IndexedPrimitivesObjectsMsg[variableArrayLength];
-                                    for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
-                                        msgs[arrayKey] = arrayAsMsg.getAsMsg(arrayKey);
+                                case ARRAY_VARIABLE_VALUE_TYPE:
+
+                                    // For variable type
+                                    // TODO
+                                    if (lengthMask != 0) {
+                                        final IndexedPrimitivesObjectsMsg arrayAsMsg = new IndexedPrimitivesObjectsMsg();
+                                        arrayAsMsg.deserializeFromBytes(bytes, pos, fieldLength);
+                                        pos += fieldLength;
+                                        final int variableArrayLength = arrayAsMsg.getKeysLength();
+                                        // TODO fix, check if the the first key not null (here we consider the first one is always not null)
+                                        final Type arraytype = arrayAsMsg.getType(0);
+                                        switch (arraytype) {
+                                            case BYTE:
+                                                final Byte[] byteArray = new Byte[variableArrayLength];
+                                                for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
+                                                    byteArray[arrayKey] = arrayAsMsg.getAsNullableByte(arrayKey);
+                                                }
+                                                this.objectValues[key] = byteArray;
+                                                break;
+                                            case SHORT:
+                                                final Short[] shorts = new Short[variableArrayLength];
+                                                for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
+                                                    shorts[arrayKey] = arrayAsMsg.getAsNullableShort(arrayKey);
+                                                }
+                                                this.objectValues[key] = shorts;
+                                                break;
+                                            case INT:
+                                                final Integer[] integers = new Integer[variableArrayLength];
+                                                for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
+                                                    integers[arrayKey] = arrayAsMsg.getAsNullableInteger(arrayKey);
+                                                }
+                                                this.objectValues[key] = integers;
+                                                break;
+                                            case LONG:
+                                                final Long[] longs = new Long[variableArrayLength];
+                                                for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
+                                                    longs[arrayKey] = arrayAsMsg.getAsNullableLong(arrayKey);
+                                                }
+                                                this.objectValues[key] = longs;
+                                                break;
+
+                                            case FIVE_BITS_DECIMAL:
+                                            case DOUBLE:
+                                                final Double[] doubles = new Double[variableArrayLength];
+                                                for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
+                                                    doubles[arrayKey] = arrayAsMsg.getAsNullableDouble(arrayKey);
+                                                }
+                                                this.objectValues[key] = doubles;
+                                                break;
+
+                                            case FLOAT:
+                                                final Float[] floats = new Float[variableArrayLength];
+                                                for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
+                                                    floats[arrayKey] = arrayAsMsg.getAsNullableFloat(arrayKey);
+                                                }
+                                                this.objectValues[key] = floats;
+                                                break;
+
+                                            case STRING_UTF8:
+                                                final String[] strings = new String[variableArrayLength];
+                                                for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
+                                                    strings[arrayKey] = arrayAsMsg.getAsString(arrayKey);
+                                                }
+                                                this.objectValues[key] = strings;
+                                                break;
+
+                                            case MSG:
+                                                final Msg[] msgs = new IndexedPrimitivesObjectsMsg[variableArrayLength];
+                                                for (int arrayKey = 0; arrayKey < variableArrayLength; arrayKey++) {
+                                                    msgs[arrayKey] = arrayAsMsg.getAsMsg(arrayKey);
+                                                }
+                                                this.objectValues[key] = msgs;
+                                                break;
+
+                                            default:
+                                                // TODO manage the other types like ARRAY_FIXED_VALUE_TYPE or ARRAY_VARIABLE_VALUE_TYPE
+                                                break;
+                                        }
                                     }
-                                    this.objectValues[key] = msgs;
-                                    break;
 
                                 default:
-                                    // TODO manage the other types like ARRAY_FIXED_VALUE_TYPE or ARRAY_VARIABLE_VALUE_TYPE
                                     break;
-                                }
                             }
-
-                        default:
-                            break;
                         }
-                    }
 
-                    break;
+                        break;
                 }
                 key++;
             }
@@ -3091,7 +3087,7 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
      */
     private int getVariableLength(final int length, final int forceEncodingAtLeastOn) {
         return (length < LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE && (forceEncodingAtLeastOn == ONE)) ? ONE
-                : (length > MAX_VALUE_FOR_UNSIGNED_BYTE || forceEncodingAtLeastOn == FIVE) ? FIVE : TWO;
+        : (length > MAX_VALUE_FOR_UNSIGNED_BYTE || forceEncodingAtLeastOn == FIVE) ? FIVE : TWO;
     }
 
     /**
@@ -3110,64 +3106,65 @@ public class IndexedPrimitivesObjectsMsg implements Msg, BytesSerializable, Byte
         } else {
             switch (this.types[key]) {
             // TODO refactor it
-            case STRING_UTF_8_TYPE:
-                // TODO optimize get length
-                final int stringUtf8length = (this.objectValues[key] != null) ? ((String) this.objectValues[key]).getBytes(UTF_8_CHARSET).length : 0;
-                return getVariableLength(stringUtf8length, (stringUtf8length == 0) ? TWO : ONE) + stringUtf8length;
+                case STRING_UTF_8_TYPE:
+                    // TODO optimize get length
+                    final int stringUtf8length = (this.objectValues[key] != null) ? ((String) this.objectValues[key]).getBytes(UTF_8_CHARSET).length
+                    : 0;
+                    return getVariableLength(stringUtf8length, (stringUtf8length == 0) ? TWO : ONE) + stringUtf8length;
 
-            case MSG_TYPE:
-                // TODO change to Serializer.getLength();
-                final int msgLength = (this.objectValues[key] != null) ? ((Serializable) this.objectValues[key]).getLength() : 0;
-                return getVariableLength(msgLength, (msgLength == 0) ? TWO : ONE) + msgLength;
+                case MSG_TYPE:
+                    // TODO change to Serializer.getLength();
+                    final int msgLength = (this.objectValues[key] != null) ? ((Serializable) this.objectValues[key]).getLength() : 0;
+                    return getVariableLength(msgLength, (msgLength == 0) ? TWO : ONE) + msgLength;
 
-                // TODO addd NULL_TYPE
+                    // TODO addd NULL_TYPE
 
-            case ARRAY_FIXED_VALUE_TYPE:
-                int arrayFixedValueLength = ONE;
-                if ((this.objectValues[key] != null)) {
-                    if (this.objectValues[key] instanceof byte[]) {
-                        final int bytesLength = ((byte[]) this.objectValues[key]).length + 1;
-                        arrayFixedValueLength = getVariableLength(bytesLength, (bytesLength == 0) ? TWO : ONE) + bytesLength;
-                    } else if (this.objectValues[key] instanceof short[]) {
-                        final int shortsLength = ((short[]) this.objectValues[key]).length << ONE + 1;
-                        arrayFixedValueLength = getVariableLength(shortsLength, (shortsLength == 0) ? TWO : ONE) + shortsLength;
-                    } else if (this.objectValues[key] instanceof int[]) {
-                        final int intsLength = ((int[]) this.objectValues[key]).length << TWO + 1;
-                        arrayFixedValueLength = getVariableLength(intsLength, (intsLength == 0) ? TWO : ONE) + intsLength;
-                    } else if (this.objectValues[key] instanceof long[]) {
-                        final int longsLength = ((long[]) this.objectValues[key]).length << THREE + 1;
-                        arrayFixedValueLength = getVariableLength(longsLength, (longsLength == 0) ? TWO : ONE) + longsLength;
-                    } else if (this.objectValues[key] instanceof double[]) {
-                        final int doublesLength = ((double[]) this.objectValues[key]).length << THREE + 1;
-                        arrayFixedValueLength = getVariableLength(doublesLength, (doublesLength == 0) ? TWO : ONE) + doublesLength;
-                    } else if (this.objectValues[key] instanceof float[]) {
-                        final int floatsLength = ((float[]) this.objectValues[key]).length << TWO + 1;
-                        arrayFixedValueLength = getVariableLength(floatsLength, (floatsLength == 0) ? TWO : ONE) + floatsLength;
+                case ARRAY_FIXED_VALUE_TYPE:
+                    int arrayFixedValueLength = ONE;
+                    if ((this.objectValues[key] != null)) {
+                        if (this.objectValues[key] instanceof byte[]) {
+                            final int bytesLength = ((byte[]) this.objectValues[key]).length + 1;
+                            arrayFixedValueLength = getVariableLength(bytesLength, (bytesLength == 0) ? TWO : ONE) + bytesLength;
+                        } else if (this.objectValues[key] instanceof short[]) {
+                            final int shortsLength = ((short[]) this.objectValues[key]).length << ONE + 1;
+                            arrayFixedValueLength = getVariableLength(shortsLength, (shortsLength == 0) ? TWO : ONE) + shortsLength;
+                        } else if (this.objectValues[key] instanceof int[]) {
+                            final int intsLength = ((int[]) this.objectValues[key]).length << TWO + 1;
+                            arrayFixedValueLength = getVariableLength(intsLength, (intsLength == 0) ? TWO : ONE) + intsLength;
+                        } else if (this.objectValues[key] instanceof long[]) {
+                            final int longsLength = ((long[]) this.objectValues[key]).length << THREE + 1;
+                            arrayFixedValueLength = getVariableLength(longsLength, (longsLength == 0) ? TWO : ONE) + longsLength;
+                        } else if (this.objectValues[key] instanceof double[]) {
+                            final int doublesLength = ((double[]) this.objectValues[key]).length << THREE + 1;
+                            arrayFixedValueLength = getVariableLength(doublesLength, (doublesLength == 0) ? TWO : ONE) + doublesLength;
+                        } else if (this.objectValues[key] instanceof float[]) {
+                            final int floatsLength = ((float[]) this.objectValues[key]).length << TWO + 1;
+                            arrayFixedValueLength = getVariableLength(floatsLength, (floatsLength == 0) ? TWO : ONE) + floatsLength;
+                        }
                     }
-                }
-                return arrayFixedValueLength;
+                    return arrayFixedValueLength;
 
-            case ARRAY_VARIABLE_VALUE_TYPE:
-                int arrayVariableValueLength = ONE;
-                if (this.objectValues[key] != null && this.objectValues[key] instanceof Object[]) {
-                    final Object[] objects = ((Object[]) this.objectValues[key]);
-                    final BytesSerializable arrayVariableValueAsMsg = serializeArrayVariableValueAsMsg(objects);
-                    final int arrayVariableValueAsMsgLength = arrayVariableValueAsMsg.getLength();
-                    arrayVariableValueLength = getVariableLength(arrayVariableValueAsMsgLength, (arrayVariableValueAsMsgLength == 0) ? TWO : ONE)
-                            + arrayVariableValueAsMsgLength;
-                }
-                return arrayVariableValueLength;
+                case ARRAY_VARIABLE_VALUE_TYPE:
+                    int arrayVariableValueLength = ONE;
+                    if (this.objectValues[key] != null && this.objectValues[key] instanceof Object[]) {
+                        final Object[] objects = ((Object[]) this.objectValues[key]);
+                        final BytesSerializable arrayVariableValueAsMsg = serializeArrayVariableValueAsMsg(objects);
+                        final int arrayVariableValueAsMsgLength = arrayVariableValueAsMsg.getLength();
+                        arrayVariableValueLength = getVariableLength(arrayVariableValueAsMsgLength, (arrayVariableValueAsMsgLength == 0) ? TWO : ONE)
+                        + arrayVariableValueAsMsgLength;
+                    }
+                    return arrayVariableValueLength;
 
-            default:
+                default:
 
-                if ((this.types[key] & TYPE_MASK) == NULL_TYPE) {
-                    int nullValueLength = ONE;
-                    final int nullLength = (this.objectValues[key] != null) ? ((Null) this.objectValues[key]).getLength() : 0;
-                    nullValueLength = getVariableLength(nullLength, ONE) + nullLength;
-                    return nullValueLength;
-                } else {
-                    return ONE;
-                }
+                    if ((this.types[key] & TYPE_MASK) == NULL_TYPE) {
+                        int nullValueLength = ONE;
+                        final int nullLength = (this.objectValues[key] != null) ? ((Null) this.objectValues[key]).getLength() : 0;
+                        nullValueLength = getVariableLength(nullLength, ONE) + nullLength;
+                        return nullValueLength;
+                    } else {
+                        return ONE;
+                    }
             }
         }
     }

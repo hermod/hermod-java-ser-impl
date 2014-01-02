@@ -4,20 +4,25 @@
 	<parent>
 		<groupId>com.github.hermod</groupId>
 		<artifactId>hermod-java-parent</artifactId>
-		<version>0.0.4</version>
+		<version>0.0.5</version>
 	</parent>
 	<artifactId>hermod-java-ser-impl</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
+	<scm>
+		<connection>scm:git:git://github.com/hermod/${project.artifactId}.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/hermod/${project.artifactId}.git</developerConnection>
+		<url>https://github.com/hermod/${project.artifactId}.git</url>
+		<tag>HEAD</tag>
+	</scm>
 	<properties>
 		<projectUrl>${parentUrl}</projectUrl>
-		<javaVersion>1.6</javaVersion>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.github.hermod</groupId>
 			<artifactId>hermod-java-ser-api</artifactId>
-			<version>0.0.5</version>
+			<version>0.0.6</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
