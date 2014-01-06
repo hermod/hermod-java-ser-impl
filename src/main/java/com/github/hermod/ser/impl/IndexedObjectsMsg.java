@@ -21,8 +21,6 @@ import static com.github.hermod.ser.impl.Msgs.FOUR;
 import static com.github.hermod.ser.impl.Msgs.ONE;
 import static com.github.hermod.ser.impl.Msgs.TWO;
 
-import java.nio.ByteBuffer;
-
 import com.github.hermod.ser.Msg;
 import com.github.hermod.ser.Null;
 import com.github.hermod.ser.Type;
@@ -107,32 +105,6 @@ public class IndexedObjectsMsg implements Msg {
      */
     public static IndexedObjectsMsg createWithKeyMax(final int keyMax) {
         return new IndexedObjectsMsg(keyMax);
-    }
-
-    /**
-     * createFromBytes.
-     * 
-     * @param bytes
-     * @param offset
-     * @param length
-     * @return
-     */
-    public static IndexedObjectsMsg createFromBytes(final byte[] aSrcBytes, final int offset, final int length) {
-        final IndexedObjectsMsg msg = new IndexedObjectsMsg();
-        DefaultMsgSerializer.get().deserializeFromBytes(aSrcBytes, offset, length, msg);
-        return msg;
-    }
-
-    /**
-     * createFromByteBuffer.
-     * 
-     * @param byteBuffer
-     * @return
-     */
-    public static IndexedObjectsMsg createFromByteBuffer(final ByteBuffer aSrcByteBuffer) {
-        final IndexedObjectsMsg msg = new IndexedObjectsMsg();
-        DefaultMsgSerializer.get().deserializeFromByteBuffer(aSrcByteBuffer, msg);
-        return msg;
     }
 
     /**
@@ -1145,7 +1117,7 @@ public class IndexedObjectsMsg implements Msg {
         try {
             if ((this.objectValues[aKey] instanceof Msg[])) {
                 final Msg[] msgs = (Msg[]) this.objectValues[aKey];
-                final Msg[] results = new IndexedPrimitivesObjectsMsg[msgs.length];
+                final Msg[] results = new IndexedObjectsMsg[msgs.length];
                 for (int i = 0; i < msgs.length; i++) {
                     results[i] = new IndexedObjectsMsg(msgs[i]);
                 }

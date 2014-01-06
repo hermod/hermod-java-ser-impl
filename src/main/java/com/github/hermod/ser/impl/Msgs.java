@@ -2,14 +2,12 @@ package com.github.hermod.ser.impl;
 
 import static com.github.hermod.ser.Types.ARRAY_FIXED_VALUE_TYPE;
 import static com.github.hermod.ser.Types.ARRAY_VARIABLE_VALUE_TYPE;
-import static com.github.hermod.ser.Types.NULL_TYPE;
 
 import com.github.hermod.ser.Msg;
-import com.github.hermod.ser.Type;
 import com.github.hermod.ser.Types;
 
 /**
- * IntMapConstants.
+ * <p>Msgs.</p>
  * 
  * @author anavarro - Dec 15, 2011
  * 
@@ -25,167 +23,112 @@ public final class Msgs {
     /**
      * ZERO
      */
-    static final int           ZERO                                  = 0;
+    public static final int      ZERO                                  = 0;
 
     /**
      * ONE
      */
-    static final int           ONE                                   = 1;
+    public static final int      ONE                                   = 1;
 
     /**
      * TWO
      */
-    static final int           TWO                                   = 2;
+    public static final int      TWO                                   = 2;
 
     /**
      * THREE
      */
-    static final int           THREE                                 = 3;
+    public static final int      THREE                                 = 3;
 
     /**
      * FOUR
      */
-    static final int           FOUR                                  = 4;
+    public static final int      FOUR                                  = 4;
 
     /**
      * FIVE
      */
-    static final int           FIVE                                  = 5;
+    public static final int      FIVE                                  = 5;
 
     /**
      * SIX
      */
-    static final int           SIX                                   = 6;
+    public static final int      SIX                                   = 6;
 
     /**
      * SEVEN
      */
-    static final int           SEVEN                                 = 7;
+    public static final int      SEVEN                                 = 7;
 
     /**
      * EIGHT
      */
-    static final int           EIGHT                                 = 8;
+    public static final int      EIGHT                                 = 8;
 
     /**
      * NINE
      */
-    static final int           NINE                                  = 9;
+    public static final int      NINE                                  = 9;
 
     /**
      * SIXTEEN
      */
-    static final int           SIXTEEN                               = 16;
+    public static final int      SIXTEEN                               = 16;
 
     /**
      * TWENTY_FOUR
      */
-    static final int           TWENTY_FOUR                           = 24;
+    public static final int      TWENTY_FOUR                           = 24;
 
     /**
      * THIRTY_TWO
      */
-    static final int           THIRTY_TWO                            = 32;
+    public static final int      THIRTY_TWO                            = 32;
 
     /**
      * FORTY
      */
-    static final int           FORTY                                 = 40;
+    public static final int      FORTY                                 = 40;
 
     /**
      * FORTY_EIGHT
      */
-    static final int           FORTY_EIGHT                           = 48;
+    public static final int      FORTY_EIGHT                           = 48;
 
     /**
      * FIFTY_SIX
      */
-    static final int           FIFTY_SIX                             = 56;
+    public static final int      FIFTY_SIX                             = 56;
 
     /**
      * SIXTY_FOUR
      */
-    static final int           SIXTY_FOUR                            = 64;
-
-    // // byte / boolean
-    // static final byte BYTE_TYPE = (byte) (Types.INTEGER_TYPE | ONE);
-    //
-    // // short
-    // static final byte SHORT_TYPE = (byte) (Types.INTEGER_TYPE | TWO);
-    //
-    // // int
-    // static final byte INT_TYPE = (byte) (Types.INTEGER_TYPE | FOUR);
-    //
-    // // long
-    // static final byte LONG_TYPE = (byte) (Types.INTEGER_TYPE | EIGHT);
-    //
-    // // float / double or double encoded on 5 bits
-    // static final byte TYPE_DECIMAL = Type.DECIMAL.getId();
-    //
-    // // float
-    // static final byte FLOAT_TYPE = (byte) (Types.DECIMAL_TYPE | FOUR);
-    //
-    // // double
-    // static final byte DOUBLE_TYPE = (byte) (Types.DECIMAL_TYPE | EIGHT);
-    //
-    // // double (encoded on 3 bits)
-    // static final byte THREE_BITS_DECIMAL_TYPE = (byte) (Types.DECIMAL_TYPE | THREE);
-    //
-    // // double (encoded on 5 bits)
-    // static final byte FIVE_BITS_DECIMAL_TYPE = (byte) (Types.DECIMAL_TYPE | FIVE);
-
-    // Length is implemented as
-    // 1-29, the length is in the last 5 bits of the type
-    // 30, the length is on next bytes (as litte endian byte)
-    // 31, the length is on next 4 bytes (as litte endian int)
-
-    // Size = 0 on the last 5 bites of type, null value
-    // Size = 0 on the next byte (Empty value like "" for String)
+    public static final int      SIXTY_FOUR                            = 64;
 
     /**
      * XFF
      */
-    static final int           XFF                                   = 0xFF;
+    public static final int      XFF                                   = 0xFF;
 
     /**
-     * 
+     * MAX_VALUE_FOR_UNSIGNED_BYTE
      */
-    static final byte          LENGTH_MASK                           = (byte) 0x1F;                                                                                                                                                                                                  // (byte)
-                                                                                                                                                                                                                                                                                      // 0b0001_1111;
-
-    /**
-     * 
-     */
-    static final int           LENGTH_ENCODED_IN_AN_UNSIGNED_BYTE    = LENGTH_MASK - ONE;
-
-    /**
-     * MAX_LENGTH_ENCODED_IN_A_BIT
-     */
-    static final int           MAX_VALUE_FOR_UNSIGNED_BYTE           = 255;
-    /**
-     * 
-     */
-    static final int           LENGTH_ENCODED_IN_AN_INT              = LENGTH_MASK;
+    public static final int      MAX_VALUE_FOR_UNSIGNED_BYTE           = 255;
 
     /**
      * DEFAULT_MSG_SIZE
      */
-    static final int           DEFAULT_MSG_LENGTH                    = SIXTY_FOUR;
+    static final int             DEFAULT_MSG_LENGTH                    = SIXTY_FOUR;
 
     /**
      * DEFAULT_MAX_KEY
      */
-    static final int           DEFAULT_MAX_KEY                       = DEFAULT_MSG_LENGTH / FOUR;
-
-    /**
-     * FIRST_KEY
-     */
-    static final int           FIRST_AUTHORIZED_KEY                  = ZERO;
+    public static final int      DEFAULT_MAX_KEY                       = DEFAULT_MSG_LENGTH / FOUR;
 
     /**
      * DEFAULT_VALUE
      */
-    static final int           DEFAULT_VALUE                         = ZERO;
+    public static final int      DEFAULT_VALUE                         = ZERO;
 
     // static final double[] TENTHS_DOZENS;
     /**
@@ -194,18 +137,28 @@ public final class Msgs {
      * We encode variable size on 2 bits (1 byte in addition of type) instead on 1 byte (in type) to distinct null and Object with 0 size.
      */
     // TODO to remove
-    static final boolean       FORCE_ENCODING_ZERO_ON_2BITS          = true;
+    // TODO move in hermod-java-ser-hermod
+    // static final boolean FORCE_ENCODING_ZERO_ON_2BITS = true;
 
     /**
-     * ERROR_WHEN_KEY_NOT_PRESENT
+     * ERROR_WHEN_KEY_NOT_PRESENT.
      */
-    static final String        ERROR_WHEN_KEY_NOT_PRESENT            = "The key=%s is not present for type asked.";
+    public static final String   ERROR_WHEN_KEY_NOT_PRESENT            = "The key=%s is not present for type asked.";
 
-    static final String        ERROR_WHEN_YOU_SET_NULL_WITH_LENGTH_0 = "You must set a Null with type Null with a length > 0, use (Integer) null or Null.INTEGER_NULL or Null.valueOf(Type.INTEGER) any Types.* except Null.NULL or Null.valueOf(0) if you want to have length = 0.";
+    /**
+     * ERROR_WHEN_YOU_SET_NULL_WITH_LENGTH_0.
+     */
+    public static final String   ERROR_WHEN_YOU_SET_NULL_WITH_LENGTH_0 = "You must set a Null with type Null with a length > 0, use (Integer) null or Null.INTEGER_NULL or Null.valueOf(Type.INTEGER) any Types.* except Null.NULL or Null.valueOf(0) if you want to have length = 0.";
 
-    static final double        HALF                                  = 0.5;
+    /**
+     * HALF.
+     */
+    static final double          HALF                                  = 0.5;
 
-    private static final int[] POW_2                                 = new int[Integer.SIZE];
+    /**
+     * POW_2.
+     */
+    private static final int[]   POW_2                                 = new int[Integer.SIZE];
 
     /**
      * DOZENS
@@ -221,7 +174,7 @@ public final class Msgs {
      * Scale.TEN_MILLIONS.getDecimal(), 1.0 / Scale.HUNDRED_MILLIONS.getDecimal() };
      */
 
-    static final double[]      DOZENS_TENTHS;
+    public static final double[] DOZENS_TENTHS;
 
     static {
 
