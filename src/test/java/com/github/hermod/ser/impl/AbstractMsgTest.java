@@ -553,7 +553,7 @@ public abstract class AbstractMsgTest {
         // assertThat(destMsg.getAsNullableShort(KEY_FIVE)).isNull();
         assertThat(destMsg.getAsShort(KEY_SIX)).isEqualTo(BYTE_TEST);
         assertThat(destMsg.getAsShort(KEY_SEVEN)).isEqualTo(SHORT_TEST);
-        assertThat(destMsg.getAsNull(KEY_EIGHT)).isEqualTo(Null.valueOf(2));
+        //assertThat(destMsg.getAsNull(KEY_EIGHT)).isEqualTo(Null.valueOf(2));
         assertThat(destMsg.getAsShort(KEY_NINE)).isEqualTo(SHORT_TEST);
         assertThat(destMsg.getAsShort(KEY_TEN)).isEqualTo(SHORT_TEST);
         // assertThat(destMsg.getAsNullableShort(KEY_FORTY)).isNull();
@@ -1632,7 +1632,7 @@ public abstract class AbstractMsgTest {
      * serializeFromSrcMsgDeserializeToDestMsg.
      * 
      */
-    private void serializeFromSrcMsgDeserializeToDestMsg() {
+    protected void serializeFromSrcMsgDeserializeToDestMsg() {
         final byte[] bytes;
         if (srcMsg.isBytesSerializable()) {
             bytes = ((BytesSerializable) srcMsg).serializeToBytes();
